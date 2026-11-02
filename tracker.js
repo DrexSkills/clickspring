@@ -19,6 +19,7 @@
   // Clean page path: strip a hosting sub-folder (e.g. GitHub Pages) and "index.html"
   function pagePath() { var p = location.pathname; if (BASE_PATH && p.indexOf(BASE_PATH) === 0) p = p.slice(BASE_PATH.length); p = p.replace(/\/index\.html$/, "/"); return (p || "/").slice(0, 300); }
   if (!SITE || !EP || !KEY) { console.warn("[ClickSpring] Missing data-site, data-endpoint or data-key on the script tag."); return; }
+  if (navigator.globalPrivacyControl === true) return; // respect the visitor's Global Privacy Control opt-out
   if (navigator.webdriver || /bot|crawl|spider|preview|lighthouse/i.test(navigator.userAgent)) return;
   var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

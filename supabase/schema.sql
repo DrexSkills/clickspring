@@ -111,3 +111,13 @@ grant select (id, site_id, name, prefix, created_at, last_used_at, revoked_at) o
 create policy "owners see their keys" on public.api_keys for select to authenticated
   using (exists (select 1 from public.sites s where s.id = site_id and s.owner = (select auth.uid())));
 -- create_api_key(p_site, p_name) and revoke_api_key(p_id): see migration "api_keys" (security definer, owner checked)
+
+-- v0.01.4: users can delete their own account (cascades to all their data)
+create or replace function public.delete_my_account() returns void
+language plpgsql security definer set search_path = '' as $$
+begin
+  if auth.uid() is null then raise exception 'Not signed in'; end if;
+  delete from auth.users where id = auth.uid();
+end $$;
+revoke all on function public.delete_my_account() from public, anon;
+grant execute on function public.delete_my_account() to authenticated;
