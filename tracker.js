@@ -1,4 +1,4 @@
-/* ClickSpring tracker v0.01
+/* ClickSpring tracker v0.01.1
    <script src="https://YOUR-CLICKSPRING-DOMAIN/tracker.js" data-site="SITE_ID" data-endpoint="SUPABASE_URL" data-key="ANON_KEY" defer></script>
    Tracks automatically: page views (including single-page apps), clicks on buttons and links,
    and sign-ups from any form with an email field.
@@ -58,12 +58,23 @@
   function send(type, label) {
     var body = JSON.stringify({ site_id: SITE, type: type, visitor_id: vid, source: DEBUG ? "test" : src, campaign_id: camp,
       path: location.pathname.slice(0, 300), label: label ? String(label).replace(/\s+/g, " ").trim().slice(0, 80) : null });
+    var ok = function () { show(type + " sent"); };
+    var fail = function (st) { show("couldn\u2019t send " + type + (st ? " (" + st + ")" : "") + ". Check data-site and data-key.", true); if (window.console) console.warn("[ClickSpring] event not saved", st || ""); };
+    // 1) Simple request: text/plain body + key in URL, so the browser sends it without a CORS preflight
+    //    and it survives page navigation (keepalive).
+    var fallback = function () {
+      // 2) Backup: standard REST insert with headers (needs a preflight, so no keepalive).
+      try {
+        fetch(EP + "/rest/v1/events", { method: "POST", body: body,
+          headers: { apikey: KEY, Authorization: "Bearer " + KEY, "Content-Type": "application/json", Prefer: "return=minimal" } })
+          .then(function (r) { r.ok ? ok() : fail(r.status); }).catch(function () { fail(); });
+      } catch (e) { fail(); }
+    };
     try {
-      fetch(EP + "/rest/v1/events", { method: "POST", keepalive: true, body: body,
-        headers: { apikey: KEY, Authorization: "Bearer " + KEY, "Content-Type": "application/json", Prefer: "return=minimal" } })
-        .then(function (r) { r.ok ? show(type + " sent") : show("couldn\u2019t send " + type + " (" + r.status + "). Check data-site.", true); })
-        .catch(function () { show("couldn\u2019t reach the server.", true); });
-    } catch (e) {}
+      fetch(EP + "/rest/v1/rpc/track?apikey=" + encodeURIComponent(KEY), { method: "POST", keepalive: true, body: body, headers: { "Content-Type": "text/plain" } })
+        .then(function (r) { r.ok ? ok() : (r.status === 404 || r.status === 415 || r.status === 401 ? fallback() : fail(r.status)); })
+        .catch(fallback);
+    } catch (e) { fallback(); }
   }
 
   var lastPath = null, signedUp = false;

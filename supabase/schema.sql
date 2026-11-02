@@ -64,3 +64,17 @@ revoke all on public.sites from anon;
 revoke all on public.campaigns from anon;
 revoke all on public.events from anon;
 grant insert on public.events to anon;
+
+-- Tracker endpoint: one text argument so browsers can send a simple (no-preflight) request
+create or replace function public.track(text) returns void
+language plpgsql security invoker set search_path = '' as $$
+declare j jsonb;
+begin
+  j := $1::jsonb;
+  insert into public.events (site_id, type, visitor_id, source, campaign_id, path, label)
+  values ((j->>'site_id')::uuid, j->>'type', left(coalesce(j->>'visitor_id','unknown'),64), left(j->>'source',40),
+    case when (j->>'campaign_id') ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then (j->>'campaign_id')::uuid end,
+    left(j->>'path',300), left(j->>'label',80));
+end $$;
+revoke all on function public.track(text) from public;
+grant execute on function public.track(text) to anon, authenticated;
