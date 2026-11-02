@@ -14,9 +14,6 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Stop guessing why people aren’t buying.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Live keys live in config.js next to this file. Without it, the app runs in demo mode (data saved in this browser). -->
 <script src="config.js"></script>
 <script>
@@ -1199,7 +1196,7 @@ function renderLanding(){
   </section>
   <section class="band" id="pricing"><div class="band-in"><div><h2>Free while we’re in beta.</h2><p>Every feature, unlimited tracking links, no card needed. Early users keep a discount when paid plans start.</p></div><a class="btn lg" href="#signup">Start Free Today ${ic("arrow", 18)}</a></div></section>
   <section class="band" id="about"><div class="band-in" style="background:var(--surface)"><div><h2>Charts tell you what happened. ClickSpring tells you why.</h2><p>Analytics tools give you numbers: 482 visitors, 0.8% conversion. ClickSpring gives you answers: which page people leave on, what your customers did differently, and what to change first. Post views are entered by you for now; everything after the click is measured automatically.</p></div><button class="btn green lg" data-demo>See Demo</button></div></section>
-  <div class="foot-note"><span class="logo" style="font-size:18px">${LOGO(22)}ClickSpring</span><span><a href="docs.html" style="color:inherit">Docs &amp; API</a> · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · © ${new Date().getFullYear()} ClickSpring</span></div>
+  <div class="foot-note"><span class="logo" style="font-size:18px">${LOGO(22)}ClickSpring</span><span><a href="docs.html" style="color:inherit">Docs &amp; API</a> · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="#" data-cookie-settings style="color:inherit">Cookie settings</a> · © ${new Date().getFullYear()} ClickSpring</span></div>
   </div>`;
 }
 
@@ -1258,7 +1255,7 @@ function authShell(inner){
   $("#root").innerHTML = `<div class="auth-wrap">
     <div class="auth-form"><a class="logo" href="#home">${LOGO(36)}ClickSpring</a>
       <div class="auth-card">${inner}</div>
-      <p class="tiny">ClickSpring v0.01 beta · <a href="privacy.html" target="_blank" rel="noopener">Privacy</a> · <a href="terms.html" target="_blank" rel="noopener">Terms</a>${store.live ? "" : " · Demo mode: accounts are saved in this browser only"}</p></div>
+      <p class="tiny">ClickSpring v0.01 beta · <a href="privacy.html" target="_blank" rel="noopener">Privacy</a> · <a href="terms.html" target="_blank" rel="noopener">Terms</a> · <a href="#" data-cookie-settings>Cookies</a>${store.live ? "" : " · Demo mode: accounts are saved in this browser only"}</p></div>
     <aside class="auth-side"><span class="pill light">For founders who need customers</span>
       <h2>Stop guessing why people aren’t buying.</h2>
       <div class="glass"><div class="gl-h"><span>Your launch</span><span>this week</span></div>
@@ -1646,7 +1643,7 @@ ClickSpring.track("click", "Pricing toggle"); // send any event</pre></div>`;
     <div class="card danger" style="margin-top:16px"><h2>Delete</h2>
       ${store.live ? `<div class="site-row"><div><b>Delete “${esc(site.name)}”</b><span class="muted">Removes this website with all its visitor data, links, changes and API keys.</span></div><button class="btn quiet sm" id="delsite">Delete website</button></div>` : ""}
       <div class="site-row"><div><b>Delete your account</b><span class="muted">Removes your account, every website and all data, permanently.</span></div><button class="btn sm danger-btn" id="delacct">Delete account</button></div></div>
-    <p class="muted" style="font-size:13px;margin-top:20px">ClickSpring v0.01 beta · <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a> · <a href="terms.html" target="_blank" rel="noopener">Terms</a></p>`;
+    <p class="muted" style="font-size:13px;margin-top:20px">ClickSpring v0.01 beta · <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a> · <a href="terms.html" target="_blank" rel="noopener">Terms</a> · <a href="#" data-cookie-settings>Cookie settings</a></p>`;
     $("#af").addEventListener("submit", async e => { e.preventDefault(); try { S.site = await store.updateSite({...Object.fromEntries(new FormData(e.target)), owner: site.owner}); toast("Changes saved"); } catch (err) { toast(friendly(err)); } });
     const on = (id, fn) => { const el = $("#" + id); if (el) el.addEventListener("click", fn); };
     on("chpw", async () => { try { await store.resetPassword(store.userEmail()); toast("We emailed you a link to change your password"); } catch (err) { toast(friendly(err)); } });
@@ -1823,6 +1820,41 @@ window.addEventListener("hashchange", () => { if (!APP_ROUTES.has(location.hash.
   if (store.live && store.user && !location.hash && !S.recovery) { location.hash = S.site ? "#advisor" : "#start"; return; }
   route();
 })();
+})();
+</script>
+<!-- ClickSpring cookie & storage preferences -->
+<style>
+.cs-ck{position:fixed;z-index:55;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:min(440px,calc(100vw - 32px));background:#ffffff;color:#0b0f0c;border-radius:20px;padding:18px 18px 16px;box-shadow:0 24px 60px -18px rgba(0,0,0,.35),0 0 0 1px #e6ebe7;font:15px/1.5 "Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.cs-ck[hidden]{display:none}
+.cs-ck b.t{display:flex;align-items:center;gap:8px;font-size:16px;margin-bottom:6px}
+.cs-ck p{margin:0 0 14px;color:#5d6a62;font-size:14px}
+.cs-ck a{color:#12933a;font-weight:600}
+.cs-ck .r{display:flex;gap:8px;flex-wrap:wrap}
+.cs-ck button{border:0;border-radius:999px;padding:10px 16px;font:700 14px system-ui,-apple-system,sans-serif;cursor:pointer}
+.cs-ck .a{background:#1fbf4f;color:#fff}.cs-ck .e{background:#f3f6f3;color:#0b0f0c;box-shadow:inset 0 0 0 1px #e6ebe7}
+@media(prefers-color-scheme:dark){.cs-ck{background:#141c17;color:#edf3ee;box-shadow:0 24px 60px -18px rgba(0,0,0,.7),0 0 0 1px #243029}.cs-ck p{color:#9aa9a0}.cs-ck a{color:#4fe080}.cs-ck .a{color:#05260f;background:#2bd468}.cs-ck .e{background:#1c2520;color:#edf3ee;box-shadow:inset 0 0 0 1px #243029}}
+@media(max-width:860px){.cs-ck{left:12px;right:12px;width:auto;bottom:calc(76px + env(safe-area-inset-bottom,0px))}}
+</style>
+<script>
+(function(){
+  var K = "cs_consent", FONT = "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap";
+  function get(){ try { return localStorage.getItem(K); } catch (e) { return null; } }
+  function set(v){ try { localStorage.setItem(K, v); } catch (e) {} }
+  function fonts(){ if (document.getElementById("cs-gf")) return; var l = document.createElement("link"); l.id = "cs-gf"; l.rel = "stylesheet"; l.href = FONT; document.head.appendChild(l); }
+  var box;
+  function show(){
+    if (!box) {
+      box = document.createElement("div"); box.className = "cs-ck"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", "Cookie preferences");
+      box.innerHTML = '<b class="t">🍪 Cookies &amp; storage</b><p>We use essential browser storage to keep you signed in and remember your settings. With your OK, we also load our font from Google, which shares your IP address with Google. No advertising or tracking cookies. <a href="privacy.html#cookies">Learn more</a></p><div class="r"><button class="a" data-v="all">Accept all</button><button class="e" data-v="essential">Essential only</button></div>';
+      box.addEventListener("click", function(e){ var b = e.target.closest("[data-v]"); if (!b) return; set(b.dataset.v); if (b.dataset.v === "all") fonts(); box.hidden = true; });
+      document.body.appendChild(box);
+    }
+    box.hidden = false; var f = box.querySelector(".a"); if (f) f.focus({preventScroll: true});
+  }
+  if (get() === "all") fonts();
+  document.addEventListener("click", function(e){ if (e.target.closest && e.target.closest("[data-cookie-settings]")) { e.preventDefault(); show(); } });
+  function init(){ if (!get()) show(); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
 </script>
 </body>
