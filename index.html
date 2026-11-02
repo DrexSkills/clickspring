@@ -540,6 +540,16 @@ const LOGO = s => `<svg width="${s}" height="${s}" viewBox="0 0 32 32" fill="non
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 
 const BASE = () => location.origin + location.pathname;
+/* Device check for "one account per device": a random ID kept in this browser + a fingerprint of the device. */
+async function deviceInfo(){
+  let id; try { id = localStorage.getItem("cs_device"); if (!id) { id = uid(); localStorage.setItem("cs_device", id); } } catch (e) { id = uid(); }
+  let canvas = "";
+  try { const c = document.createElement("canvas"); c.width = 220; c.height = 40; const x = c.getContext("2d"); x.textBaseline = "top"; x.font = "16px Arial"; x.fillStyle = "#1fbf4f"; x.fillRect(0, 0, 60, 20); x.fillStyle = "#0b0f0c"; x.fillText("ClickSpring ✓ 🌱", 4, 12); canvas = c.toDataURL(); } catch (e) {}
+  const parts = [navigator.userAgent, navigator.language, (navigator.languages || []).join(","), screen.width + "x" + screen.height + "x" + screen.colorDepth, window.devicePixelRatio, (Intl.DateTimeFormat().resolvedOptions() || {}).timeZone, navigator.hardwareConcurrency, navigator.maxTouchPoints, navigator.platform, canvas].join("|");
+  let fp = "";
+  try { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(parts)); fp = [...new Uint8Array(b)].map(v => v.toString(16).padStart(2, "0")).join(""); } catch (e) {}
+  return {device_id: id, fp};
+}
 function makeSample(){
     const r = mulberry32(42), now = Date.now();
     const camps = [
@@ -580,7 +590,7 @@ const DemoStore = {
   },
   userName(){ return this.user ? this.user.name : ""; },
   userEmail(){ return this.user ? this.user.email : ""; },
-  async signUp({name, email, site_url, site_name}){ this.account = {name, email: email.toLowerCase(), site_url, site_name, on: true}; this.user = this.account; this._saveUser(); return {needsConfirm: false}; },
+  async signUp({name, email, site_url, site_name}){ let owner = null; try { owner = localStorage.getItem("cs_device_owner"); } catch (e) {} if (owner && owner !== email.toLowerCase()) throw new Error("This device already has a ClickSpring account. Log in to it instead. You can restart your website any time in Settings."); try { localStorage.setItem("cs_device_owner", email.toLowerCase()); } catch (e) {} this.account = {name, email: email.toLowerCase(), site_url, site_name, on: true}; this.user = this.account; this._saveUser(); return {needsConfirm: false}; },
   async signIn({email}){
     if (!this.account || this.account.email !== email.toLowerCase()) throw new Error("Invalid login credentials");
     this.account.on = true; this.user = this.account; this._saveUser(); return this.data ? this.data.site : null;
@@ -606,7 +616,8 @@ const DemoStore = {
     return { recent, pageview: ev.some(e => e.t === "pageview"), click: ev.some(e => e.t === "click"), signup: ev.some(e => e.t === "signup"), campaign: ev.some(e => e.c) };
   },
   async reset(){ this.data = null; try { localStorage.removeItem(this.key); } catch (e) {} },
-  async deleteAccount(){ await this.reset(); this.account = null; this.user = null; try { localStorage.removeItem(this.ukey); } catch (e) {} },
+  async deleteAccount(){ await this.reset(); this.account = null; this.user = null; try { localStorage.removeItem(this.ukey); localStorage.removeItem("cs_device_owner"); } catch (e) {} },
+  async restartSite(){ if (!this.data) return; this.data.events = []; this.data.campaigns = []; this.data.fixes = []; this._save(); },
   seed(){ const smp = makeSample(); this.data.events = smp.events; this.data.campaigns = smp.campaigns; this._save(); }
 };
 
@@ -642,6 +653,17 @@ const LiveStore = {
   },
   selectSite(id){ const x = this.sites.find(s => s.id === id); if (!x) return this.site; try { localStorage.setItem("cs_site_" + this.user.id, id); } catch (e) {} return this.site = x; },
   async signUp({name, email, password, site_url, site_name}){
+    // Created by our "signup" function: no confirmation email, one account per device.
+    const dev = await deviceInfo();
+    const res = await fetch(CFG.supabaseUrl + "/functions/v1/signup", { method: "POST", headers: { "Content-Type": "application/json", apikey: CFG.supabaseAnonKey },
+      body: JSON.stringify({ name, email, password, site_url, site_name, ...dev }) });
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error((out.error && out.error.message) || "Couldn’t create your account. Try again.");
+    const si = await this.sb.auth.signInWithPassword({ email, password });
+    if (si.error) throw si.error;
+    this.user = si.data.user; return {needsConfirm: false};
+  },
+  async signUpWithEmailConfirm({name, email, password, site_url, site_name}){
     const { data, error } = await this.sb.auth.signUp({ email, password, options: { data: { full_name: name, site_url, site_name }, emailRedirectTo: BASE() + "?confirmed=1" } });
     if (error) throw error;
     if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) throw new Error("User already registered");
@@ -707,6 +729,7 @@ const LiveStore = {
   async addFix(f){ const { error } = await this.sb.from("fixes").insert({site_id: this.site.id, tip_key: f.tip_key, title: f.title, note: f.note || null}); if (error) throw error; },
   async deleteFix(id){ const { error } = await this.sb.from("fixes").delete().eq("id", id); if (error) throw error; },
   async deleteSite(id){ const { error } = await this.sb.from("sites").delete().eq("id", id); if (error) throw error; this.sites = this.sites.filter(x => x.id !== id); try { localStorage.removeItem("cs_site_" + this.user.id); } catch (e) {} return this.site = this.sites[0] || null; },
+  async restartSite(){ const { error } = await this.sb.rpc("restart_site", {p_site: this.site.id}); if (error) throw error; },
   async deleteAccount(){ const { error } = await this.sb.rpc("delete_my_account"); if (error) throw error; try { await this.sb.auth.signOut({ scope: "local" }); } catch (e) {} this.user = null; this.site = null; this.sites = []; },
   async usage(){ const t = new Date(), m = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-01`; const { data } = await this.sb.from("usage_monthly").select("events").eq("site_id", this.site.id).eq("month", m).maybeSingle(); return {events: data ? data.events : 0}; },
   async apiKeys(){ const { data, error } = await this.sb.from("api_keys").select("id,name,prefix,created_at,last_used_at,revoked_at").eq("site_id", this.site.id).is("revoked_at", null).order("created_at", {ascending: false}); if (error) throw error; return data; },
@@ -1251,6 +1274,7 @@ function friendly(err){
   if (/email not confirmed/i.test(m)) return "Confirm your email first. Check your inbox for the link we sent.";
   if (/already registered|already been registered/i.test(m)) return "That email already has an account. Log in instead.";
   if (/password should be at least|weak password/i.test(m)) return "Use a password with at least 8 characters.";
+  if (/this device already has|too many new accounts/i.test(m)) return m;
   if (/beta limit/i.test(m)) return m.replace(/^.*?ClickSpring beta limit( reached)?:\s*/i, "Free beta limit: ") + ".";
   if (/rate limit|too many/i.test(m)) return "Too many attempts. Wait a minute, then try again.";
   if (/failed to fetch|network/i.test(m)) return "Can’t reach the server. Check your connection and try again.";
@@ -1651,6 +1675,8 @@ ClickSpring.track("click", "Pricing toggle"); // send any event</pre></div>`;
       <details class="add-site"><summary>+ Add another website</summary><form id="nsf" novalidate><div class="form-row"><label class="field">Name<input name="name" required placeholder="My other project"></label><label class="field">Website address<input name="url" required inputmode="url" placeholder="otherproject.com"></label></div><button class="btn green sm">Add website</button></form></details></div>` : ""}
     <div class="card m-only" style="margin-bottom:16px"><h2>Tracking</h2><a class="btn green" href="#install">Open tracking setup</a></div>
     ${store.live ? "" : `<div class="card"><h2>Demo data</h2><p class="muted" style="margin-top:0">Demo mode saves everything in this browser only.</p><div class="cta-row"><button class="btn quiet" id="seed">Load sample data</button><button class="btn ghost" id="reset">Delete demo workspace</button>${demoSession ? `<button class="btn quiet" id="exit">Leave demo</button>` : ""}</div></div>`}
+    <div class="card" style="margin-top:16px"><h2>Restart your website</h2>
+      <div class="site-row"><div><b>Start “${esc(site.name)}” fresh</b><span class="muted">Clears its visitor data, tracking links and tested changes so you can start over. Your account, tracking script and API keys stay the same. Changing your website’s address above is fine too.</span></div><button class="btn quiet sm" id="restart">Restart website</button></div></div>
     <div class="card danger" style="margin-top:16px"><h2>Delete</h2>
       ${store.live ? `<div class="site-row"><div><b>Delete “${esc(site.name)}”</b><span class="muted">Removes this website with all its visitor data, links, changes and API keys.</span></div><button class="btn quiet sm" id="delsite">Delete website</button></div>` : ""}
       <div class="site-row"><div><b>Delete your account</b><span class="muted">Removes your account, every website and all data, permanently.</span></div><button class="btn sm danger-btn" id="delacct">Delete account</button></div></div>
@@ -1659,6 +1685,10 @@ ClickSpring.track("click", "Pricing toggle"); // send any event</pre></div>`;
     const on = (id, fn) => { const el = $("#" + id); if (el) el.addEventListener("click", fn); };
     on("chpw", async () => { try { await store.resetPassword(store.userEmail()); toast("We emailed you a link to change your password"); } catch (err) { toast(friendly(err)); } });
     on("tourbtn", () => Tour.start());
+    on("restart", async () => {
+      if (prompt(`This clears all visitor data, links and tested changes for “${site.name}”. Type RESTART to confirm.`) !== "RESTART") return;
+      try { await store.restartSite(); toast("Website restarted. Fresh start!"); location.hash = "#advisor"; } catch (err) { toast(friendly(err)); }
+    });
     on("delsite", async () => {
       if (prompt(`This permanently deletes “${site.name}” and all its data. Type DELETE to confirm.`) !== "DELETE") return;
       try { S.site = await store.deleteSite(site.id); $("#root").innerHTML = ""; toast("Website deleted"); location.hash = S.site ? "#advisor" : "#start"; } catch (err) { toast(friendly(err)); }

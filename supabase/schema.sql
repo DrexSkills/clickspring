@@ -124,3 +124,6 @@ grant execute on function public.delete_my_account() to authenticated;
 
 -- v0.01.5: free beta limits (3 websites/account, 10,000 events/website/month, 20 links/website)
 -- see migration "beta_limits": usage_monthly table + triggers private.enforce_event_limit / enforce_site_limit / enforce_link_limit
+
+-- v0.01.6: one account per device (device_signups, written by the "signup" edge function) + restart_site(p_site)
+-- see migration "device_limit_and_restart"
