@@ -10,7 +10,7 @@
    Test mode: open your site with ?cs_debug=1 to see a badge confirming events are sent. */
 (function () {
   var s = document.currentScript;
-  if (!s || window.ClickSpring) return;
+  if (!s) return;
   var SITE = s.getAttribute("data-site"),
       EP = (s.getAttribute("data-endpoint") || "").replace(/\/$/, ""),
       KEY = s.getAttribute("data-key"),
@@ -19,6 +19,9 @@
   // Clean page path: strip a hosting sub-folder (e.g. GitHub Pages) and "index.html"
   function pagePath() { var p = location.pathname; if (BASE_PATH && p.indexOf(BASE_PATH) === 0) p = p.slice(BASE_PATH.length); p = p.replace(/\/index\.html$/, "/"); return (p || "/").slice(0, 300); }
   if (!SITE || !EP || !KEY) { console.warn("[ClickSpring] Missing data-site, data-endpoint or data-key on the script tag."); return; }
+  // Several websites (ClickSpring accounts) can track the same page: data-site="id1,id2", or a second script tag.
+  var SITES = SITE.split(",").map(function (x) { return x.trim(); }).filter(Boolean);
+  if (window.ClickSpring && window.ClickSpring._add) { SITES.forEach(window.ClickSpring._add); return; }
   if (navigator.globalPrivacyControl === true) return; // respect the visitor's Global Privacy Control opt-out
   if (navigator.webdriver || /bot|crawl|spider|preview|lighthouse/i.test(navigator.userAgent)) return;
   var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -62,8 +65,11 @@
     badge.textContent = (bad ? "ClickSpring: " : "ClickSpring \u2713 ") + msg;
   }
 
-  function send(type, label) {
-    var body = JSON.stringify({ site_id: SITE, type: type, visitor_id: vid, source: DEBUG ? "test" : src, campaign_id: camp,
+  function send(type, label, only) {
+    (only ? [only] : SITES).forEach(function (site) { sendOne(site, type, label); });
+  }
+  function sendOne(site, type, label) {
+    var body = JSON.stringify({ site_id: site, type: type, visitor_id: vid, source: DEBUG ? "test" : src, campaign_id: camp,
       path: pagePath(), device: DEVICE, label: label ? String(label).replace(/\s+/g, " ").trim().slice(0, 80) : null });
     var ok = function () { show(type + " sent"); };
     var fail = function (st) { show("couldn\u2019t send " + type + (st ? " (" + st + ")" : "") + ". Check data-site and data-key.", true); if (window.console) console.warn("[ClickSpring] event not saved", st || ""); };
@@ -115,6 +121,7 @@
       signup(f.getAttribute("data-cs-signup") || "form");
   }, true);
 
-  window.ClickSpring = { signup: signup, track: send };
+  window.ClickSpring = { signup: signup, track: function (t, l) { send(t, l); },
+    _add: function (id) { if (!id || SITES.indexOf(id) >= 0) return; SITES.push(id); if (lastPath !== null) send("pageview", null, id); } };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", pageview); else pageview();
 })();
