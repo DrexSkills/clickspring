@@ -471,6 +471,10 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .wc .try b{color:var(--green-ink)}
 .legal{font-size:13px;color:var(--muted);text-align:center;margin:12px 0 0}.legal a,.tiny a{color:inherit}
 .danger{border-color:rgba(212,52,44,.35)}.danger-btn{background:var(--bad);color:#fff}
+.beta-tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--green-ink);background:var(--green-soft);border-radius:999px;padding:3px 8px;margin-left:8px;vertical-align:middle}
+.up .beta-tag{margin:0 0 4px}
+.limit-alert{margin-bottom:16px}.limit-alert a{color:inherit;font-weight:700}
+.logo svg{flex:none}.side .logo{white-space:nowrap}
 </style>
 </head>
 <body>
@@ -593,6 +597,7 @@ const DemoStore = {
   async saveCampaign(c){ const l = this.data.campaigns, i = l.findIndex(x => x.id === c.id); if (i >= 0) l[i] = c; else l.unshift(c); this._save(); return c; },
   async deleteCampaign(id){ this.data.campaigns = this.data.campaigns.filter(c => c.id !== id); this._save(); },
   async fixes(){ return this.data ? (this.data.fixes || []) : []; },
+  async usage(){ const t = new Date(); const m = new Date(t.getFullYear(), t.getMonth(), 1).getTime(); return {events: (this.data ? this.data.events : []).filter(e => e.ts >= m).length}; },
   async addFix(f){ (this.data.fixes = this.data.fixes || []).unshift({id: uid(), created: Date.now(), ...f}); this._save(); },
   async deleteFix(id){ this.data.fixes = (this.data.fixes || []).filter(f => f.id !== id); this._save(); },
   async status(){
@@ -703,6 +708,7 @@ const LiveStore = {
   async deleteFix(id){ const { error } = await this.sb.from("fixes").delete().eq("id", id); if (error) throw error; },
   async deleteSite(id){ const { error } = await this.sb.from("sites").delete().eq("id", id); if (error) throw error; this.sites = this.sites.filter(x => x.id !== id); try { localStorage.removeItem("cs_site_" + this.user.id); } catch (e) {} return this.site = this.sites[0] || null; },
   async deleteAccount(){ const { error } = await this.sb.rpc("delete_my_account"); if (error) throw error; try { await this.sb.auth.signOut({ scope: "local" }); } catch (e) {} this.user = null; this.site = null; this.sites = []; },
+  async usage(){ const t = new Date(), m = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-01`; const { data } = await this.sb.from("usage_monthly").select("events").eq("site_id", this.site.id).eq("month", m).maybeSingle(); return {events: data ? data.events : 0}; },
   async apiKeys(){ const { data, error } = await this.sb.from("api_keys").select("id,name,prefix,created_at,last_used_at,revoked_at").eq("site_id", this.site.id).is("revoked_at", null).order("created_at", {ascending: false}); if (error) throw error; return data; },
   async createApiKey(name){ const { data, error } = await this.sb.rpc("create_api_key", {p_site: this.site.id, p_name: name}); if (error) throw error; return data; },
   async revokeApiKey(id){ const { error } = await this.sb.rpc("revoke_api_key", {p_id: id}); if (error) throw error; },
@@ -1029,6 +1035,10 @@ function funnelHTML(s){
   }).join("")}</div>`;
 }
 
+/* ---------- Beta plan ---------- */
+const LIMITS = {sites: 3, events: 10000, links: 20, keys: 10};
+const monthReset = () => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth() + 1, 1).toLocaleDateString("en-US", {month: "long", day: "numeric"}); };
+
 /* ---------- App state & routing ---------- */
 const S = { site: null, days: 30, metric: "visitors", m: null, events: [], campaigns: [], sim: {v: uid(), log: []} };
 const NAV = [["advisor","Why They Leave","bulb"],["dashboard","Dashboard","home"],["journeys","Visitor Journeys","route"],["funnel","Funnels","funnel"],["analytics","Analytics","chart"],["campaigns","Campaign Links","link"],["install","Tracking Setup","code"],["developers","API Keys","key"],["account","Settings","gear"]];
@@ -1037,7 +1047,7 @@ const APP_ROUTES = new Set(NAV.map(n => n[0]));
 
 async function loadData(){
   const since = Date.now() - Math.max(2 * S.days, 90) * DAY;
-  [S.events, S.campaigns, S.fixes] = await Promise.all([store.events(since), store.campaigns(), store.fixes().catch(() => [])]);
+  [S.events, S.campaigns, S.fixes, S.usage] = await Promise.all([store.events(since), store.campaigns(), store.fixes().catch(() => []), store.usage().catch(() => null)]);
   S.sample = false;
   if (Tour.active && !S.events.some(e => e.s !== "test")) { const smp = makeSample(); S.events = smp.events; S.campaigns = smp.campaigns; S.sample = true; }
   S.m = compute(S.events.filter(e => e.s !== "test"), S.campaigns, S.days);
@@ -1060,13 +1070,14 @@ async function route(){
   try { await loadData(); } catch (e) { v.innerHTML = `<div class="card empty"><h2>Couldn’t load your data</h2><p class="muted">${esc(e.message)}</p></div>`; S.seq = (S.seq || 0) + 1; return; }
   const top = advise(S.m)[0]; const pip = $("#pip"); if (pip) pip.hidden = !(top && top.lvl === "high");
   VIEWS[r]();
+  if (S.usage && S.usage.events >= LIMITS.events * .8) $("#view").insertAdjacentHTML("afterbegin", `<div class="alert ${S.usage.events >= LIMITS.events ? "err" : "ok"} limit-alert">${S.usage.events >= LIMITS.events ? `This website reached the free beta limit of ${LIMITS.events.toLocaleString("en-US")} events this month. New visits aren’t recorded until ${monthReset()}.` : `This website has used ${fmt(S.usage.events)} of its ${LIMITS.events.toLocaleString("en-US")} free events this month.`} <a href="#account">See usage</a></div>`);
   S.seq = (S.seq || 0) + 1;
   if (r === "advisor" && !Tour.active && !tourSeen()) setTimeout(() => { if (location.hash === "#advisor" && !Tour.active) Tour.start(); }, 900);
 }
 
-const sideHTML = active => `<aside class="side"><a class="logo" href="#home">${LOGO(34)}ClickSpring</a>${siteSwitch()}
+const sideHTML = active => `<aside class="side"><a class="logo" href="#home">${LOGO(34)}ClickSpring<span class="beta-tag">BETA</span></a>${siteSwitch()}
   ${NAV.map(([k, label, i]) => `<a class="nav-i ${k === active ? "on" : ""}" data-k="${k}" href="#${k}">${ic(i)}${label}</a>`).join("")}
-  <div class="up">${ic("crown", 30)}<b>Pro is free in beta</b><span>Unlock advanced insights and automation while we launch.</span><a class="btn green" href="#install">Set up tracking</a></div></aside>`;
+  <div class="up"><span class="beta-tag">BETA</span><b>Completely free for now</b><span>${LIMITS.sites} websites · ${LIMITS.events.toLocaleString("en-US")} events a month · ${LIMITS.links} links each</span><a class="btn green" href="#account">See your usage</a></div></aside>`;
 const siteSwitch = () => (store.sites || []).length > 1 && S.site ? `<label class="site-sw">${ic("dash", 16)}<select class="sitesel" aria-label="Website">${store.sites.map(x => `<option value="${x.id}" ${x.id === S.site.id ? "selected" : ""}>${esc(x.name)}</option>`).join("")}</select></label>` : "";
 function switchSite(id){ S.site = store.selectSite(id); $("#root").innerHTML = ""; toast(`Viewing ${S.site.name}`); route(); }
 const topbarHTML = initial => `<header class="topbar">
@@ -1142,7 +1153,7 @@ function renderLanding(){
     <path d="M560 0C700 120 860 260 900 420V0Z" style="fill:var(--green-soft)"/>
     <path d="M300 1000C340 760 520 600 900 520V1000Z" style="fill:var(--green-soft);opacity:.75"/>
     <path d="M120 760C260 640 520 560 900 600V700C560 660 330 720 190 820Z" style="fill:var(--green-wash)"/></svg>
-  <header class="nav"><a class="logo" href="#home" style="font-size:30px">${LOGO(44)}ClickSpring</a>
+  <header class="nav"><a class="logo" href="#home" style="font-size:30px">${LOGO(44)}ClickSpring<span class="beta-tag">BETA</span></a>
     <nav class="links"><button data-scroll="why">Why They Leave</button><button data-scroll="product">Product</button><button data-scroll="pricing">Pricing</button><a href="docs.html" style="font-weight:500;font-size:16px;text-decoration:none;padding:6px 0">Docs</a><button data-scroll="about">About</button></nav>
     <div class="nav-r"><a class="signin" href="${store.user ? "#advisor" : "#login"}">${store.user ? "Open app" : "Sign In"}</a><a class="btn" href="${store.user ? "#advisor" : "#signup"}">Get Started Free ${ic("arrow", 16)}</a></div></header>
   <section class="hero">
@@ -1188,7 +1199,7 @@ function renderLanding(){
     <div class="step"><span class="n">2</span><h3>See where customers slip away</h3><p>Your funnel and real visitor journeys show the exact page and step where people give up.</p></div>
     <div class="step"><span class="n">3</span><h3>Know why, then fix it</h3><p>ClickSpring compares the people who bought with the people who left, and tells you the change that wins back the most customers.</p></div>
   </section>
-  <section class="band" id="pricing"><div class="band-in"><div><h2>Free while we’re in beta.</h2><p>Every feature, unlimited tracking links, no card needed. Early users keep a discount when paid plans start.</p></div><a class="btn lg" href="#signup">Start Free Today ${ic("arrow", 18)}</a></div></section>
+  <section class="band" id="pricing"><div class="band-in"><div><span class="beta-tag" style="margin:0 0 10px">BETA</span><h2>ClickSpring is in beta, and completely free for now.</h2><p>Every feature, no card needed. The free beta includes ${LIMITS.sites} websites per account, ${LIMITS.events.toLocaleString("en-US")} events per website each month, and ${LIMITS.links} tracking links per website. Early users keep a discount when paid plans start.</p></div><a class="btn lg" href="#signup">Start Free Today ${ic("arrow", 18)}</a></div></section>
   <section class="band" id="about"><div class="band-in" style="background:var(--surface)"><div><h2>Charts tell you what happened. ClickSpring tells you why.</h2><p>Analytics tools give you numbers: 482 visitors, 0.8% conversion. ClickSpring gives you answers: which page people leave on, what your customers did differently, and what to change first. Post views are entered by you for now; everything after the click is measured automatically.</p></div><button class="btn green lg" data-demo>See Demo</button></div></section>
   <div class="foot-note"><span class="logo" style="font-size:18px">${LOGO(22)}ClickSpring</span><span><a href="docs.html" style="color:inherit">Docs &amp; API</a> · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="#" data-cookie-settings style="color:inherit">Cookie settings</a> · © ${new Date().getFullYear()} ClickSpring</span></div>
   </div>`;
@@ -1240,6 +1251,7 @@ function friendly(err){
   if (/email not confirmed/i.test(m)) return "Confirm your email first. Check your inbox for the link we sent.";
   if (/already registered|already been registered/i.test(m)) return "That email already has an account. Log in instead.";
   if (/password should be at least|weak password/i.test(m)) return "Use a password with at least 8 characters.";
+  if (/beta limit/i.test(m)) return m.replace(/^.*?ClickSpring beta limit( reached)?:\s*/i, "Free beta limit: ") + ".";
   if (/rate limit|too many/i.test(m)) return "Too many attempts. Wait a minute, then try again.";
   if (/failed to fetch|network/i.test(m)) return "Can’t reach the server. Check your connection and try again.";
   return m || "Something went wrong. Try again.";
@@ -1541,7 +1553,7 @@ ClickSpring.track("click", "Pricing toggle"); // send any event</pre></div>`;
   campaigns(){
     const m = S.m;
     $("#view").innerHTML = header("Campaign Links", "One link per post. Compare which posts bring visitors and sign-ups.", false) + `
-    <div class="card" style="margin-bottom:16px"><h2>New tracking link</h2>
+    <div class="card" style="margin-bottom:16px"><h2>New tracking link <small>${S.campaigns.length} of ${LIMITS.links} used</small></h2>
       <form id="cf"><div class="form-row">
         <label class="field">Post name<input name="name" required placeholder="3 tips video"></label>
         <label class="field">Platform<select name="platform">${PLATFORMS.map(p => `<option value="${p}">${srcName(p)}</option>`).join("")}</select></label>
@@ -1550,6 +1562,7 @@ ClickSpring.track("click", "Pricing toggle"); // send any event</pre></div>`;
     ${m.camps.length ? m.camps.map(campHTML).join("") : `<div class="card empty"><h2>No links yet</h2><p class="muted">Create one for your next post and put it in your bio.</p></div>`}`;
     $("#cf").addEventListener("submit", async e => {
       e.preventDefault(); const fd = Object.fromEntries(new FormData(e.target));
+      if (S.campaigns.length >= LIMITS.links) return toast(`Free beta limit: ${LIMITS.links} tracking links per website. Delete one to add another.`);
       const c = {id: uid(), name: fd.name.trim(), platform: fd.platform, slug: slugify(fd.name), views: Math.max(0, +fd.views || 0), created: Date.now()};
       try { await store.saveCampaign(c); toast("Link created"); route(); } catch (err) { toast(err.message); }
     });
@@ -1622,6 +1635,9 @@ ClickSpring.track("click", "Pricing toggle"); // send any event</pre></div>`;
   account(){
     const site = S.site;
     $("#view").innerHTML = header("Settings", "Your account and website.", false) + `
+    <div class="card plan-card" style="margin-bottom:16px"><h2><span>Your plan: <b>Beta</b> <span class="beta-tag">FREE</span></span><small>Resets ${monthReset()}</small></h2>
+      ${[["Events this month (this website)", (S.usage && S.usage.events) || 0, LIMITS.events], ["Websites", (store.sites || [site]).length, LIMITS.sites], ["Tracking links (this website)", (S.campaigns || []).length, LIMITS.links]].map(([l, n, max]) => `<div class="bar-row"><div class="bar-top"><b>${l}</b><span>${fmt(n)} of ${max.toLocaleString("en-US")}</span></div><div class="src-bar"><i style="width:${Math.min(100, n / max * 100)}%;background:${n >= max ? "var(--bad)" : n >= max * .8 ? "var(--warn)" : "var(--green)"}"></i></div></div>`).join("")}
+      <p class="muted" style="margin:6px 0 0;font-size:13px">ClickSpring is completely free during beta. Need more? Email <a href="mailto:disow29@gmail.com">disow29@gmail.com</a>.</p></div>
     <div class="grid halves">
       <div class="card"><h2>Website</h2><form id="af">
         <label class="field">Website or brand name<input name="name" value="${esc(site.name)}" required></label>

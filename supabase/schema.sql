@@ -121,3 +121,6 @@ begin
 end $$;
 revoke all on function public.delete_my_account() from public, anon;
 grant execute on function public.delete_my_account() to authenticated;
+
+-- v0.01.5: free beta limits (3 websites/account, 10,000 events/website/month, 20 links/website)
+-- see migration "beta_limits": usage_monthly table + triggers private.enforce_event_limit / enforce_site_limit / enforce_link_limit
