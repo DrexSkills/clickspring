@@ -1,5 +1,9 @@
 # ClickSpring v0.01
 
+**Stop guessing why people aren’t buying.**
+
+Creators get the views, but viewers don’t turn into customers. ClickSpring shows exactly where people drop off and tells you what to fix first.
+
 Plain JavaScript, no build step. Supabase is the backend (auth, database, AI function).
 
 ```
