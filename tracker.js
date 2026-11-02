@@ -6,6 +6,7 @@
               data-cs-signup on a form, or ClickSpring.signup() in your own code.
               data-cs-signup="manual" on a form: don’t count on submit; you call ClickSpring.signup() on success.
               data-cs-ignore on anything you don't want tracked.
+              data-base-path="/repo-name" if your site lives in a sub-folder (e.g. GitHub Pages).
    Test mode: open your site with ?cs_debug=1 to see a badge confirming events are sent. */
 (function () {
   var s = document.currentScript;
@@ -13,7 +14,10 @@
   var SITE = s.getAttribute("data-site"),
       EP = (s.getAttribute("data-endpoint") || "").replace(/\/$/, ""),
       KEY = s.getAttribute("data-key"),
-      SIGNUP_PATH = (s.getAttribute("data-signup-path") || "").replace(/\/$/, "");
+      SIGNUP_PATH = (s.getAttribute("data-signup-path") || "").replace(/\/$/, ""),
+      BASE_PATH = (s.getAttribute("data-base-path") || "").replace(/\/$/, "");
+  // Clean page path: strip a hosting sub-folder (e.g. GitHub Pages) and "index.html"
+  function pagePath() { var p = location.pathname; if (BASE_PATH && p.indexOf(BASE_PATH) === 0) p = p.slice(BASE_PATH.length); p = p.replace(/\/index\.html$/, "/"); return (p || "/").slice(0, 300); }
   if (!SITE || !EP || !KEY) { console.warn("[ClickSpring] Missing data-site, data-endpoint or data-key on the script tag."); return; }
   if (navigator.webdriver || /bot|crawl|spider|preview|lighthouse/i.test(navigator.userAgent)) return;
   var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -59,7 +63,7 @@
 
   function send(type, label) {
     var body = JSON.stringify({ site_id: SITE, type: type, visitor_id: vid, source: DEBUG ? "test" : src, campaign_id: camp,
-      path: location.pathname.slice(0, 300), device: DEVICE, label: label ? String(label).replace(/\s+/g, " ").trim().slice(0, 80) : null });
+      path: pagePath(), device: DEVICE, label: label ? String(label).replace(/\s+/g, " ").trim().slice(0, 80) : null });
     var ok = function () { show(type + " sent"); };
     var fail = function (st) { show("couldn\u2019t send " + type + (st ? " (" + st + ")" : "") + ". Check data-site and data-key.", true); if (window.console) console.warn("[ClickSpring] event not saved", st || ""); };
     // 1) Simple request: text/plain body + key in URL, so the browser sends it without a CORS preflight
@@ -81,10 +85,10 @@
 
   var lastPath = null, signedUp = false;
   function pageview() {
-    if (location.pathname === lastPath) return;
-    lastPath = location.pathname;
+    if (pagePath() === lastPath) return;
+    lastPath = pagePath();
     send("pageview");
-    if (SIGNUP_PATH && location.pathname.replace(/\/$/, "") === SIGNUP_PATH) signup("thank-you page");
+    if (SIGNUP_PATH && pagePath().replace(/\/$/, "") === SIGNUP_PATH) signup("thank-you page");
   }
   function signup(label) { if (signedUp) return; signedUp = true; send("signup", label || "signup"); setTimeout(function () { signedUp = false; }, 3000); }
 

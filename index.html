@@ -425,6 +425,11 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .fx-arrow{color:var(--muted)}
 .fx-v{font-weight:700;font-size:14px}
 .fx.up .fx-v{color:var(--green-ink)}.fx.down .fx-v{color:var(--bad)}
+.site-sw{display:flex;align-items:center;gap:8px;margin:0 6px 14px;padding:0 10px;height:42px;border:1px solid var(--line);border-radius:12px;color:var(--muted)}
+.site-sw select{flex:1;min-width:0;border:0;background:transparent;font-weight:700;color:var(--ink);cursor:pointer}
+.site-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.site-row div{display:flex;flex-direction:column;min-width:0}.site-row span.muted{font-size:13px;overflow:hidden;text-overflow:ellipsis}
+.add-site{margin-top:12px}.add-site summary{cursor:pointer;font-weight:700;color:var(--green-ink)}.add-site form{margin-top:12px}
 </style>
 </head>
 <body>
@@ -538,6 +543,8 @@ const DemoStore = {
   async resend(){}, async resetPassword(){}, async updatePassword(){},
   async createSite(s){ this.data = {site:{id: uid(), name: s.name, url: s.url, owner: s.owner, created: Date.now()}, events: [], campaigns: []}; this._save(); return this.data.site; },
   async updateSite(p){ Object.assign(this.data.site, p); this._save(); return this.data.site; },
+  get sites(){ return this.data ? [this.data.site] : []; },
+  selectSite(){ return this.data ? this.data.site : null; },
   async events(since){ return (this.data ? this.data.events : []).filter(e => e.ts >= since); },
   async addEvent(e){ this.data.events.push(e); this._save(); },
   async campaigns(){ return this.data ? this.data.campaigns : []; },
@@ -577,12 +584,15 @@ const LiveStore = {
   },
   userName(){ const m = this.user && this.user.user_metadata; return (m && m.full_name) || ""; },
   userEmail(){ return this.user ? this.user.email : ""; },
+  sites: [],
   async loadSite(){
-    const res = await this.sb.from("sites").select("*").eq("owner", this.user.id).order("created_at").limit(1);
+    const res = await this.sb.from("sites").select("*").eq("owner", this.user.id).order("created_at");
     if (res.error) throw res.error;
-    const row = res.data && res.data[0];
-    return this.site = row ? {id: row.id, name: row.name, url: row.url, owner: row.owner_name, created: Date.parse(row.created_at)} : null;
+    this.sites = res.data.map(row => ({id: row.id, name: row.name, url: row.url, owner: row.owner_name, created: Date.parse(row.created_at)}));
+    let pickId = null; try { pickId = localStorage.getItem("cs_site_" + this.user.id); } catch (e) {}
+    return this.site = this.sites.find(x => x.id === pickId) || this.sites[0] || null;
   },
+  selectSite(id){ const x = this.sites.find(s => s.id === id); if (!x) return this.site; try { localStorage.setItem("cs_site_" + this.user.id, id); } catch (e) {} return this.site = x; },
   async signUp({name, email, password, site_url, site_name}){
     const { data, error } = await this.sb.auth.signUp({ email, password, options: { data: { full_name: name, site_url, site_name }, emailRedirectTo: BASE() + "?confirmed=1" } });
     if (error) throw error;
@@ -602,11 +612,12 @@ const LiveStore = {
   async createSite(s){
     const { data, error } = await this.sb.from("sites").insert({owner: this.user.id, name: s.name, url: s.url, owner_name: s.owner}).select().single();
     if (error) throw error;
-    return this.site = {id: data.id, name: data.name, url: data.url, owner: data.owner_name, created: Date.parse(data.created_at)};
+    const site = {id: data.id, name: data.name, url: data.url, owner: data.owner_name, created: Date.parse(data.created_at)};
+    this.sites.push(site); return this.selectSite(site.id);
   },
   async updateSite(p){
     const { error } = await this.sb.from("sites").update({name: p.name, url: p.url, owner_name: p.owner}).eq("id", this.site.id);
-    if (error) throw error; return Object.assign(this.site, p);
+    if (error) throw error; return Object.assign(this.site, {name: p.name, url: p.url, owner: p.owner});
   },
   async status(){
     const sid = this.site.id, ev = this.sb.from("events");
@@ -935,9 +946,11 @@ async function route(){
   if (r === "dashboard" && !Tour.active && !tourSeen()) setTimeout(() => { if (location.hash === "#dashboard" && !Tour.active) Tour.start(); }, 900);
 }
 
-const sideHTML = active => `<aside class="side"><a class="logo" href="#home">${LOGO(34)}ClickSpring</a>
+const sideHTML = active => `<aside class="side"><a class="logo" href="#home">${LOGO(34)}ClickSpring</a>${siteSwitch()}
   ${NAV.map(([k, label, i]) => `<a class="nav-i ${k === active ? "on" : ""}" data-k="${k}" href="#${k}">${ic(i)}${label}</a>`).join("")}
   <div class="up">${ic("crown", 30)}<b>Pro is free in beta</b><span>Unlock advanced insights and automation while we launch.</span><a class="btn green" href="#install">Set up tracking</a></div></aside>`;
+const siteSwitch = () => (store.sites || []).length > 1 && S.site ? `<label class="site-sw">${ic("dash", 16)}<select class="sitesel" aria-label="Website">${store.sites.map(x => `<option value="${x.id}" ${x.id === S.site.id ? "selected" : ""}>${esc(x.name)}</option>`).join("")}</select></label>` : "";
+function switchSite(id){ S.site = store.selectSite(id); $("#root").innerHTML = ""; toast(`Viewing ${S.site.name}`); route(); }
 const topbarHTML = initial => `<header class="topbar">
   <a class="logo m-only flex" href="#home">${LOGO(28)}ClickSpring</a>
   <label class="search d-only">${ic("search", 18)}<input id="q" placeholder="Search anything..." aria-label="Search pages and campaigns" autocomplete="off"></label>
@@ -1442,6 +1455,9 @@ const VIEWS = {
       <div class="card"><h2>Account</h2><p style="margin:0 0 2px;font-weight:700">${esc(store.userName() || site.owner || "")}</p><p class="muted" style="margin:0 0 18px">${esc(store.userEmail())}</p>
         <div class="cta-row">${store.live ? `<button class="btn quiet" id="chpw">Change password</button>` : ""}<button class="btn quiet" id="tourbtn">Replay the tour</button><button class="btn" id="out">Log out</button></div></div>
     </div>
+    ${store.live ? `<div class="card" style="margin-bottom:16px"><h2>Your websites <small>each gets its own script and dashboard</small></h2>
+      ${store.sites.map(x => `<div class="site-row"><div><b>${esc(x.name)}</b><span class="muted">${esc(x.url)}</span></div>${x.id === site.id ? `<span class="testing">Viewing</span>` : `<button class="btn quiet sm" data-switch="${x.id}">View</button>`}</div>`).join("")}
+      <details class="add-site"><summary>+ Add another website</summary><form id="nsf" novalidate><div class="form-row"><label class="field">Name<input name="name" required placeholder="My other project"></label><label class="field">Website address<input name="url" required inputmode="url" placeholder="otherproject.com"></label></div><button class="btn green sm">Add website</button></form></details></div>` : ""}
     <div class="card m-only" style="margin-bottom:16px"><h2>Tracking</h2><a class="btn green" href="#install">Open tracking setup</a></div>
     ${store.live ? "" : `<div class="card"><h2>Demo data</h2><p class="muted" style="margin-top:0">Demo mode saves everything in this browser only.</p><div class="cta-row"><button class="btn quiet" id="seed">Load sample data</button><button class="btn ghost" id="reset">Delete demo workspace</button>${demoSession ? `<button class="btn quiet" id="exit">Leave demo</button>` : ""}</div></div>`}
     <p class="muted" style="font-size:13px;margin-top:20px">ClickSpring v0.01 beta</p>`;
@@ -1449,6 +1465,12 @@ const VIEWS = {
     const on = (id, fn) => { const el = $("#" + id); if (el) el.addEventListener("click", fn); };
     on("chpw", async () => { try { await store.resetPassword(store.userEmail()); toast("We emailed you a link to change your password"); } catch (err) { toast(friendly(err)); } });
     on("tourbtn", () => Tour.start());
+    $("#view").onclick = e => { const b = e.target.closest("[data-switch]"); if (b) switchSite(b.dataset.switch); };
+    const nsf = $("#nsf"); if (nsf) nsf.addEventListener("submit", async e => {
+      e.preventDefault(); const fd = Object.fromEntries(new FormData(nsf)), url = normUrl(fd.url);
+      if (!fd.name.trim() || !url) return toast("Enter a name and a website address like yoursite.com");
+      try { S.site = await store.createSite({name: fd.name.trim(), url, owner: site.owner || store.userName()}); $("#root").innerHTML = ""; toast("Website added"); location.hash = "#install"; } catch (err) { toast(friendly(err)); }
+    });
     on("out", async () => { await store.signOut(); S.site = null; if (demoSession) { try { sessionStorage.removeItem("cs_demo"); } catch (e) {} location.hash = "#login"; return location.reload(); } location.hash = "#login"; });
     on("seed", () => { if (confirm("Replace your demo data with sample data?")) { DemoStore.seed(); toast("Sample data loaded"); location.hash = "#dashboard"; } });
     on("reset", async () => { if (confirm("Delete the demo workspace and all its data?")) { await DemoStore.reset(); S.site = null; location.hash = "#start"; } });
@@ -1599,7 +1621,7 @@ document.addEventListener("click", e => {
   if (e.target.closest("[data-video]")) { e.preventDefault(); openVideo(); }
   const sc = e.target.closest("[data-scroll]"); if (sc) { const el = document.getElementById(sc.dataset.scroll); if (el) el.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}); }
 });
-document.addEventListener("change", e => { if (e.target.matches(".range-sel")) { S.days = +e.target.value; route(); } });
+document.addEventListener("change", e => { if (e.target.matches(".range-sel")) { S.days = +e.target.value; route(); } if (e.target.matches(".sitesel")) switchSite(e.target.value); });
 window.addEventListener("hashchange", () => { if (!APP_ROUTES.has(location.hash.slice(1))) $("#root").innerHTML = ""; route(); });
 (async () => {
   try { S.site = await store.init(); if (store.user && !S.site) await ensureSite(); } catch (e) { console.error(e); }
