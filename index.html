@@ -396,6 +396,33 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .tour-sample{position:fixed;z-index:64;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:#101411;color:#fff;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;white-space:nowrap}
 #tour-help{border:1.5px solid var(--line);font-weight:800;font-size:17px;width:38px;height:38px}
 @media(prefers-reduced-motion:reduce){.tour-cursor,.tour-spot,.tour-tip{transition:none}.tour-ripple{display:none}}
+/* ---------- Why They Leave v2 ---------- */
+.tip-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.tip-h .badge{margin:0}
+.conf{font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px}
+.conf.lo{background:rgba(194,122,6,.14);color:var(--warn)}
+.conf.md{background:var(--surface);color:var(--muted)}
+.conf.hi{background:var(--green-soft);color:var(--green-ink)}
+.evid{margin:8px 0 10px;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.evid li{background:var(--surface);border-radius:10px;padding:5px 10px;font-size:13px;font-weight:600}
+.tip .fix ol{margin:6px 0 0;padding-left:20px}
+.tip .fix li{margin:3px 0}
+.tip-a{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.testing{display:inline-flex;gap:6px;align-items:center;font-size:13px;font-weight:700;color:var(--green-ink);background:var(--green-soft);border-radius:999px;padding:5px 12px}
+.fix-form{margin-top:12px;background:var(--surface);border-radius:14px;padding:14px}
+.fx-list{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.fx{border:1px solid var(--line);border-radius:16px;padding:14px;border-top:4px solid var(--muted)}
+.fx.up{border-top-color:var(--green)}.fx.down{border-top-color:var(--bad)}.fx.flat{border-top-color:var(--warn)}
+.fx-h{display:flex;justify-content:space-between;gap:8px}
+.fx-h b{font-size:14px}
+.fx p{margin:4px 0}
+.fx-cmp{display:flex;align-items:center;gap:12px;margin:10px 0}
+.fx-cmp small{display:block;color:var(--muted);font-size:12px;font-weight:600}
+.fx-cmp strong{font-size:22px;letter-spacing:-.02em}
+.fx-cmp span{display:block;font-size:12px;color:var(--muted)}
+.fx-arrow{color:var(--muted)}
+.fx-v{font-weight:700;font-size:14px}
+.fx.up .fx-v{color:var(--green-ink)}.fx.down .fx-v{color:var(--bad)}
 </style>
 </head>
 <body>
@@ -477,11 +504,12 @@ function makeSample(){
         const ts = now - d*DAY - r()*DAY + 6e4, v = uid();
         const cp = camps.find(c => c.platform === s && ts > c.created && r() < .85);
         const c = cp ? cp.id : null;
-        ev.push({t:"pageview", v, s, c, p:"/", l:null, ts});
-        if (r() < .3) ev.push({t:"pageview", v, s, c, p: r() < .5 ? "/pricing" : "/about", l:null, ts: ts + 3e4});
-        if (r() < (CLICK[s] || .12)) {
-          ev.push({t:"click", v, s, c, p:"/", l: r() < .8 ? "Get the free guide" : "See pricing", ts: ts + 2e4});
-          if (r() < (s === "tiktok" ? .5 : .24)) ev.push({t:"signup", v, s, c, p:"/", l:"signup form", ts: ts + 9e4});
+        const dv = r() < ({instagram:.88,tiktok:.94,youtube:.7,x:.75}[s] || .45) ? "mobile" : "desktop";
+        ev.push({t:"pageview", v, s, c, p:"/", l:null, d: dv, ts});
+        if (r() < .3) ev.push({t:"pageview", v, s, c, p: r() < .5 ? "/pricing" : "/about", l:null, d: dv, ts: ts + 3e4});
+        if (r() < (CLICK[s] || .12) * (dv === "mobile" ? .8 : 1.5)) {
+          ev.push({t:"click", v, s, c, p:"/", l: r() < .8 ? "Get the free guide" : "See pricing", d: dv, ts: ts + 2e4});
+          if (r() < (s === "tiktok" ? .5 : .24)) ev.push({t:"signup", v, s, c, p:"/", l:"signup form", d: dv, ts: ts + 9e4});
         }
       }
     }
@@ -513,6 +541,9 @@ const DemoStore = {
   async campaigns(){ return this.data ? this.data.campaigns : []; },
   async saveCampaign(c){ const l = this.data.campaigns, i = l.findIndex(x => x.id === c.id); if (i >= 0) l[i] = c; else l.unshift(c); this._save(); return c; },
   async deleteCampaign(id){ this.data.campaigns = this.data.campaigns.filter(c => c.id !== id); this._save(); },
+  async fixes(){ return this.data ? (this.data.fixes || []) : []; },
+  async addFix(f){ (this.data.fixes = this.data.fixes || []).unshift({id: uid(), created: Date.now(), ...f}); this._save(); },
+  async deleteFix(id){ this.data.fixes = (this.data.fixes || []).filter(f => f.id !== id); this._save(); },
   async status(){
     const ev = this.data ? this.data.events : [];
     const recent = ev.slice(-10).reverse();
@@ -584,17 +615,17 @@ const LiveStore = {
   async events(since){
     const out = []; let from = 0; const size = 1000;
     for (;;) {
-      const { data, error } = await this.sb.from("events").select("type,visitor_id,source,campaign_id,path,label,created_at")
+      const { data, error } = await this.sb.from("events").select("type,visitor_id,source,campaign_id,path,label,device,created_at")
         .eq("site_id", this.site.id).gte("created_at", new Date(since).toISOString()).order("created_at").range(from, from + size - 1);
       if (error) throw error;
-      for (const r of data) out.push({t: r.type, v: r.visitor_id, s: r.source || "direct", c: r.campaign_id, p: r.path, l: r.label, ts: Date.parse(r.created_at)});
+      for (const r of data) out.push({t: r.type, v: r.visitor_id, s: r.source || "direct", c: r.campaign_id, p: r.path, l: r.label, d: r.device, ts: Date.parse(r.created_at)});
       if (data.length < size || out.length >= 50000) break;
       from += size;
     }
     return out;
   },
   async addEvent(e){
-    const { error } = await this.sb.from("events").insert({site_id: this.site.id, type: e.t, visitor_id: e.v, source: e.s, campaign_id: e.c, path: e.p, label: e.l});
+    const { error } = await this.sb.from("events").insert({site_id: this.site.id, type: e.t, visitor_id: e.v, source: e.s, campaign_id: e.c, path: e.p, label: e.l, device: e.d || null});
     if (error) throw error;
   },
   async campaigns(){
@@ -607,9 +638,13 @@ const LiveStore = {
     if (error) throw error; return c;
   },
   async deleteCampaign(id){ const { error } = await this.sb.from("campaigns").delete().eq("id", id); if (error) throw error; },
+  async fixes(){ const { data, error } = await this.sb.from("fixes").select("*").eq("site_id", this.site.id).order("created_at", {ascending: false}); if (error) throw error; return data.map(f => ({id: f.id, tip_key: f.tip_key, title: f.title, note: f.note, created: Date.parse(f.created_at)})); },
+  async addFix(f){ const { error } = await this.sb.from("fixes").insert({site_id: this.site.id, tip_key: f.tip_key, title: f.title, note: f.note || null}); if (error) throw error; },
+  async deleteFix(id){ const { error } = await this.sb.from("fixes").delete().eq("id", id); if (error) throw error; },
   async askAI(summary){
     const { data, error } = await this.sb.functions.invoke("advisor", { body: { summary } });
-    if (error) throw error; return data.text;
+    if (error) { let msg = error.message; try { const b = await error.context.json(); if (b && b.error) msg = b.error; } catch (_) {} throw new Error(msg); }
+    return data.text;
   }
 };
 
@@ -659,9 +694,11 @@ function compute(events, campaigns, days){
   for (const j of leavers) for (const f of feat(j)) fl.set(f, (fl.get(f) || 0) + 1);
   const diffs = buyers.length >= 3 ? [...fb].map(([f, n]) => ({f, b: pct(n, buyers.length), l: pct(fl.get(f) || 0, leavers.length)}))
     .filter(d => d.b >= 15 && d.b > d.l * 1.5).sort((a, b) => (b.b - b.l) - (a.b - a.l)).slice(0, 5) : [];
+  const devices = [...groupBy(cur.filter(e => e.d), e => e.d)].map(([k, l]) => ({key: k, ...summarize(l)}));
+  const signupEver = events.some(e => e.t === "signup");
   const clickedLeft = leavers.filter(j => j.steps.some(e => e.t === "click")).length;
   const count = (list, f) => { const m = new Map(); for (const e of list) { const k = f(e); if (k) m.set(k, (m.get(k) || 0) + 1); } return [...m].sort((a, b) => b[1] - a[1]).slice(0, 6); };
-  return { days, c, p, series, sources, camps, bounce: pct(bounced, perVisitor.size), journeys, exits, diffs, clickedLeft, buyers: buyers.length, leavers: leavers.length,
+  return { days, c, p, series, sources, camps, bounce: pct(bounced, perVisitor.size), journeys, exits, diffs, clickedLeft, devices, signupEver, buyers: buyers.length, leavers: leavers.length,
     buttons: count(cur.filter(e => e.t === "click"), e => e.l), pages: count(cur.filter(e => e.t === "pageview"), e => e.p) };
 }
 const pageName = p => !p || p === "/" ? "Homepage" : p;
@@ -673,63 +710,162 @@ function deltaHTML(a, b){
   return `<span class="delta ${cls}">${d > 0.5 ? "↑" : d < -0.5 ? "↓" : "→"} ${Math.abs(Math.round(d))}% <span class="muted" style="font-weight:500">vs previous</span></span>`;
 }
 
-/* ---------- Growth advisor ---------- */
+/* ---------- Why They Leave: diagnosis engine ---------- */
+const conf = n => n >= 150 ? {level: "High confidence", cls: "hi", n} : n >= 30 ? {level: "Medium confidence", cls: "md", n} : {level: "Early signal", cls: "lo", n};
+const SIGNUPISH = /sign|join|get|start|access|free|subscribe|register|try|book|buy|waitlist|download|claim/i;
 function advise(m){
-  const c = m.c, tips = [];
-  if (c.visitors === 0) return [{lvl: "setup", impact: 100, tag: "Setup", title: "Install the tracking script to get your first insights", short: "It takes about five minutes.",
-    body: "ClickSpring can’t see your website yet. Add one line of code, then put a tracking link in your bio.", fix: "Open tracking setup and copy your script.", href: "#install", cta: "Open tracking setup"}];
-  const ctr = pct(c.clickers, c.visitors), sr = pct(c.signups, c.clickers);
-  const convRate = c.visitors ? c.signups / c.visitors : .02;
+  const c = m.c, tips = [], V = c.visitors;
+  if (V === 0) return [{key: "setup", lvl: "setup", impact: 100, tag: "Setup", title: "No visitors in this period yet", short: "Install the script and share your link.",
+    evidence: [`0 visitors in the last ${m.days} days`], body: "ClickSpring can only explain what it can see. Once visitors arrive, this page fills in on its own.",
+    steps: ["Add the tracking script to your site (Tracking Setup).", "Open your site with ?cs_debug=1 to confirm it’s working.", "Put a ClickSpring tracking link in your bio."], href: "#install", cta: "Open Tracking Setup", conf: conf(0)}];
+  const ctr = pct(c.clickers, V), sr = pct(c.signups, c.clickers), convRate = V ? c.signups / V : 0;
+  const topBtn = m.buttons[0] ? m.buttons[0][0] : null;
+
+  // 1. Sign-ups never recorded
+  if (!m.signupEver && c.clickers >= 1) tips.push({key: "track-signup", lvl: c.clickers >= 3 ? "high" : "setup", impact: 97, tag: "Sign-up tracking",
+    title: `People clicked${topBtn ? ` “${topBtn}”` : ""}, but no sign-ups have been recorded`, short: "Check whether sign-ups are being counted.",
+    evidence: [`${fmt(c.clickers)} of ${fmt(V)} visitors clicked a button`, "0 sign-ups recorded in the last 90 days"],
+    body: "Either people stop at your sign-up form, or your sign-ups aren’t being counted yet. Find out which before changing your page.",
+    steps: ["Open your site with ?cs_debug=1 and sign up yourself.", "If the green badge says “signup sent”, tracking works and the form is the problem — look at the other cards here.", "If it doesn’t, your form is probably an embed or redirect: add your thank-you page in Tracking Setup."],
+    href: "#install", cta: "Open Tracking Setup", conf: conf(c.clickers)});
+
+  // 2. Campaign posts that get views but no visits
   for (const cp of m.camps) {
     if (cp.views < 300) continue;
     const vr = pct(cp.visitors, cp.views);
-    if (vr < 1.5) {
-      const social = cp.platform === "youtube"
-        ? "Put your tracking link in the first line of the description and in a pinned comment, and mention it out loud in the video."
-        : "Say “link in my bio” out loud and show it on screen in the last 3 seconds, pin a comment saying what people get when they tap it, and make sure your bio link is this tracking link.";
-      tips.push({lvl: vr < .5 ? "high" : "med", impact: 95 - vr*10, tag: srcName(cp.platform) + " post",
-        title: `“${cp.name}” got ${fmt(cp.views)} views but only ${fmt(cp.visitors)} website visits`, short: "Tell viewers exactly where to go next.",
-        body: `That’s ${pctStr(vr)} of viewers. The leak is before your website: people watched, but didn’t know why or where to go next.`, fix: social,
-        gain: Math.max(1, Math.round((cp.views * .015 - cp.visitors) * Math.max(convRate, .02)))});
-    }
+    if (vr < 1.5) tips.push({key: "camp:" + cp.id, lvl: vr < .5 ? "high" : "med", impact: 93 - vr * 10, tag: srcName(cp.platform) + " post",
+      title: `“${cp.name}” got ${fmt(cp.views)} views but only ${fmt(cp.visitors)} visits`, short: "Tell viewers exactly where to go next.",
+      evidence: [`${pctStr(vr)} of viewers visited your site`, `${fmt(cp.signups)} of those visitors signed up`],
+      body: "The leak is before your website: people watched, but didn’t know why or where to go next.",
+      steps: cp.platform === "youtube"
+        ? ["Put the tracking link in the first line of the description.", "Pin a comment with the link and what people get.", "Say it out loud near the end of the video."]
+        : ["Say “link in my bio” out loud and show it on screen in the last 3 seconds.", "Pin a comment saying what people get when they tap it.", "Make sure your bio link is this tracking link."],
+      gain: Math.max(1, Math.round((cp.views * .015 - cp.visitors) * Math.max(convRate, .02))), conf: conf(cp.visitors)});
   }
-  if (c.visitors >= 20 && ctr < 15) {
-    const est = Math.max(c.signups + 1, Math.round(c.visitors * .15 * (sr || 25) / 100));
-    tips.push({lvl: "high", impact: 90, tag: "Landing page", title: "Your CTA button isn’t getting clicked", short: "Move it higher and make your headline clearer.",
-      body: `Only ${pctStr(ctr)} of ${fmt(c.visitors)} visitors clicked anything. If 15% clicked, you’d get about ${fmt(est)} sign-ups instead of ${fmt(c.signups)}.`,
-      fix: "Make your headline say exactly what people get, and move your main button above the fold so it’s visible without scrolling.", gain: est - c.signups});
+
+  // 3. Visitors don't click anything
+  if (V >= 5 && ctr < 15) {
+    const est = Math.max(c.signups + 1, Math.round(V * .15 * ((sr || 25) / 100)));
+    tips.push({key: "cta", lvl: V >= 30 ? "high" : "med", impact: 90, tag: "First screen",
+      title: `${pctStr(100 - ctr)} of visitors leave without clicking anything`, short: "Make the next step obvious on the first screen.",
+      evidence: [`${fmt(c.clickers)} of ${fmt(V)} visitors clicked a button or link`, topBtn ? `Most-clicked: “${topBtn}”` : "No button clicks recorded"],
+      body: "People arrive, look, and leave. Usually the first screen doesn’t say clearly enough what they get, or the button isn’t visible without scrolling.",
+      steps: ["Rewrite the headline to say exactly what people get, in the words of the post that sent them.", "Put your main button on the first screen, on phones too.", "Use one main button, not several competing ones."],
+      gain: est - c.signups, conf: conf(V)});
   }
-  if (c.clickers >= 10 && sr < 35) tips.push({lvl: "high", impact: 82, tag: "Sign-up form", title: "People click, then quit at the sign-up step", short: "Cut your form down to just an email.",
-    body: `${fmt(c.clickers)} visitors clicked, but only ${fmt(c.signups)} signed up (${pctStr(sr)}).`,
-    fix: "Ask for an email only, write the button in first person (“Send me the guide”), and put one line of proof right next to it.",
-    gain: Math.max(1, Math.round(c.clickers * .35) - c.signups)});
-  if (c.visitors >= 20 && m.bounce >= 55) tips.push({lvl: "med", impact: 70, tag: "First impression", title: `${pctStr(m.bounce)} of visitors leave without doing anything`, short: "Match your page to the post that sent them.",
-    body: "They load one page and go. This usually means the page doesn’t match the post that sent them.",
-    fix: "Reuse the hook from your post as your headline, and show the thing you talked about in the first screen.", gain: Math.max(1, Math.round(c.signups * .15))});
-  const ex = m.exits[0];
-  if (ex && m.leavers >= 20 && ex.page !== "/" && ex.share >= 30) tips.push({lvl: "high", impact: 88, tag: "Exit page",
-    title: `${pctStr(ex.share)} of people who don’t sign up leave on ${ex.page}`, short: `Find out what ${ex.page} is missing.`,
-    body: `${fmt(ex.n)} of ${fmt(m.leavers)} visitors who left were last on ${ex.page}.${m.diffs[0] ? ` Customers behaved differently: ${m.diffs[0].f.charAt(0).toLowerCase() + m.diffs[0].f.slice(1)} (${pctStr(m.diffs[0].b)} of customers vs ${pctStr(m.diffs[0].l)} of everyone else).` : ""}`,
-    fix: `Open ${ex.page} as a first-time visitor. Check it answers the question that brought them there, shows the price or next step clearly, and has one obvious button to continue.`,
-    gain: Math.max(1, Math.round(ex.n * .1 * Math.max(convRate, .05)))});
-  const ranked = m.sources.filter(s => s.visitors >= 15).sort((a, b) => b.conv - a.conv);
+
+  // 4. Visitors click a different button than sign-up
+  if (m.buttons.length >= 2 && V >= 10) {
+    const [l1, n1] = m.buttons[0];
+    const signupBtn = m.buttons.find(([l]) => SIGNUPISH.test(l));
+    if (signupBtn && !SIGNUPISH.test(l1) && n1 > signupBtn[1] * 1.5) tips.push({key: "btn:" + l1, lvl: "med", impact: 66, tag: "Buttons",
+      title: `Visitors click “${l1}” more than “${signupBtn[0]}”`, short: `Answer what “${l1}” is about on the main page.`,
+      evidence: [`“${l1}”: ${fmt(n1)} clicks`, `“${signupBtn[0]}”: ${fmt(signupBtn[1])} clicks`],
+      body: "People are looking for something before they’re ready to sign up. Whatever that button leads to is a question your page isn’t answering.",
+      steps: [`Bring the key info from “${l1}” onto your main page, right above the sign-up button.`, "Make the sign-up button the most visible thing on the screen."], conf: conf(V)});
+  }
+
+  // 5. Click, then quit at the form
+  if (m.signupEver && c.clickers >= 5 && sr < 35) tips.push({key: "form", lvl: "high", impact: 84, tag: "Sign-up form",
+    title: `${pctStr(100 - sr)} of people who click quit before signing up`, short: "Cut the form down to just an email.",
+    evidence: [`${fmt(c.clickers)} clicked`, `${fmt(c.signups)} signed up`],
+    body: "They wanted in, then something at the sign-up step stopped them: too many fields, a surprise (price, account, card), or a slow or broken form.",
+    steps: ["Ask for an email only.", "Write the button in first person, like “Send me the guide”.", "Put one line of proof right next to it.", "Try signing up on your own phone and time it."],
+    gain: Math.max(1, Math.round(c.clickers * .35) - c.signups), conf: conf(c.clickers)});
+
+  // 6. Phones vs computers
+  const mob = m.devices.find(d => d.key === "mobile"), desk = m.devices.find(d => d.key === "desktop");
+  if (mob && desk && mob.visitors >= 5 && desk.visitors >= 5) {
+    const mc = pct(mob.clickers, mob.visitors), dc = pct(desk.clickers, desk.visitors);
+    const conv2 = desk.conv > 0 && desk.conv >= mob.conv * 2, click2 = dc >= 10 && dc >= mc * 1.8;
+    if (conv2 || click2) tips.push({key: "mobile", lvl: mob.visitors >= desk.visitors ? "high" : "med", impact: mob.visitors >= desk.visitors ? 87 : 64, tag: "Phones",
+      title: conv2 ? `Phone visitors sign up ${mob.conv ? (desk.conv / mob.conv).toFixed(1) + "×" : "far"} less than computer visitors` : `Phone visitors click ${mc ? (dc / mc).toFixed(1) + "×" : "far"} less than computer visitors`,
+      short: "Your page probably works worse on phones.",
+      evidence: [`${pctStr(pct(mob.visitors, V))} of your visitors are on phones`, `Phones: ${pctStr(mc)} click, ${pctStr(mob.conv)} sign up`, `Computers: ${pctStr(dc)} click, ${pctStr(desk.conv)} sign up`],
+      body: "Instagram and TikTok traffic is almost all phones, so a page that only works well on a computer loses most of it.",
+      steps: ["Open your site on your phone with mobile data, not Wi-Fi.", "Check the main button is visible without scrolling.", "Make text big enough to read and buttons easy to tap.", "Make sure nothing (pop-ups, banners) covers the button."],
+      gain: Math.max(1, Math.round(mob.visitors * (desk.conv - mob.conv) / 100 / 2)), conf: conf(mob.visitors)});
+  }
+
+  // 7. One page and gone
+  if (V >= 10 && m.bounce >= 55 && !tips.some(t => t.key === "cta")) tips.push({key: "bounce", lvl: "med", impact: 70, tag: "First impression",
+    title: `${pctStr(m.bounce)} of visitors leave after one look`, short: "Match your page to the post that sent them.",
+    evidence: [`${pctStr(m.bounce)} viewed one page and did nothing else`],
+    body: "This usually means the page doesn’t match what people expected from the post or link that sent them.",
+    steps: ["Reuse the hook from your post as your headline.", "Show the thing you talked about in the first screen.", "Remove anything that loads slowly at the top."],
+    gain: Math.max(1, Math.round(c.signups * .15)), conf: conf(V)});
+
+  // 8. Exit page
+  const ex = m.exits.find(x => x.page !== "/");
+  if (ex && m.leavers >= 10 && ex.share >= 25) {
+    const d = m.diffs[0];
+    tips.push({key: "exit:" + ex.page, lvl: ex.share >= 40 ? "high" : "med", impact: 80 + Math.min(10, ex.share / 10), tag: "Exit page",
+      title: `${pctStr(ex.share)} of people who don’t sign up leave on ${ex.page}`, short: `Find out what ${ex.page} is missing.`,
+      evidence: [`${fmt(ex.n)} of ${fmt(m.leavers)} people who left were last on ${ex.page}`].concat(d ? [`Customers: ${d.f.charAt(0).toLowerCase() + d.f.slice(1)} (${pctStr(d.b)} vs ${pctStr(d.l)} of everyone else)`] : []),
+      body: `Something on ${ex.page} makes people stop. Often it’s an unanswered question (price, how it works, is it for me) or no clear next step.`,
+      steps: [`Open ${ex.page} as a first-time visitor and write down your first question.`, "Answer it on that page, near the top.", "Add one obvious button to continue."].concat(d ? [`Make “${d.f.replace(/^Visited |^Clicked /, "")}” easier to reach — customers used it much more.`] : []),
+      gain: Math.max(1, Math.round(ex.n * .1 * Math.max(convRate, .05))), conf: conf(m.leavers)});
+  }
+
+  // 9. Traffic sources
+  const ranked = m.sources.filter(s => s.visitors >= (V >= 60 ? 15 : 6)).sort((a, b) => b.conv - a.conv);
   if (ranked.length >= 2) {
     const best = ranked[0], worst = ranked[ranked.length - 1];
-    if (best.conv > 0 && best.conv >= worst.conv * 2) tips.push({lvl: "med", impact: 60, tag: "Traffic sources",
-      title: `${best.name} visitors sign up ${worst.conv ? (best.conv / worst.conv).toFixed(1) + "×" : "far"} more often than ${worst.name} visitors`, short: `Post more of what brings ${best.name} traffic.`,
-      body: `${best.name}: ${pctStr(best.conv)} convert. ${worst.name}: ${pctStr(worst.conv)}.`,
-      fix: `Post more of what brings ${best.name} visitors, and send ${worst.name} traffic to a page that continues the post they just saw instead of your homepage.`});
+    if (best.conv > 0 && best.conv >= worst.conv * 2) tips.push({key: "src:" + worst.key, lvl: "med", impact: 60, tag: "Traffic sources",
+      title: `${worst.name} visitors sign up ${worst.conv ? (best.conv / worst.conv).toFixed(1) + "× less" : "far less"} than ${best.name} visitors`, short: `Send ${worst.name} traffic somewhere that fits it.`,
+      evidence: [`${best.name}: ${pctStr(best.conv)} of ${fmt(best.visitors)} sign up`, `${worst.name}: ${pctStr(worst.conv)} of ${fmt(worst.visitors)} sign up`],
+      body: `${worst.name} visitors arrive with different expectations. Your page speaks to ${best.name} visitors better.`,
+      steps: [`Send ${worst.name} visitors to a page that continues the post they just saw.`, `Post more of what brings ${best.name} visitors.`], conf: conf(worst.visitors)});
   }
-  if (!m.camps.length) tips.push({lvl: "low", impact: 45, tag: "Campaigns", title: "Create a tracking link for each post", short: "Then you’ll see which posts bring sign-ups.",
-    body: "Right now you can see which platform people come from, but not which post.", fix: "Make a link per post and use it in your bio while the post is live.", href: "#campaigns", cta: "Create a tracking link"});
-  if (!tips.some(t => t.lvl === "high" || t.lvl === "med")) tips.push({lvl: "good", impact: 30, tag: "Healthy", title: "Your funnel is in good shape", short: "Your next lever is more traffic.",
-    body: `${pctStr(c.conv)} of visitors sign up.`, fix: "Your next lever is more traffic. Track each new post so you can repeat the ones that bring sign-ups."});
+
+  // 10. Getting worse
+  if (V >= 30 && m.p.visitors >= 30 && m.p.conv > 0 && c.conv < m.p.conv * .7) tips.push({key: "trend", lvl: "high", impact: 89, tag: "Trend",
+    title: `Sign-ups fell from ${pctStr(m.p.conv)} to ${pctStr(c.conv)} of visitors`, short: "Something changed. Find out what.",
+    evidence: [`Previous ${m.days} days: ${pctStr(m.p.conv)} (${fmt(m.p.visitors)} visitors)`, `Last ${m.days} days: ${pctStr(c.conv)} (${fmt(V)} visitors)`],
+    body: "Your conversion dropped compared with the period before. Usually a page change, a new traffic source, or something broken.",
+    steps: ["Check what you changed on your site in this period.", "Compare traffic sources: did a new one bring visitors who don’t fit?", "Sign up yourself to check nothing is broken."], conf: conf(V)});
+
+  // Not enough data / healthy
+  if (V < 30) tips.push({key: "data", lvl: "low", impact: 20, tag: "More data needed", title: `${fmt(V)} visitor${V === 1 ? "" : "s"} so far`, short: "Patterns get reliable around 30 visitors.",
+    evidence: [`${fmt(V)} of 30 visitors needed for reliable patterns`], progress: Math.min(100, V / 30 * 100),
+    body: "Cards marked “Early signal” are based on very few people. Treat them as hints, not conclusions.",
+    steps: ["Share your tracking link in your bio and a post.", "Come back after about 30 visitors."], href: "#campaigns", cta: "Create a tracking link", conf: conf(V)});
+  else if (!tips.some(t => t.lvl === "high" || t.lvl === "med")) tips.push({key: "healthy", lvl: "good", impact: 30, tag: "Working well", title: `${pctStr(c.conv)} of visitors sign up`, short: "No big leak right now. Grow traffic next.",
+    evidence: [`${fmt(c.signups)} sign-ups from ${fmt(V)} visitors`], body: "Nothing stands out as broken. Your next lever is more of the right traffic.",
+    steps: ["Make a tracking link for each new post.", "Repeat the posts that bring sign-ups, not just views."], conf: conf(V)});
   return tips.sort((a, b) => b.impact - a.impact);
 }
-const estHTML = t => t.estText ? `<div class="est">${ic("trend", 18)} ${esc(t.estText)}</div>` : t.gain > 0 ? `<div class="est">${ic("trend", 18)} Est. +${fmt(t.gain)} more sign-ups</div>` : "";
+
+/* Before / after for changes the founder made */
+function measureFix(fix, events){
+  const T = fix.created, now = Date.now(), w = Math.min(14 * DAY, Math.max(DAY, now - T));
+  const before = summarize(events.filter(e => e.s !== "test" && e.ts >= T - w && e.ts < T));
+  const after = summarize(events.filter(e => e.s !== "test" && e.ts >= T && e.ts < T + 14 * DAY));
+  let verdict = "early", text = "Measuring… needs about 30 visitors after the change.";
+  if (after.visitors >= 30 && before.visitors >= 30) {
+    const ch = before.conv ? (after.conv - before.conv) / before.conv : after.conv > 0 ? 1 : 0;
+    if (ch >= .2) { verdict = "up"; text = `Sign-ups improved ${Math.round(ch * 100)}% since this change.`; }
+    else if (ch <= -.2) { verdict = "down"; text = `Sign-ups dropped ${Math.round(-ch * 100)}% since this change. Consider undoing it.`; }
+    else { verdict = "flat"; text = "No clear change yet."; }
+  }
+  return {before, after, verdict, text};
+}
+
+const estHTML = t => t.estText ? `<div class="est">${ic("trend", 18)} ${esc(t.estText)}</div>` : t.gain > 0 ? `<div class="est">${ic("trend", 18)} Could win back about ${fmt(t.gain)} sign-up${t.gain === 1 ? "" : "s"} per ${S.days} days</div>` : "";
 function tipHTML(t){
-  return `<div class="tip ${t.lvl}"><span class="badge">${esc(t.tag)}</span><h3>${esc(t.title)}</h3><p>${esc(t.body)}</p>
-  <div class="fix"><b>What to try: </b>${esc(t.fix)}</div>${estHTML(t)}${t.href ? `<p style="margin:12px 0 0"><a class="btn sm" href="${t.href}">${esc(t.cta)}</a></p>` : ""}</div>`;
+  const fix = (S.fixes || []).find(f => f.tip_key === t.key);
+  return `<article class="tip ${t.lvl}" data-key="${esc(t.key)}">
+    <div class="tip-h"><span class="badge">${esc(t.tag)}</span>${t.conf ? `<span class="conf ${t.conf.cls}" title="Based on ${fmt(t.conf.n)} people">${t.conf.level} · ${fmt(t.conf.n)} ${t.conf.n === 1 ? "person" : "people"}</span>` : ""}</div>
+    <h3>${esc(t.title)}</h3>
+    ${t.evidence ? `<ul class="evid">${t.evidence.map(e => `<li>${esc(e)}</li>`).join("")}</ul>` : ""}
+    ${t.progress != null ? `<div class="src-bar" style="margin:4px 0 12px"><i style="width:${t.progress}%;background:var(--green)"></i></div>` : ""}
+    <p>${esc(t.body)}</p>
+    ${t.steps ? `<div class="fix"><b>What to try</b><ol>${t.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol></div>` : ""}
+    ${estHTML(t)}
+    <div class="tip-a">${t.href ? `<a class="btn sm" href="${t.href}">${esc(t.cta)}</a>` : ""}
+      ${["setup", "low", "good"].includes(t.lvl) ? "" : fix ? `<span class="testing">${ic("cal", 14)} Testing your change since ${dShort(new Date(fix.created))}</span>` : `<button class="btn quiet sm" data-fix="${esc(t.key)}">I made this change</button>`}</div>
+    <form class="fix-form" data-for="${esc(t.key)}" hidden><label class="field">What did you change? (optional)<input name="note" maxlength="300" placeholder="e.g. Moved the button above the fold"></label><div class="cta-row"><button class="btn green sm">Start measuring</button><button type="button" class="btn quiet sm" data-cancel>Cancel</button></div></form>
+  </article>`;
 }
 
 /* ---------- Charts ---------- */
@@ -766,7 +902,7 @@ const APP_ROUTES = new Set(NAV.map(n => n[0]));
 
 async function loadData(){
   const since = Date.now() - Math.max(2 * S.days, 90) * DAY;
-  [S.events, S.campaigns] = await Promise.all([store.events(since), store.campaigns()]);
+  [S.events, S.campaigns, S.fixes] = await Promise.all([store.events(since), store.campaigns(), store.fixes().catch(() => [])]);
   S.sample = false;
   if (Tour.active && !S.events.some(e => e.s !== "test")) { const smp = makeSample(); S.events = smp.events; S.campaigns = smp.campaigns; S.sample = true; }
   S.m = compute(S.events.filter(e => e.s !== "test"), S.campaigns, S.days);
@@ -1146,14 +1282,37 @@ const VIEWS = {
     $("#fsrc").addEventListener("change", e => { const s = m.sources.find(x => x.key === e.target.value) || m.c; $("#fbody").innerHTML = funnelHTML(s); });
   },
   advisor(){
-    const tips = advise(S.m);
-    $("#view").innerHTML = header("Why They Leave", "Every problem here comes from what your visitors actually did, ranked by how many customers fixing it could win back.") + `
-    ${store.live && S.m.c.visitors ? `<div class="ai-box"><b>Get a written plan for this week</b><p>Turns your funnel, exit pages and visitor journeys into a step-by-step plan.</p><button class="btn green sm" style="color:#05260f;background:#2bd468" id="ask">Analyze my funnel</button><div class="ai-out" id="aiout"></div></div>` : ""}
+    const tips = advise(S.m), fixes = S.fixes || [];
+    const fixHTML = f => { const r = measureFix(f, S.events);
+      return `<div class="fx ${r.verdict}"><div class="fx-h"><b>${esc(f.title)}</b><button class="tour-skip" data-delfix="${f.id}" aria-label="Stop measuring">Remove</button></div>
+        ${f.note ? `<p class="muted">You changed: ${esc(f.note)}</p>` : ""}<p class="muted" style="font-size:13px">Since ${dShort(new Date(f.created))}</p>
+        <div class="fx-cmp"><div><small>Before</small><strong>${pctStr(r.before.conv)}</strong><span>${fmt(r.before.signups)} of ${fmt(r.before.visitors)}</span></div><div class="fx-arrow">${ic("arrow", 18)}</div>
+        <div><small>After</small><strong>${pctStr(r.after.conv)}</strong><span>${fmt(r.after.signups)} of ${fmt(r.after.visitors)}</span></div></div>
+        <p class="fx-v">${esc(r.text)}</p></div>`; };
+    $("#view").innerHTML = header("Why They Leave", "Every card comes from what your visitors actually did, ranked by how many customers fixing it could win back.") + `
+    ${fixes.length ? `<div class="card" style="margin-bottom:16px"><h2>Changes you’re testing <small>sign-up rate before vs after</small></h2><div class="fx-list">${fixes.map(fixHTML).join("")}</div></div>` : ""}
+    ${store.live && S.m.c.visitors ? `<div class="ai-box"><b>Get a written plan for this week</b><p>Turns your funnel, exit pages, devices and visitor journeys into a step-by-step plan.</p><button class="btn green sm" style="color:#05260f;background:#2bd468" id="ask">Write my plan</button><div class="ai-out" id="aiout"></div></div>` : ""}
     ${tips.map(tipHTML).join("")}`;
+    const v = $("#view");
+    v.onclick = async e => {
+      const fb = e.target.closest("[data-fix]");
+      if (fb) { const f = v.querySelector(`.fix-form[data-for="${CSS.escape(fb.dataset.fix)}"]`); f.hidden = false; fb.hidden = true; f.querySelector("input").focus(); return; }
+      const cb = e.target.closest("[data-cancel]");
+      if (cb) { const f = cb.closest(".fix-form"); f.hidden = true; const b = v.querySelector(`[data-fix="${CSS.escape(f.dataset.for)}"]`); if (b) b.hidden = false; return; }
+      const db = e.target.closest("[data-delfix]");
+      if (db && confirm("Stop measuring this change?")) { try { await store.deleteFix(db.dataset.delfix); route(); } catch (err) { toast(friendly(err)); } }
+    };
+    v.onsubmit = async e => {
+      const f = e.target.closest(".fix-form"); if (!f) return; e.preventDefault();
+      const t = tips.find(x => x.key === f.dataset.for); if (!t) return;
+      f.querySelector("button").disabled = true;
+      try { await store.addFix({tip_key: t.key, title: t.title, note: f.note.value.trim()}); toast("Measuring before vs after"); route(); }
+      catch (err) { toast(friendly(err)); f.querySelector("button").disabled = false; }
+    };
     const ask = $("#ask"); if (ask) ask.addEventListener("click", async () => {
-      ask.disabled = true; ask.textContent = "Analyzing…";
-      try { $("#aiout").textContent = "\n" + await store.askAI(aiSummary()); ask.textContent = "Analyze again"; }
-      catch (e) { $("#aiout").textContent = "\nThe AI review isn’t set up yet: " + e.message; ask.textContent = "Try again"; }
+      ask.disabled = true; ask.textContent = "Writing…";
+      try { $("#aiout").textContent = "\n" + await store.askAI(aiSummary()); ask.textContent = "Write it again"; }
+      catch (e) { $("#aiout").textContent = "\n" + (/not configured|ANTHROPIC/i.test(e.message) ? "The plan writer isn’t switched on yet. Add your Anthropic API key in Supabase → Edge Functions → Secrets as ANTHROPIC_API_KEY." : "Couldn’t write the plan: " + e.message); ask.textContent = "Try again"; }
       ask.disabled = false;
     });
   },
@@ -1231,7 +1390,7 @@ const VIEWS = {
     $(".sim").addEventListener("click", async e => {
       const b = e.target.closest("[data-ev]"); if (!b) return;
       if (b.dataset.ev === "new") { S.sim.v = uid(); return toast("New visitor started"); }
-      const ev = {t: b.dataset.ev, v: S.sim.v, s: $("#ss").value, c: $("#sc").value || null, p: "/", l: b.dataset.ev === "click" ? "Get started" : b.dataset.ev === "signup" ? "signup form" : null, ts: Date.now()};
+      const ev = {d: innerWidth < 760 ? "mobile" : "desktop", t: b.dataset.ev, v: S.sim.v, s: $("#ss").value, c: $("#sc").value || null, p: "/", l: b.dataset.ev === "click" ? "Get started" : b.dataset.ev === "signup" ? "signup form" : null, ts: Date.now()};
       try { await store.addEvent(ev); toast("Event recorded"); checkStatus(); } catch (err) { toast(friendly(err)); }
     });
     checkStatus();
@@ -1288,7 +1447,7 @@ function aiSummary(){
     previous_period: { visitors: m.p.visitors, signups: m.p.signups },
     sources: m.sources.map(s => ({ source: s.name, visitors: s.visitors, clicked: s.clickers, signups: s.signups })),
     campaigns: m.camps.map(x => ({ post: x.name, platform: x.platform, views: x.views, visits: x.visitors, signups: x.signups })),
-    top_buttons: m.buttons, top_pages: m.pages, exit_pages: m.exits, customers_did_more: m.diffs, clicked_then_left: m.clickedLeft };
+    top_buttons: m.buttons, top_pages: m.pages, exit_pages: m.exits, customers_did_more: m.diffs, clicked_then_left: m.clickedLeft, devices: m.devices.map(d => ({device: d.key, visitors: d.visitors, clicked: d.clickers, signups: d.signups})), signups_ever_recorded: m.signupEver, diagnosis: advise(m).map(t => ({problem: t.title, evidence: t.evidence, confidence: t.conf && t.conf.level})), changes_tested: (S.fixes || []).map(f => { const r = measureFix(f, S.events); return {change: f.note || f.title, since: new Date(f.created).toISOString().slice(0, 10), before_conv_pct: +r.before.conv.toFixed(2), after_conv_pct: +r.after.conv.toFixed(2), after_visitors: r.after.visitors}; }) };
 }
 
 /* ---------- Guided tour (animated cursor) ---------- */

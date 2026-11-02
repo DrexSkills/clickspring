@@ -22,6 +22,8 @@
   function ss(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch (e) {} return null; }
   function newId() { try { return crypto.randomUUID(); } catch (e) { return "v" + Math.random().toString(36).slice(2) + Date.now().toString(36); } }
 
+  var UA = navigator.userAgent, DEVICE = (navigator.userAgentData && navigator.userAgentData.mobile) || /Mobi|Android.+Mobile|iPhone|iPod/i.test(UA) ? "mobile"
+    : /iPad|Tablet|Android/i.test(UA) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(UA)) ? "tablet" : "desktop";
   var vid = ls("cs_vid"); if (!vid) { vid = newId(); ls("cs_vid", vid); }
   var q = new URLSearchParams(location.search);
   if (q.get("cs_debug") === "1") ss("cs_debug", "1");
@@ -57,7 +59,7 @@
 
   function send(type, label) {
     var body = JSON.stringify({ site_id: SITE, type: type, visitor_id: vid, source: DEBUG ? "test" : src, campaign_id: camp,
-      path: location.pathname.slice(0, 300), label: label ? String(label).replace(/\s+/g, " ").trim().slice(0, 80) : null });
+      path: location.pathname.slice(0, 300), device: DEVICE, label: label ? String(label).replace(/\s+/g, " ").trim().slice(0, 80) : null });
     var ok = function () { show(type + " sent"); };
     var fail = function (st) { show("couldn\u2019t send " + type + (st ? " (" + st + ")" : "") + ". Check data-site and data-key.", true); if (window.console) console.warn("[ClickSpring] event not saved", st || ""); };
     // 1) Simple request: text/plain body + key in URL, so the browser sends it without a CORS preflight

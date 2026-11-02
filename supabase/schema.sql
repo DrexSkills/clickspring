@@ -78,3 +78,21 @@ begin
 end $$;
 revoke all on function public.track(text) from public;
 grant execute on function public.track(text) to anon, authenticated;
+
+-- v0.01.2: device type + changes the founder is testing
+alter table public.events add column if not exists device text check (device in ('mobile','tablet','desktop'));
+-- (track() above is redefined in the live project to also store device)
+create table if not exists public.fixes (
+  id uuid primary key default gen_random_uuid(),
+  site_id uuid not null references public.sites(id) on delete cascade,
+  tip_key text not null check (char_length(tip_key) <= 200),
+  title text not null check (char_length(title) <= 300),
+  note text check (char_length(note) <= 500),
+  created_at timestamptz not null default now()
+);
+create index if not exists fixes_site on public.fixes (site_id);
+alter table public.fixes enable row level security;
+create policy "own fixes" on public.fixes for all to authenticated
+  using (exists (select 1 from public.sites s where s.id = site_id and s.owner = (select auth.uid())))
+  with check (exists (select 1 from public.sites s where s.id = site_id and s.owner = (select auth.uid())));
+revoke all on public.fixes from anon;
