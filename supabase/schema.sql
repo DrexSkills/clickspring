@@ -96,3 +96,18 @@ create policy "own fixes" on public.fixes for all to authenticated
   using (exists (select 1 from public.sites s where s.id = site_id and s.owner = (select auth.uid())))
   with check (exists (select 1 from public.sites s where s.id = site_id and s.owner = (select auth.uid())));
 revoke all on public.fixes from anon;
+
+-- v0.01.3: API keys (hashed; plaintext shown once). Used by the "api" edge function.
+create table if not exists public.api_keys (
+  id uuid primary key default gen_random_uuid(),
+  site_id uuid not null references public.sites(id) on delete cascade,
+  name text not null check (char_length(name) <= 60),
+  prefix text not null, key_hash text not null unique,
+  created_at timestamptz not null default now(), last_used_at timestamptz, revoked_at timestamptz
+);
+alter table public.api_keys enable row level security;
+revoke all on public.api_keys from anon, authenticated;
+grant select (id, site_id, name, prefix, created_at, last_used_at, revoked_at) on public.api_keys to authenticated;
+create policy "owners see their keys" on public.api_keys for select to authenticated
+  using (exists (select 1 from public.sites s where s.id = site_id and s.owner = (select auth.uid())));
+-- create_api_key(p_site, p_name) and revoke_api_key(p_id): see migration "api_keys" (security definer, owner checked)

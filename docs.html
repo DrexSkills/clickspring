@@ -1,0 +1,181 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ClickSpring Docs – tracker, SDK and API</title><meta name="description" content="Install the ClickSpring tracker, use the browser SDK, and pull your data with the ClickSpring REST API and API keys.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--surface:#f3f6f3;--card:#fff;--line:#e6ebe7;--ink:#0b0f0c;--muted:#5d6a62;--green:#1fbf4f;--green-ink:#12933a;--green-soft:#e7f7ec;--code:#101411;--code-ink:#e9efe9}
+@media(prefers-color-scheme:dark){:root{--bg:#0b100d;--surface:#141b16;--card:#141c17;--line:#243029;--ink:#edf3ee;--muted:#9aa9a0;--green-ink:#4fe080;--green-soft:#133222;--code:#070a08}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:80px}body{margin:0;font-family:"Plus Jakarta Sans",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+a{color:var(--green-ink)}header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:12px 24px;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.03em;text-decoration:none;color:var(--ink)}.logo small{font-weight:600;color:var(--muted);font-size:14px}
+.hbtn{background:var(--ink);color:var(--bg);border-radius:999px;padding:9px 16px;font-weight:700;text-decoration:none;font-size:14px;white-space:nowrap}
+.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1200px;margin:0 auto}
+aside{position:sticky;top:62px;height:calc(100vh - 62px);overflow:auto;padding:24px 16px;border-right:1px solid var(--line)}
+aside a{display:block;padding:6px 10px;border-radius:8px;color:var(--muted);text-decoration:none;font-weight:600;font-size:14px}aside a:hover,aside a.on{background:var(--green-soft);color:var(--green-ink)}
+main{padding:32px 40px 80px;min-width:0}section{margin-bottom:48px}h1{font-size:40px;letter-spacing:-.04em;margin:0 0 8px}h2{font-size:28px;letter-spacing:-.03em;margin:0 0 12px;padding-top:8px}h3{font-size:18px;margin:24px 0 8px}
+.lead{font-size:19px;color:var(--muted);margin:0 0 20px}.muted{color:var(--muted)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;background:var(--surface);border-radius:6px;padding:2px 6px}
+pre{position:relative;background:var(--code);color:var(--code-ink);border-radius:14px;padding:16px;overflow-x:auto;font-size:13px;line-height:1.6;margin:10px 0 14px}pre code{background:none;padding:0;color:inherit;font-size:inherit}
+.copy{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:8px;padding:4px 10px;font:600 12px system-ui;cursor:pointer}
+table{width:100%;border-collapse:collapse;margin:10px 0 14px;font-size:14px;display:block;overflow-x:auto}td,th{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.qc{display:block;border:1px solid var(--line);border-radius:16px;padding:16px;text-decoration:none;color:var(--ink)}.qc:hover{border-color:var(--green)}.qc b{display:block}.qc span{color:var(--muted);font-size:14px}
+.steps{padding-left:22px}.steps li{margin:6px 0}
+.warn{background:rgba(212,52,44,.08);border:1px solid rgba(212,52,44,.25);border-radius:14px;padding:14px 16px;margin-top:12px}
+.ep{border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:16px 0}.ep h3{margin-top:0;display:flex;gap:10px;align-items:center;font-family:ui-monospace,Menlo,monospace}
+.m{font:800 12px system-ui;border-radius:6px;padding:3px 8px}.m.get{background:var(--green-soft);color:var(--green-ink)}.m.post{background:rgba(124,92,255,.15);color:#7c5cff}
+.tabs{display:flex;gap:6px;margin-top:6px}.tabs button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:5px 12px;font:600 13px system-ui;cursor:pointer}.tabs button.on{background:var(--ink);color:var(--bg)}
+@media(max-width:860px){.layout{grid-template-columns:1fr}aside{display:none}main{padding:24px 18px 60px}.cards{grid-template-columns:1fr}h1{font-size:32px}}
+</style></head><body>
+<header><a class="logo" href="./"><svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="#1fbf4f" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23.5 5.5C19 3.5 9.5 4 7.5 7s13 3.5 15.5 6.5S9.5 17 7.5 18.5s13.5 3.5 15.5 6.5S12 30 7.5 27"/></svg>ClickSpring <small>Docs</small></a><a class="hbtn" href="./#developers">Get an API key</a></header>
+<div class="layout"><aside><nav><a href="#intro">Introduction</a><a href="#quickstart">Quick start</a><a href="#install">Install the tracker</a><a href="#sdk">Browser SDK</a><a href="#links">Tracking links</a><a href="#keys">API keys</a><a href="#api">REST API</a><a href="#ep-stats">· GET /stats</a><a href="#ep-events">· GET /events</a><a href="#ep-post">· POST /events</a><a href="#ep-campaigns">· GET /campaigns</a><a href="#js-sdk">JavaScript SDK</a><a href="#limits">Limits</a></nav></aside><main><section id="intro"><h1>ClickSpring Docs</h1>
+<p class="lead">Everything you need to track visitors, find out why they aren’t buying, and use your ClickSpring data from your own code.</p>
+<div class="cards"><a href="#quickstart" class="qc"><b>Quick start</b><span>Live in 5 minutes</span></a><a href="#sdk" class="qc"><b>Browser SDK</b><span>Track sign-ups your way</span></a><a href="#api" class="qc"><b>REST API</b><span>Your data, in your code</span></a></div></section>
+
+<section id="quickstart"><h2>Quick start</h2>
+<ol class="steps"><li><b>Create an account</b> at <a href="./#signup">ClickSpring</a> and add your website.</li>
+<li><b>Copy your script</b> from <i>Tracking Setup</i> and paste it before <code>&lt;/head&gt;</code> on every page.</li>
+<li><b>Open your site with <code>?cs_debug=1</code></b>. A green “ClickSpring ✓” badge confirms it’s working, and Tracking Setup turns green.</li></ol>
+<p>That’s it. Page views, button clicks and sign-ups from email forms are tracked automatically.</p></section>
+
+<section id="install"><h2>Install the tracker</h2>
+<pre><code>&lt;script src="https://drexskills.github.io/clickspring/tracker.js"
+  data-site="YOUR_SITE_ID"
+  data-endpoint="https://kuzdzlbyxllovbcudzsy.supabase.co"
+  data-key="YOUR_PUBLIC_KEY"
+  defer&gt;&lt;/script&gt;</code></pre>
+<p class="muted">Your exact script, with your IDs filled in, is in ClickSpring → Tracking Setup. The <code>data-key</code> here is a public key and is safe to put in your HTML.</p>
+<table><thead><tr><th>Attribute</th><th>What it does</th></tr></thead><tbody>
+<tr><td><code>data-site</code></td><td>Your website’s ID. Required.</td></tr>
+<tr><td><code>data-endpoint</code>, <code>data-key</code></td><td>Where events are sent. Required. Copy them from Tracking Setup.</td></tr>
+<tr><td><code>data-signup-path</code></td><td>Counts a sign-up when someone reaches this page, e.g. <code>/thank-you</code>. Use it for embedded forms (Mailchimp, ConvertKit, Typeform).</td></tr>
+<tr><td><code>data-base-path</code></td><td>Strips a sub-folder from page names, e.g. <code>/my-repo</code> on GitHub Pages.</td></tr></tbody></table>
+<h3>What’s tracked automatically</h3>
+<ul><li><b>Page views</b>, including page changes on single-page apps (React, Next.js, Framer).</li>
+<li><b>Clicks</b> on every button and link, named by their text.</li>
+<li><b>Sign-ups</b> from any form with an email field.</li>
+<li><b>Source</b> (Instagram, TikTok, Google…), <b>tracking link</b> and <b>device</b> (phone, tablet, computer).</li></ul></section>
+
+<section id="sdk"><h2>Browser SDK</h2>
+<p>Once the script loads, <code>window.ClickSpring</code> is available on your site.</p>
+<pre><code>// Count a sign-up yourself, e.g. after your form's success callback
+ClickSpring.signup("waitlist");
+
+// Send any event: "pageview" | "click" | "signup"
+ClickSpring.track("click", "Pricing toggle");</code></pre>
+<h3>HTML attributes</h3>
+<table><thead><tr><th>Attribute</th><th>Use it on</th><th>What it does</th></tr></thead><tbody>
+<tr><td><code>data-cs-signup</code></td><td>a form</td><td>Count submitting this form as a sign-up (even without an email field).</td></tr>
+<tr><td><code>data-cs-signup="manual"</code></td><td>a form</td><td>Don’t count on submit. Call <code>ClickSpring.signup()</code> yourself only when it succeeds.</td></tr>
+<tr><td><code>data-cs-click="Name"</code></td><td>any element</td><td>Track clicks on it, with this name.</td></tr>
+<tr><td><code>data-cs-ignore</code></td><td>any element</td><td>Don’t track clicks inside it (e.g. your menu).</td></tr></tbody></table>
+<h3>Test mode</h3><p>Add <code>?cs_debug=1</code> to any page URL. A badge shows each event as it’s sent. Test visits are kept out of your stats.</p></section>
+
+<section id="links"><h2>Tracking links</h2>
+<p>Create a link for each post in ClickSpring → Campaign Links. Each link adds <code>utm_source</code> and <code>cs_c</code> to your URL, so ClickSpring knows which post sent each visitor. The first link a visitor arrives from is remembered, even if they come back later without it.</p></section>
+
+<section id="keys"><h2>API keys</h2>
+<p>Use an API key to pull your stats into your own tools, or to send sign-ups from your server (for example after a payment or email verification).</p>
+<ol class="steps"><li>Open ClickSpring → <b>API Keys</b>.</li><li>Name your key and click <b>Create key</b>.</li><li>Copy it right away. It starts with <code>cs_live_</code> and is shown only once.</li></ol>
+<div class="warn"><b>Keep API keys secret.</b> Use them only on your server, never in website code. If a key leaks, revoke it in ClickSpring and create a new one. Each key belongs to one website.</div></section>
+
+<section id="api"><h2>REST API</h2>
+<p><b>Base URL</b></p><pre><code>https://kuzdzlbyxllovbcudzsy.supabase.co/functions/v1/api</code></pre>
+<p><b>Authentication:</b> send your key in the <code>Authorization</code> header on every request.</p>
+<pre><code>Authorization: Bearer cs_live_YOUR_KEY</code></pre>
+
+<div class="ep" id="ep-stats"><h3><span class="m get">GET</span> /stats</h3>
+<p>Totals, funnel, traffic sources, devices, top pages, top buttons and exit pages for your website.</p>
+<table><tbody><tr><td><code>days</code></td><td>optional</td><td>1–365. Default 30.</td></tr></tbody></table>
+<div class="tabs"><button class="on" data-lang="curl">curl</button><button data-lang="js">JavaScript</button><button data-lang="py">Python</button></div>
+<pre data-lang="curl"><code>curl "https://kuzdzlbyxllovbcudzsy.supabase.co/functions/v1/api/stats?days=30" \
+  -H "Authorization: Bearer $CLICKSPRING_KEY"</code></pre>
+<pre data-lang="js" hidden><code>import { ClickSpring } from "https://drexskills.github.io/clickspring/sdk.js";
+const cs = new ClickSpring(process.env.CLICKSPRING_KEY);
+const stats = await cs.stats({ days: 30 });
+console.log(stats.totals.conversion_rate);</code></pre>
+<pre data-lang="py" hidden><code>import os, requests
+r = requests.get(
+    "https://kuzdzlbyxllovbcudzsy.supabase.co/functions/v1/api/stats",
+    params={"days": 30},
+    headers={"Authorization": f"Bearer {os.environ['CLICKSPRING_KEY']}"},
+)
+print(r.json()["totals"])</code></pre>
+<p class="muted">Response</p>
+<pre><code>{
+  "site": { "id": "…", "name": "Pinn", "url": "https://pinn.homes" },
+  "period": { "days": 30, "since": "2026-10-03T12:00:00Z" },
+  "totals": { "visitors": 482, "pageviews": 910, "clicks": 140, "clicked": 96, "signups": 21, "conversion_rate": 4.36 },
+  "funnel": [ { "step": "visited", "count": 482 }, { "step": "clicked", "count": 96 }, { "step": "signed_up", "count": 21 } ],
+  "sources": [ { "name": "instagram", "visitors": 310, "signups": 9, "conversion_rate": 2.9, … } ],
+  "devices": [ { "name": "mobile", "visitors": 401, … } ],
+  "top_pages": [ { "path": "/", "views": 640 } ],
+  "top_buttons": [ { "label": "Get early access", "clicks": 88 } ],
+  "exit_pages": [ { "path": "/pricing", "visitors_left": 120, "share": 26.04 } ]
+}</code></pre></div>
+
+<div class="ep" id="ep-events"><h3><span class="m get">GET</span> /events</h3>
+<p>Your latest events, newest first. Test-mode events are left out.</p>
+<table><tbody><tr><td><code>limit</code></td><td>optional</td><td>1–1000. Default 100.</td></tr>
+<tr><td><code>type</code></td><td>optional</td><td><code>pageview</code>, <code>click</code> or <code>signup</code>.</td></tr>
+<tr><td><code>since</code></td><td>optional</td><td>ISO date, e.g. <code>2026-11-01</code>.</td></tr></tbody></table>
+<pre><code>curl "https://kuzdzlbyxllovbcudzsy.supabase.co/functions/v1/api/events?type=signup&amp;limit=50" \
+  -H "Authorization: Bearer $CLICKSPRING_KEY"</code></pre></div>
+
+<div class="ep" id="ep-post"><h3><span class="m post">POST</span> /events</h3>
+<p>Send events from your server. One object, or an array of up to 100. Great for counting sign-ups that happen off-page, like a confirmed payment.</p>
+<table><thead><tr><th>Field</th><th></th><th></th></tr></thead><tbody>
+<tr><td><code>type</code></td><td>required</td><td><code>pageview</code>, <code>click</code> or <code>signup</code>.</td></tr>
+<tr><td><code>visitor_id</code></td><td>optional</td><td>Links the event to a visitor. In the browser it’s <code>localStorage.cs_vid</code>; send it to your server to join the two.</td></tr>
+<tr><td><code>label</code>, <code>path</code></td><td>optional</td><td>Button name and page path.</td></tr>
+<tr><td><code>source</code>, <code>campaign_id</code>, <code>device</code></td><td>optional</td><td>Default source is <code>api</code>. Device: <code>mobile</code>, <code>tablet</code> or <code>desktop</code>.</td></tr></tbody></table>
+<div class="tabs"><button class="on" data-lang="curl">curl</button><button data-lang="js">JavaScript</button><button data-lang="py">Python</button></div>
+<pre data-lang="curl"><code>curl -X POST "https://kuzdzlbyxllovbcudzsy.supabase.co/functions/v1/api/events" \
+  -H "Authorization: Bearer $CLICKSPRING_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"type":"signup","visitor_id":"VISITOR_ID","label":"paid plan"}'</code></pre>
+<pre data-lang="js" hidden><code>await cs.signup({ visitorId: req.body.cs_vid, label: "paid plan" });</code></pre>
+<pre data-lang="py" hidden><code>requests.post(
+    "https://kuzdzlbyxllovbcudzsy.supabase.co/functions/v1/api/events",
+    json={"type": "signup", "visitor_id": cs_vid, "label": "paid plan"},
+    headers={"Authorization": f"Bearer {os.environ['CLICKSPRING_KEY']}"},
+)</code></pre>
+<p class="muted">Response: <code>201 {"ok": true, "inserted": 1}</code></p></div>
+
+<div class="ep" id="ep-campaigns"><h3><span class="m get">GET</span> /campaigns</h3>
+<p>Your tracking links with post views, visits, sign-ups and view-to-visit rate.</p>
+<pre><code>curl "https://kuzdzlbyxllovbcudzsy.supabase.co/functions/v1/api/campaigns" \
+  -H "Authorization: Bearer $CLICKSPRING_KEY"</code></pre></div>
+
+<div class="ep"><h3><span class="m get">GET</span> /</h3><p>Checks your key and returns the website it belongs to.</p></div>
+
+<h3>Errors</h3>
+<p>Errors return a status code and a JSON body you can show or log:</p>
+<pre><code>{ "error": { "code": "invalid_key", "message": "This API key doesn’t exist or was revoked." } }</code></pre>
+<table><tbody><tr><td><code>401</code></td><td><code>missing_key</code>, <code>invalid_key</code></td></tr>
+<tr><td><code>400</code></td><td><code>bad_json</code>, <code>bad_type</code>, <code>bad_batch</code>, <code>bad_since</code>, <code>bad_event</code></td></tr>
+<tr><td><code>404</code></td><td><code>not_found</code></td></tr><tr><td><code>500</code></td><td><code>server_error</code></td></tr></tbody></table></section>
+
+<section id="js-sdk"><h2>JavaScript SDK (server)</h2>
+<p>A tiny wrapper around the REST API for Node 18+, Deno, Bun and edge functions. No install needed.</p>
+<pre><code>import { ClickSpring } from "https://drexskills.github.io/clickspring/sdk.js";
+const cs = new ClickSpring(process.env.CLICKSPRING_KEY);
+
+await cs.me();                          // which website this key belongs to
+await cs.stats({ days: 7 });            // totals, funnel, sources, devices…
+await cs.events({ type: "signup" });    // latest sign-ups
+await cs.track({ type: "click", label: "Upgrade" });
+await cs.signup({ visitorId, label: "paid plan" });
+await cs.campaigns();                   // tracking links with results</code></pre>
+<p class="muted">On Node, download <a href="sdk.js">sdk.js</a> into your project and import it from there. Errors throw a <code>ClickSpringError</code> with <code>status</code>, <code>code</code> and <code>message</code>.</p></section>
+
+<section id="limits"><h2>Limits</h2>
+<ul><li>Up to 10 active API keys per website.</li><li>Up to 100 events per <code>POST /events</code> request.</li><li>Up to 1,000 events per <code>GET /events</code> request.</li><li><code>/stats</code> covers up to 365 days.</li></ul>
+<p class="muted">ClickSpring v0.01 beta. Questions or ideas? Reply to any ClickSpring email.</p></section>
+</main></div>
+<script>
+document.querySelectorAll("pre").forEach(p=>{const b=document.createElement("button");b.className="copy";b.textContent="Copy";b.onclick=async()=>{const t=p.querySelector("code").innerText;try{await navigator.clipboard.writeText(t)}catch(e){}b.textContent="Copied ✓";setTimeout(()=>b.textContent="Copy",1400)};p.appendChild(b)});
+document.querySelectorAll(".tabs").forEach(t=>t.addEventListener("click",e=>{const b=e.target.closest("[data-lang]");if(!b)return;const ep=t.parentElement;t.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));ep.querySelectorAll("pre[data-lang]").forEach(p=>p.hidden=p.dataset.lang!==b.dataset.lang)}));
+const links=[...document.querySelectorAll("aside a")];const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+e.target.id))}),{rootMargin:"-30% 0px -60% 0px"});
+document.querySelectorAll("section[id], .ep[id]").forEach(s=>obs.observe(s));
+</script></body></html>

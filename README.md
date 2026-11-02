@@ -45,6 +45,11 @@ Open `index.html` in a browser. With no Supabase keys it runs in demo mode: data
 - Test mode: open your site with `?cs_debug=1`. A green badge confirms each event, and Tracking Setup shows it live. Test visits are kept out of the stats.
 - Post views are typed in by the user (v0.01 can't read Instagram/TikTok views).
 
+## Developers
+- Docs: `docs.html` (live at https://drexskills.github.io/clickspring/docs.html)
+- API keys: app → API Keys. REST API: `supabase/functions/api` (deployed, no JWT; auth with `Bearer cs_live_…`).
+- JS SDK: `sdk.js` (`import { ClickSpring } from "https://drexskills.github.io/clickspring/sdk.js"`).
+
 ## Known limits to fix after launch
 - Anyone with a site ID can send fake events (normal for analytics scripts). Add rate limiting via an edge function if it becomes a problem.
 - The dashboard downloads raw events (capped at 50k). Past a few thousand visitors a day, move the math into a SQL view.

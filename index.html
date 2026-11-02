@@ -440,6 +440,10 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .plan-next{font-size:14px;opacity:.8;margin:8px 0 12px}
 .plan .btn.quiet{background:rgba(255,255,255,.12);color:#fff;box-shadow:none}
 .plan-ai{white-space:pre-wrap;line-height:1.6;margin-top:14px}
+.key-form{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-top:14px}
+.newkey{background:var(--green-soft);border-radius:14px;padding:14px;margin-bottom:12px}
+.newkey .linkbox{margin-top:8px}
+.newkey code{background:var(--card)}
 </style>
 </head>
 <body>
@@ -471,6 +475,7 @@ const srcColor = s => (SOURCES[s] || SOURCES.other).color;
 const PLATFORMS = ["instagram","tiktok","youtube","x","facebook","other"];
 
 const I = {
+  key:'<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M16 7l3 3M14 9l2 2"/>',
   route:'<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3.5 3.5 0 0 0 0-7H8a3.5 3.5 0 0 1 0-7h7.5"/>',
   home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
   dash:'<path d="M3 13h8V3H3zM13 21h8v-8h-8zM3 21h8v-6H3zM13 3v8h8V3z"/>',
@@ -668,6 +673,9 @@ const LiveStore = {
   async fixes(){ const { data, error } = await this.sb.from("fixes").select("*").eq("site_id", this.site.id).order("created_at", {ascending: false}); if (error) throw error; return data.map(f => ({id: f.id, tip_key: f.tip_key, title: f.title, note: f.note, created: Date.parse(f.created_at)})); },
   async addFix(f){ const { error } = await this.sb.from("fixes").insert({site_id: this.site.id, tip_key: f.tip_key, title: f.title, note: f.note || null}); if (error) throw error; },
   async deleteFix(id){ const { error } = await this.sb.from("fixes").delete().eq("id", id); if (error) throw error; },
+  async apiKeys(){ const { data, error } = await this.sb.from("api_keys").select("id,name,prefix,created_at,last_used_at,revoked_at").eq("site_id", this.site.id).is("revoked_at", null).order("created_at", {ascending: false}); if (error) throw error; return data; },
+  async createApiKey(name){ const { data, error } = await this.sb.rpc("create_api_key", {p_site: this.site.id, p_name: name}); if (error) throw error; return data; },
+  async revokeApiKey(id){ const { error } = await this.sb.rpc("revoke_api_key", {p_id: id}); if (error) throw error; },
   async askAI(summary){
     const { data, error } = await this.sb.functions.invoke("advisor", { body: { summary } });
     if (error) { let msg = error.message; try { const b = await error.context.json(); if (b && b.error) msg = b.error; } catch (_) {} throw new Error(msg); }
@@ -950,7 +958,7 @@ function funnelHTML(s){
 
 /* ---------- App state & routing ---------- */
 const S = { site: null, days: 30, metric: "visitors", m: null, events: [], campaigns: [], sim: {v: uid(), log: []} };
-const NAV = [["dashboard","Dashboard","home"],["analytics","Analytics","chart"],["advisor","Why They Leave","bulb"],["funnel","Funnels","funnel"],["journeys","Visitor Journeys","route"],["campaigns","Campaign Links","link"],["install","Tracking Setup","code"],["account","Settings","gear"]];
+const NAV = [["dashboard","Dashboard","home"],["analytics","Analytics","chart"],["advisor","Why They Leave","bulb"],["funnel","Funnels","funnel"],["journeys","Visitor Journeys","route"],["campaigns","Campaign Links","link"],["install","Tracking Setup","code"],["developers","API Keys","key"],["account","Settings","gear"]];
 const TABS = [["dashboard","Home","home"],["journeys","Journeys","route"],["advisor","Why","bulb"],["campaigns","Links","link"],["account","Profile","user"]];
 const APP_ROUTES = new Set(NAV.map(n => n[0]));
 
@@ -1013,7 +1021,7 @@ function shell(active){
 function search(q){
   q = q.trim().toLowerCase(); if (!q) return;
   const words = {dashboard:"dashboard home overview", analytics:"analytics traffic source sources pages buttons clicks visitors", advisor:"why leave leaving recommendations fix fixes advice suggestions insight leak",journeys:"journeys journey visitors visitor path paths exit exits customers",
-    funnel:"funnel funnels drop conversion", campaigns:"campaign campaigns link links post posts tiktok instagram youtube views utm", install:"setup install script tracking code track", account:"settings account profile name"};
+    funnel:"funnel funnels drop conversion", campaigns:"campaign campaigns link links post posts tiktok instagram youtube views utm", install:"setup install script tracking code track",developers:"api key keys developer developers sdk docs documentation", account:"settings account profile name"};
   let hit = Object.keys(words).find(k => words[k].split(" ").some(w => w.startsWith(q) || q.startsWith(w)));
   if (!hit && S.campaigns.some(c => c.name.toLowerCase().includes(q))) hit = "campaigns";
   if (hit) { $("#q").value = ""; location.hash = "#" + hit; } else toast(`No matches for “${q}”`);
@@ -1062,7 +1070,7 @@ function renderLanding(){
     <path d="M300 1000C340 760 520 600 900 520V1000Z" style="fill:var(--green-soft);opacity:.75"/>
     <path d="M120 760C260 640 520 560 900 600V700C560 660 330 720 190 820Z" style="fill:var(--green-wash)"/></svg>
   <header class="nav"><a class="logo" href="#home" style="font-size:30px">${LOGO(44)}ClickSpring</a>
-    <nav class="links"><button data-scroll="product">Product</button><button data-scroll="pricing">Pricing</button><button data-scroll="how">Resources ${ic("chev", 16)}</button><button data-scroll="about">About</button></nav>
+    <nav class="links"><button data-scroll="product">Product</button><button data-scroll="pricing">Pricing</button><a href="docs.html" style="font-weight:500;font-size:16px;text-decoration:none;padding:6px 0">Docs</a><button data-scroll="about">About</button></nav>
     <div class="nav-r"><a class="signin" href="${store.user ? "#dashboard" : "#login"}">${store.user ? "Dashboard" : "Sign In"}</a><a class="btn" href="${store.user ? "#dashboard" : "#signup"}">Get Started Free ${ic("arrow", 16)}</a></div></header>
   <section class="hero">
     <div>
@@ -1099,7 +1107,7 @@ function renderLanding(){
   </section>
   <section class="band" id="pricing"><div class="band-in"><div><h2>Free while we’re in beta.</h2><p>Every feature, unlimited tracking links, no card needed. Early users keep a discount when paid plans start.</p></div><a class="btn lg" href="#signup">Start Free Today ${ic("arrow", 18)}</a></div></section>
   <section class="band" id="about"><div class="band-in" style="background:var(--surface)"><div><h2>Charts tell you what happened. ClickSpring tells you why.</h2><p>Analytics tools give you numbers: 482 visitors, 0.8% conversion. ClickSpring gives you answers: which page people leave on, what your customers did differently, and what to change first. Post views are entered by you for now; everything after the click is measured automatically.</p></div><button class="btn green lg" data-demo>See Demo</button></div></section>
-  <div class="foot-note"><span class="logo" style="font-size:18px">${LOGO(22)}ClickSpring</span><span>© ${new Date().getFullYear()} ClickSpring</span></div>
+  <div class="foot-note"><span class="logo" style="font-size:18px">${LOGO(22)}ClickSpring</span><span><a href="docs.html" style="color:inherit">Docs &amp; API</a> · © ${new Date().getFullYear()} ClickSpring</span></div>
   </div>`;
 }
 
@@ -1350,6 +1358,50 @@ const VIEWS = {
           : `<p class="muted">Once at least 3 people sign up, this shows the pages and buttons customers used more than everyone else.</p>`}</div>
     </div>
     <div class="card"><h2>Recent visitors</h2>${recent.map(jHTML).join("")}</div>`;
+  },
+  developers(){
+    const base = "https://kuzdzlbyxllovbcudzsy.supabase.co/functions/v1/api";
+    $("#view").innerHTML = header("API Keys", "Use ClickSpring from your own code: pull your stats, or send sign-ups from your server.", false) + `
+    <div class="card" style="margin-bottom:16px"><h2>Your API keys <small>for ${esc(S.site.name)}</small></h2>
+      ${store.live ? `<div id="newkey"></div><div id="keylist"><p class="muted">Loading…</p></div>
+        <form id="kf" class="key-form" novalidate><label class="field" style="margin:0;flex:1">Key name<input name="name" maxlength="60" placeholder="e.g. My backend, Zapier, Stats script"></label><button class="btn green">Create key</button></form>`
+      : `<p class="muted" style="margin-top:0">API keys work on your live ClickSpring account at drexskills.github.io/clickspring. Demo mode has no server to call.</p>`}
+      <p class="muted" style="font-size:13px;margin-bottom:0">Keep keys secret: use them only on your server, never in website code. Each key only sees this website.</p></div>
+    <div class="card" style="margin-bottom:16px"><h2>Try it <a class="btn quiet sm" href="docs.html#api" target="_blank" rel="noopener">Full API docs</a></h2>
+      <pre class="code">curl "${base}/stats?days=30" \\
+  -H "Authorization: Bearer cs_live_YOUR_KEY"</pre>
+      <pre class="code">import { ClickSpring } from "https://drexskills.github.io/clickspring/sdk.js";
+const cs = new ClickSpring(process.env.CLICKSPRING_KEY);
+const { totals } = await cs.stats({ days: 30 });
+await cs.signup({ visitorId, label: "paid plan" });  // from your server</pre></div>
+    <div class="card"><h2>On your website <a class="btn quiet sm" href="docs.html#sdk" target="_blank" rel="noopener">Browser SDK docs</a></h2>
+      <p class="muted" style="margin-top:0">No API key needed. Once the tracking script is on your page:</p>
+      <pre class="code">ClickSpring.signup("waitlist");          // count a sign-up yourself
+ClickSpring.track("click", "Pricing toggle"); // send any event</pre></div>`;
+    if (!store.live) return;
+    const list = async () => {
+      try {
+        const keys = await store.apiKeys();
+        $("#keylist").innerHTML = keys.length ? keys.map(k => `<div class="site-row"><div><b>${esc(k.name)}</b><span class="muted"><code>${esc(k.prefix)}…</code> · created ${dShort(new Date(k.created_at))} · ${k.last_used_at ? "last used " + ago(Date.parse(k.last_used_at)) : "never used"}</span></div><button class="btn quiet sm" data-revoke="${k.id}">Revoke</button></div>`).join("")
+          : `<p class="muted" style="margin-top:0">No keys yet. Create one below.</p>`;
+      } catch (e) { $("#keylist").innerHTML = `<p class="muted">${esc(friendly(e))}</p>`; }
+    };
+    list();
+    $("#kf").addEventListener("submit", async e => {
+      e.preventDefault(); const b = e.target.querySelector("button"); b.disabled = true;
+      try {
+        const key = await store.createApiKey(e.target.name.value.trim() || "API key"); e.target.reset();
+        $("#newkey").innerHTML = `<div class="newkey"><b>Copy your new key now. You won’t see it again.</b><div class="linkbox"><code id="nk">${esc(key)}</code><button class="btn green sm" id="cpk">Copy</button></div></div>`;
+        $("#cpk").addEventListener("click", () => copy(key));
+        list();
+      } catch (err) { toast(friendly(err)); }
+      b.disabled = false;
+    });
+    $("#view").onclick = async e => {
+      const r = e.target.closest("[data-revoke]"); if (!r) return;
+      if (!confirm("Revoke this key? Anything using it stops working right away.")) return;
+      try { await store.revokeApiKey(r.dataset.revoke); toast("Key revoked"); list(); } catch (err) { toast(friendly(err)); }
+    };
   },
   analytics(){
     const m = S.m; if (!m.c.visitors) return $("#view").innerHTML = header("Analytics", "Where visitors come from and what they do.") + noData();
