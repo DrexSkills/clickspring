@@ -4,6 +4,7 @@
    and sign-ups from any form with an email field.
    Optional:  data-signup-path="/thank-you"  counts a sign-up when someone reaches that page.
               data-cs-signup on a form, or ClickSpring.signup() in your own code.
+              data-cs-signup="manual" on a form: don’t count on submit; you call ClickSpring.signup() on success.
               data-cs-ignore on anything you don't want tracked.
    Test mode: open your site with ?cs_debug=1 to see a badge confirming events are sent. */
 (function () {
@@ -91,6 +92,7 @@
   document.addEventListener("submit", function (ev) {
     var f = ev.target;
     if (!f || !f.querySelector || f.closest("[data-cs-ignore]")) return;
+    if (f.getAttribute("data-cs-signup") === "manual") return; // site calls ClickSpring.signup() itself after success
     if (f.hasAttribute("data-cs-signup") || f.querySelector("input[type=email],input[name*=email i],input[autocomplete=email]"))
       signup(f.getAttribute("data-cs-signup") || "form");
   }, true);

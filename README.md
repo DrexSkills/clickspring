@@ -40,7 +40,7 @@ Open `index.html` in a browser. With no Supabase keys it runs in demo mode: data
 ## How tracking works
 - Page views on every load, plus route changes on single-page sites.
 - Clicks on every button and link (add `data-cs-ignore` to skip, e.g. your nav).
-- Sign-ups: any form with an email field counts automatically. For embedded forms or redirects, set the thank-you page path in Tracking Setup (adds `data-signup-path`), or call `ClickSpring.signup()`.
+- Sign-ups: any form with an email field counts automatically. For embedded forms or redirects, set the thank-you page path in Tracking Setup (adds `data-signup-path`), or call `ClickSpring.signup()`. If your form validates or can fail, add `data-cs-signup="manual"` to it and call `ClickSpring.signup()` only on success.
 - Source from tracking links (`utm_source`, `cs_c`) or the referrer. First touch is remembered per browser.
 - Test mode: open your site with `?cs_debug=1`. A green badge confirms each event, and Tracking Setup shows it live. Test visits are kept out of the stats.
 - Post views are typed in by the user (v0.01 can't read Instagram/TikTok views).
