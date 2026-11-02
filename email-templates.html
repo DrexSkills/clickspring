@@ -1,0 +1,120 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ClickSpring email templates</title>
+<link rel="icon" href="favicon.svg"><meta name="robots" content="noindex">
+<style>body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#f3f6f3;color:#0b0f0c}main{max-width:760px;margin:0 auto;padding:24px 16px 60px}
+h1{font-size:26px;letter-spacing:-.03em}section{background:#fff;border:1px solid #e6ebe7;border-radius:18px;padding:18px;margin:0 0 18px}
+h2{margin:0 0 6px;font-size:18px}.where{color:#5d6a62;margin:0 0 14px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0}
+code{background:#f3f6f3;border-radius:8px;padding:8px 10px;font-size:14px;flex:1;min-width:0}
+button{border:0;border-radius:999px;background:#1fbf4f;color:#fff;font-weight:700;padding:10px 16px;font-size:14px;cursor:pointer}
+textarea{display:none}iframe{width:100%;height:520px;border:1px solid #e6ebe7;border-radius:12px;margin-top:10px;background:#f3f6f3}</style></head><body><main>
+<h1>ClickSpring email templates</h1><p class="where">Supabase → ClickSpring project → Authentication → Emails. Copy each subject and body into the matching template, then Save.</p>
+<section><h2>1. Confirm signup</h2>
+<div class="row"><code>You’re one click away from ClickSpring</code><button data-copy="s1">Copy subject</button></div>
+<div class="row"><button data-copy="b1">Copy email body</button></div><textarea id="s1">You’re one click away from ClickSpring</textarea><textarea id="b1">&lt;div style=&quot;margin:0;padding:32px 16px;background:#f3f6f3;font-family:-apple-system,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;color:#0b0f0c&quot;&gt;
+  &lt;div style=&quot;display:none;max-height:0;overflow:hidden;opacity:0&quot;&gt;Confirm your email and we’ll take you straight to your dashboard.&lt;/div&gt;
+  &lt;table role=&quot;presentation&quot; width=&quot;100%&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; style=&quot;max-width:520px;margin:0 auto;background:#ffffff;border-radius:20px;border:1px solid #e6ebe7&quot;&gt;
+    &lt;tr&gt;&lt;td style=&quot;padding:32px 32px 8px&quot;&gt;
+      &lt;table role=&quot;presentation&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;
+        &lt;td style=&quot;vertical-align:middle&quot;&gt;&lt;img src=&quot;https://drexskills.github.io/clickspring/email-logo.png&quot; width=&quot;36&quot; height=&quot;36&quot; alt=&quot;&quot; style=&quot;display:block;border:0&quot;&gt;&lt;/td&gt;
+        &lt;td style=&quot;vertical-align:middle;padding-left:10px;font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#0b0f0c&quot;&gt;ClickSpring&lt;/td&gt;
+      &lt;/tr&gt;&lt;/table&gt;
+    &lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style=&quot;padding:16px 32px 0&quot;&gt;
+      &lt;h1 style=&quot;margin:0 0 12px;font-size:26px;line-height:1.2;letter-spacing:-0.5px;color:#0b0f0c&quot;&gt;One click and you’re in&lt;/h1&gt;
+      &lt;p style=&quot;margin:0 0 14px;font-size:16px;line-height:1.55;color:#0b0f0c&quot;&gt;Hi {{ .Data.full_name }},&lt;/p&gt;
+      &lt;p style=&quot;margin:0 0 24px;font-size:16px;line-height:1.55;color:#5d6a62&quot;&gt;Welcome to ClickSpring. Confirm your email and we’ll take you straight to your dashboard, where you’ll see exactly where your visitors leave, and why they aren’t buying.&lt;/p&gt;
+      &lt;table role=&quot;presentation&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td style=&quot;border-radius:999px;background:#1fbf4f&quot;&gt;
+        &lt;a href=&quot;{{ .ConfirmationURL }}&quot; style=&quot;display:inline-block;padding:15px 30px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:999px&quot;&gt;Confirm &amp;amp; open my dashboard&lt;/a&gt;
+      &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+      &lt;p style=&quot;margin:24px 0 0;font-size:14px;line-height:1.55;color:#5d6a62&quot;&gt;This link works once and expires in 24 hours.&lt;/p&gt;
+    &lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style=&quot;padding:24px 32px 32px&quot;&gt;
+      &lt;p style=&quot;margin:0;padding-top:20px;border-top:1px solid #e6ebe7;font-size:13px;line-height:1.5;color:#8a968e&quot;&gt;Button not working? Copy this link into your browser:&lt;br&gt;&lt;a href=&quot;{{ .ConfirmationURL }}&quot; style=&quot;color:#12933a;word-break:break-all&quot;&gt;{{ .ConfirmationURL }}&lt;/a&gt;&lt;/p&gt;
+      &lt;p style=&quot;margin:16px 0 0;font-size:13px;line-height:1.5;color:#8a968e&quot;&gt;Didn’t sign up for ClickSpring? Ignore this email and nothing will happen.&lt;/p&gt;
+    &lt;/td&gt;&lt;/tr&gt;
+  &lt;/table&gt;
+  &lt;p style=&quot;max-width:520px;margin:16px auto 0;text-align:center;font-size:12px;color:#8a968e&quot;&gt;ClickSpring · Stop guessing why people aren’t buying.&lt;/p&gt;
+&lt;/div&gt;
+</textarea>
+<iframe title="Preview" srcdoc="&lt;div style=&quot;margin:0;padding:32px 16px;background:#f3f6f3;font-family:-apple-system,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;color:#0b0f0c&quot;&gt;
+  &lt;div style=&quot;display:none;max-height:0;overflow:hidden;opacity:0&quot;&gt;Confirm your email and we’ll take you straight to your dashboard.&lt;/div&gt;
+  &lt;table role=&quot;presentation&quot; width=&quot;100%&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; style=&quot;max-width:520px;margin:0 auto;background:#ffffff;border-radius:20px;border:1px solid #e6ebe7&quot;&gt;
+    &lt;tr&gt;&lt;td style=&quot;padding:32px 32px 8px&quot;&gt;
+      &lt;table role=&quot;presentation&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;
+        &lt;td style=&quot;vertical-align:middle&quot;&gt;&lt;img src=&quot;https://drexskills.github.io/clickspring/email-logo.png&quot; width=&quot;36&quot; height=&quot;36&quot; alt=&quot;&quot; style=&quot;display:block;border:0&quot;&gt;&lt;/td&gt;
+        &lt;td style=&quot;vertical-align:middle;padding-left:10px;font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#0b0f0c&quot;&gt;ClickSpring&lt;/td&gt;
+      &lt;/tr&gt;&lt;/table&gt;
+    &lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style=&quot;padding:16px 32px 0&quot;&gt;
+      &lt;h1 style=&quot;margin:0 0 12px;font-size:26px;line-height:1.2;letter-spacing:-0.5px;color:#0b0f0c&quot;&gt;One click and you’re in&lt;/h1&gt;
+      &lt;p style=&quot;margin:0 0 14px;font-size:16px;line-height:1.55;color:#0b0f0c&quot;&gt;Hi Drex,&lt;/p&gt;
+      &lt;p style=&quot;margin:0 0 24px;font-size:16px;line-height:1.55;color:#5d6a62&quot;&gt;Welcome to ClickSpring. Confirm your email and we’ll take you straight to your dashboard, where you’ll see exactly where your visitors leave, and why they aren’t buying.&lt;/p&gt;
+      &lt;table role=&quot;presentation&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td style=&quot;border-radius:999px;background:#1fbf4f&quot;&gt;
+        &lt;a href=&quot;#&quot; style=&quot;display:inline-block;padding:15px 30px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:999px&quot;&gt;Confirm &amp;amp; open my dashboard&lt;/a&gt;
+      &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+      &lt;p style=&quot;margin:24px 0 0;font-size:14px;line-height:1.55;color:#5d6a62&quot;&gt;This link works once and expires in 24 hours.&lt;/p&gt;
+    &lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style=&quot;padding:24px 32px 32px&quot;&gt;
+      &lt;p style=&quot;margin:0;padding-top:20px;border-top:1px solid #e6ebe7;font-size:13px;line-height:1.5;color:#8a968e&quot;&gt;Button not working? Copy this link into your browser:&lt;br&gt;&lt;a href=&quot;#&quot; style=&quot;color:#12933a;word-break:break-all&quot;&gt;#&lt;/a&gt;&lt;/p&gt;
+      &lt;p style=&quot;margin:16px 0 0;font-size:13px;line-height:1.5;color:#8a968e&quot;&gt;Didn’t sign up for ClickSpring? Ignore this email and nothing will happen.&lt;/p&gt;
+    &lt;/td&gt;&lt;/tr&gt;
+  &lt;/table&gt;
+  &lt;p style=&quot;max-width:520px;margin:16px auto 0;text-align:center;font-size:12px;color:#8a968e&quot;&gt;ClickSpring · Stop guessing why people aren’t buying.&lt;/p&gt;
+&lt;/div&gt;
+"></iframe></section>
+<section><h2>2. Reset password</h2>
+<div class="row"><code>Reset your ClickSpring password</code><button data-copy="s2">Copy subject</button></div>
+<div class="row"><button data-copy="b2">Copy email body</button></div><textarea id="s2">Reset your ClickSpring password</textarea><textarea id="b2">&lt;div style=&quot;margin:0;padding:32px 16px;background:#f3f6f3;font-family:-apple-system,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;color:#0b0f0c&quot;&gt;
+  &lt;div style=&quot;display:none;max-height:0;overflow:hidden;opacity:0&quot;&gt;Choose a new password for ClickSpring.&lt;/div&gt;
+  &lt;table role=&quot;presentation&quot; width=&quot;100%&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; style=&quot;max-width:520px;margin:0 auto;background:#ffffff;border-radius:20px;border:1px solid #e6ebe7&quot;&gt;
+    &lt;tr&gt;&lt;td style=&quot;padding:32px 32px 8px&quot;&gt;
+      &lt;table role=&quot;presentation&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;
+        &lt;td style=&quot;vertical-align:middle&quot;&gt;&lt;img src=&quot;https://drexskills.github.io/clickspring/email-logo.png&quot; width=&quot;36&quot; height=&quot;36&quot; alt=&quot;&quot; style=&quot;display:block;border:0&quot;&gt;&lt;/td&gt;
+        &lt;td style=&quot;vertical-align:middle;padding-left:10px;font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#0b0f0c&quot;&gt;ClickSpring&lt;/td&gt;
+      &lt;/tr&gt;&lt;/table&gt;
+    &lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style=&quot;padding:16px 32px 0&quot;&gt;
+      &lt;h1 style=&quot;margin:0 0 12px;font-size:26px;line-height:1.2;letter-spacing:-0.5px;color:#0b0f0c&quot;&gt;Let’s get you back in&lt;/h1&gt;
+      &lt;p style=&quot;margin:0 0 14px;font-size:16px;line-height:1.55;color:#0b0f0c&quot;&gt;Hi {{ .Data.full_name }},&lt;/p&gt;
+      &lt;p style=&quot;margin:0 0 24px;font-size:16px;line-height:1.55;color:#5d6a62&quot;&gt;Someone (hopefully you) asked to reset your ClickSpring password. Click below to choose a new one.&lt;/p&gt;
+      &lt;table role=&quot;presentation&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td style=&quot;border-radius:999px;background:#1fbf4f&quot;&gt;
+        &lt;a href=&quot;{{ .ConfirmationURL }}&quot; style=&quot;display:inline-block;padding:15px 30px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:999px&quot;&gt;Choose a new password&lt;/a&gt;
+      &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+      &lt;p style=&quot;margin:24px 0 0;font-size:14px;line-height:1.55;color:#5d6a62&quot;&gt;This link works once and expires in 1 hour.&lt;/p&gt;
+    &lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style=&quot;padding:24px 32px 32px&quot;&gt;
+      &lt;p style=&quot;margin:0;padding-top:20px;border-top:1px solid #e6ebe7;font-size:13px;line-height:1.5;color:#8a968e&quot;&gt;Button not working? Copy this link into your browser:&lt;br&gt;&lt;a href=&quot;{{ .ConfirmationURL }}&quot; style=&quot;color:#12933a;word-break:break-all&quot;&gt;{{ .ConfirmationURL }}&lt;/a&gt;&lt;/p&gt;
+      &lt;p style=&quot;margin:16px 0 0;font-size:13px;line-height:1.5;color:#8a968e&quot;&gt;Didn’t ask for this? Ignore this email and your password stays the same.&lt;/p&gt;
+    &lt;/td&gt;&lt;/tr&gt;
+  &lt;/table&gt;
+  &lt;p style=&quot;max-width:520px;margin:16px auto 0;text-align:center;font-size:12px;color:#8a968e&quot;&gt;ClickSpring · Stop guessing why people aren’t buying.&lt;/p&gt;
+&lt;/div&gt;
+</textarea>
+<iframe title="Preview" srcdoc="&lt;div style=&quot;margin:0;padding:32px 16px;background:#f3f6f3;font-family:-apple-system,&#x27;Segoe UI&#x27;,Roboto,Helvetica,Arial,sans-serif;color:#0b0f0c&quot;&gt;
+  &lt;div style=&quot;display:none;max-height:0;overflow:hidden;opacity:0&quot;&gt;Choose a new password for ClickSpring.&lt;/div&gt;
+  &lt;table role=&quot;presentation&quot; width=&quot;100%&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; style=&quot;max-width:520px;margin:0 auto;background:#ffffff;border-radius:20px;border:1px solid #e6ebe7&quot;&gt;
+    &lt;tr&gt;&lt;td style=&quot;padding:32px 32px 8px&quot;&gt;
+      &lt;table role=&quot;presentation&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;
+        &lt;td style=&quot;vertical-align:middle&quot;&gt;&lt;img src=&quot;https://drexskills.github.io/clickspring/email-logo.png&quot; width=&quot;36&quot; height=&quot;36&quot; alt=&quot;&quot; style=&quot;display:block;border:0&quot;&gt;&lt;/td&gt;
+        &lt;td style=&quot;vertical-align:middle;padding-left:10px;font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#0b0f0c&quot;&gt;ClickSpring&lt;/td&gt;
+      &lt;/tr&gt;&lt;/table&gt;
+    &lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style=&quot;padding:16px 32px 0&quot;&gt;
+      &lt;h1 style=&quot;margin:0 0 12px;font-size:26px;line-height:1.2;letter-spacing:-0.5px;color:#0b0f0c&quot;&gt;Let’s get you back in&lt;/h1&gt;
+      &lt;p style=&quot;margin:0 0 14px;font-size:16px;line-height:1.55;color:#0b0f0c&quot;&gt;Hi Drex,&lt;/p&gt;
+      &lt;p style=&quot;margin:0 0 24px;font-size:16px;line-height:1.55;color:#5d6a62&quot;&gt;Someone (hopefully you) asked to reset your ClickSpring password. Click below to choose a new one.&lt;/p&gt;
+      &lt;table role=&quot;presentation&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td style=&quot;border-radius:999px;background:#1fbf4f&quot;&gt;
+        &lt;a href=&quot;#&quot; style=&quot;display:inline-block;padding:15px 30px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:999px&quot;&gt;Choose a new password&lt;/a&gt;
+      &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+      &lt;p style=&quot;margin:24px 0 0;font-size:14px;line-height:1.55;color:#5d6a62&quot;&gt;This link works once and expires in 1 hour.&lt;/p&gt;
+    &lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style=&quot;padding:24px 32px 32px&quot;&gt;
+      &lt;p style=&quot;margin:0;padding-top:20px;border-top:1px solid #e6ebe7;font-size:13px;line-height:1.5;color:#8a968e&quot;&gt;Button not working? Copy this link into your browser:&lt;br&gt;&lt;a href=&quot;#&quot; style=&quot;color:#12933a;word-break:break-all&quot;&gt;#&lt;/a&gt;&lt;/p&gt;
+      &lt;p style=&quot;margin:16px 0 0;font-size:13px;line-height:1.5;color:#8a968e&quot;&gt;Didn’t ask for this? Ignore this email and your password stays the same.&lt;/p&gt;
+    &lt;/td&gt;&lt;/tr&gt;
+  &lt;/table&gt;
+  &lt;p style=&quot;max-width:520px;margin:16px auto 0;text-align:center;font-size:12px;color:#8a968e&quot;&gt;ClickSpring · Stop guessing why people aren’t buying.&lt;/p&gt;
+&lt;/div&gt;
+"></iframe></section>
+</main><script>document.addEventListener("click",async e=>{const b=e.target.closest("[data-copy]");if(!b)return;const t=document.getElementById(b.dataset.copy).value;
+try{await navigator.clipboard.writeText(t)}catch(_){const a=document.getElementById(b.dataset.copy);a.style.display="block";a.select();document.execCommand("copy");a.style.display="none"}
+const o=b.textContent;b.textContent="Copied ✓";setTimeout(()=>b.textContent=o,1500)});</script></body></html>
