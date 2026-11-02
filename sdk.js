@@ -1,5 +1,5 @@
 /*! ClickSpring JavaScript SDK v1 — works in Node 18+, Deno, Bun and edge runtimes.
- *  import { ClickSpring } from "https://drexskills.github.io/clickspring/sdk.js";
+ *  import { ClickSpring } from "https://clickspring.live/sdk.js";
  *  const cs = new ClickSpring(process.env.CLICKSPRING_KEY);
  *  const stats = await cs.stats({ days: 30 });
  *  Keep your key on the server. Never put it in browser code.

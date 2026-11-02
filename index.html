@@ -1458,12 +1458,12 @@ const VIEWS = {
     <div class="card" style="margin-bottom:16px"><h2>Your API keys <small>for ${esc(S.site.name)}</small></h2>
       ${store.live ? `<div id="newkey"></div><div id="keylist"><p class="muted">Loading…</p></div>
         <form id="kf" class="key-form" novalidate><label class="field" style="margin:0;flex:1">Key name<input name="name" maxlength="60" placeholder="e.g. My backend, Zapier, Stats script"></label><button class="btn green">Create key</button></form>`
-      : `<p class="muted" style="margin-top:0">API keys work on your live ClickSpring account at drexskills.github.io/clickspring. Demo mode has no server to call.</p>`}
+      : `<p class="muted" style="margin-top:0">API keys work on your live ClickSpring account at clickspring.live. Demo mode has no server to call.</p>`}
       <p class="muted" style="font-size:13px;margin-bottom:0">Keep keys secret: use them only on your server, never in website code. Each key only sees this website.</p></div>
     <div class="card" style="margin-bottom:16px"><h2>Try it <a class="btn quiet sm" href="docs.html#api" target="_blank" rel="noopener">Full API docs</a></h2>
       <pre class="code">curl "${base}/stats?days=30" \\
   -H "Authorization: Bearer cs_live_YOUR_KEY"</pre>
-      <pre class="code">import { ClickSpring } from "https://drexskills.github.io/clickspring/sdk.js";
+      <pre class="code">import { ClickSpring } from "https://clickspring.live/sdk.js";
 const cs = new ClickSpring(process.env.CLICKSPRING_KEY);
 const { totals } = await cs.stats({ days: 30 });
 await cs.signup({ visitorId, label: "paid plan" });  // from your server</pre></div>

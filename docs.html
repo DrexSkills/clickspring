@@ -37,7 +37,7 @@ table{width:100%;border-collapse:collapse;margin:10px 0 14px;font-size:14px;disp
 <p>That’s it. Page views, button clicks and sign-ups from email forms are tracked automatically.</p></section>
 
 <section id="install"><h2>Install the tracker</h2>
-<pre><code>&lt;script src="https://drexskills.github.io/clickspring/tracker.js"
+<pre><code>&lt;script src="https://clickspring.live/tracker.js"
   data-site="YOUR_SITE_ID"
   data-endpoint="https://kuzdzlbyxllovbcudzsy.supabase.co"
   data-key="YOUR_PUBLIC_KEY"
@@ -88,7 +88,7 @@ ClickSpring.track("click", "Pricing toggle");</code></pre>
 <div class="tabs"><button class="on" data-lang="curl">curl</button><button data-lang="js">JavaScript</button><button data-lang="py">Python</button></div>
 <pre data-lang="curl"><code>curl "https://kuzdzlbyxllovbcudzsy.supabase.co/functions/v1/api/stats?days=30" \
   -H "Authorization: Bearer $CLICKSPRING_KEY"</code></pre>
-<pre data-lang="js" hidden><code>import { ClickSpring } from "https://drexskills.github.io/clickspring/sdk.js";
+<pre data-lang="js" hidden><code>import { ClickSpring } from "https://clickspring.live/sdk.js";
 const cs = new ClickSpring(process.env.CLICKSPRING_KEY);
 const stats = await cs.stats({ days: 30 });
 console.log(stats.totals.conversion_rate);</code></pre>
@@ -156,7 +156,7 @@ print(r.json()["totals"])</code></pre>
 
 <section id="js-sdk"><h2>JavaScript SDK (server)</h2>
 <p>A tiny wrapper around the REST API for Node 18+, Deno, Bun and edge functions. No install needed.</p>
-<pre><code>import { ClickSpring } from "https://drexskills.github.io/clickspring/sdk.js";
+<pre><code>import { ClickSpring } from "https://clickspring.live/sdk.js";
 const cs = new ClickSpring(process.env.CLICKSPRING_KEY);
 
 await cs.me();                          // which website this key belongs to
