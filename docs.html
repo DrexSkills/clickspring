@@ -195,17 +195,27 @@ document.querySelectorAll("section[id], .ep[id]").forEach(s=>obs.observe(s));
   function get(){ try { return localStorage.getItem(K); } catch (e) { return null; } }
   function set(v){ try { localStorage.setItem(K, v); } catch (e) {} }
   function fonts(){ if (document.getElementById("cs-gf")) return; var l = document.createElement("link"); l.id = "cs-gf"; l.rel = "stylesheet"; l.href = FONT; document.head.appendChild(l); }
+  function analytics(){
+    if (document.getElementById("cs-an") || !/^https?:$/.test(location.protocol) || /claude|claudeusercontent/.test(location.hostname)) return;
+    var t = document.createElement("script"); t.id = "cs-an"; t.defer = true;
+    t.src = "tracker.js?v=5";
+    t.setAttribute("data-site", "0bb18186-0c21-4a6d-a560-5b1fdbf5a08c");
+    t.setAttribute("data-endpoint", "https://kuzdzlbyxllovbcudzsy.supabase.co");
+    t.setAttribute("data-key", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt1emR6bGJ5eGxsb3ZiY3VkenN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzE5NjEsImV4cCI6MjEwOTE0Nzk2MX0.2fOWgBbPz5WCrfE8DiXbcfLmD-NVt-mXCu2zsp4eBx8");
+    t.setAttribute("data-base-path", location.pathname.replace(/\/[^\/]*$/, ""));
+    document.head.appendChild(t);
+  }
   var box;
   function show(){
     if (!box) {
       box = document.createElement("div"); box.className = "cs-ck"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", "Cookie preferences");
-      box.innerHTML = '<b class="t">🍪 Cookies &amp; storage</b><p>We use essential browser storage to keep you signed in and remember your settings. With your OK, we also load our font from Google, which shares your IP address with Google. No advertising or tracking cookies. <a href="privacy.html#cookies">Learn more</a></p><div class="r"><button class="a" data-v="all">Accept all</button><button class="e" data-v="essential">Essential only</button></div>';
-      box.addEventListener("click", function(e){ var b = e.target.closest("[data-v]"); if (!b) return; set(b.dataset.v); if (b.dataset.v === "all") fonts(); box.hidden = true; });
+      box.innerHTML = '<b class="t">🍪 Cookies &amp; storage</b><p>We use essential browser storage to keep you signed in and remember your settings. With your OK, we also measure visits with ClickSpring itself (no cookies, no IP stored) and load our font from Google, which shares your IP address with Google. No advertising cookies. <a href="privacy.html#cookies">Learn more</a></p><div class="r"><button class="a" data-v="all">Accept all</button><button class="e" data-v="essential">Essential only</button></div>';
+      box.addEventListener("click", function(e){ var b = e.target.closest("[data-v]"); if (!b) return; set(b.dataset.v); if (b.dataset.v === "all") { fonts(); analytics(); } box.hidden = true; });
       document.body.appendChild(box);
     }
     box.hidden = false; var f = box.querySelector(".a"); if (f) f.focus({preventScroll: true});
   }
-  if (get() === "all") fonts();
+  if (get() === "all") { fonts(); analytics(); }
   document.addEventListener("click", function(e){ if (e.target.closest && e.target.closest("[data-cookie-settings]")) { e.preventDefault(); show(); } });
   function init(){ if (!get()) show(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();

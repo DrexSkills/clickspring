@@ -1079,7 +1079,7 @@ const topbarHTML = initial => `<header class="topbar">
 
 function shell(active){
   if (!$("#view")) {
-    $("#root").innerHTML = `<div class="app">${sideHTML(active)}
+    $("#root").innerHTML = `<div class="app" data-cs-ignore>${sideHTML(active)}
       <div class="main">${topbarHTML((store.userName() || S.site.owner || S.site.name || "?")[0].toUpperCase())}<div id="view"></div></div>
       <nav class="tabs">${TABS.map(([k, label, i]) => `<a data-k="${k}" href="#${k}">${ic(i, 22)}${label}</a>`).join("")}</nav>
       <div class="sheet" id="sheet"><nav>${NAV.map(([k, label, i]) => `<a class="nav-i" data-k="${k}" href="#${k}">${ic(i)}${label}</a>`).join("")}</nav></div></div>`;
@@ -1284,7 +1284,7 @@ async function afterLogin(site){
 function renderAuth(mode){
   const forms = {
     signup: `<h1>Create your account</h1><p class="sub">Free during beta. No card needed.</p>${flashHTML()}
-      <form id="af" novalidate><label class="field">Your name<input name="name" required autocomplete="name" placeholder="Hassen"></label>
+      <form id="af" novalidate data-cs-signup="manual"><label class="field">Your name<input name="name" required autocomplete="name" placeholder="Hassen"></label>
       <label class="field">Email<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
       <label class="field">Your website<input name="site" required inputmode="url" autocomplete="url" placeholder="yoursite.com"></label>
       ${pwField("password", "Password", "new-password")}<p class="hint">At least 8 characters.</p>
@@ -1293,18 +1293,18 @@ function renderAuth(mode){
       <p class="legal">By creating an account, you agree to the <a href="terms.html" target="_blank" rel="noopener">Terms</a> and <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</p></form>
       <p class="switch">Already have an account? <a href="#login">Log in</a></p>`,
     login: `<h1>Welcome back</h1><p class="sub">Log in to see what to fix today.</p>${flashHTML()}
-      <form id="af" novalidate><label class="field">Email<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
+      <form id="af" novalidate data-cs-ignore><label class="field">Email<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
       ${pwField("password", "Password", "current-password", `<a class="forgot" href="#forgot">Forgot password?</a>`)}
       <div class="alert err" id="err" role="alert" hidden></div>
       <button class="btn green wide lg">Log in</button></form>
       <p class="switch">New to ClickSpring? <a href="#signup">Create a free account</a></p>`,
     forgot: `<h1>Reset your password</h1><p class="sub">We’ll email you a link to set a new one.</p>
-      <form id="af" novalidate><label class="field">Email<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
+      <form id="af" novalidate data-cs-ignore><label class="field">Email<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
       <div class="alert err" id="err" role="alert" hidden></div>
       <button class="btn green wide lg">Send reset link</button></form>
       <p class="switch"><a href="#login">Back to log in</a></p>`,
     reset: `<h1>Set a new password</h1><p class="sub">Choose a password you don’t use anywhere else.</p>
-      <form id="af" novalidate>${pwField("password", "New password", "new-password")}${pwField("confirm", "Confirm new password", "new-password")}
+      <form id="af" novalidate data-cs-ignore>${pwField("password", "New password", "new-password")}${pwField("confirm", "Confirm new password", "new-password")}
       <div class="alert err" id="err" role="alert" hidden></div>
       <button class="btn green wide lg">Save new password</button></form>`
   };
@@ -1323,6 +1323,7 @@ function renderAuth(mode){
       if (mode === "signup") {
         const su = normUrl(fd.site);
         const r = await store.signUp({name: fd.name.trim(), email: fd.email.trim(), password: fd.password, site_url: su, site_name: new URL(su).hostname.replace(/^www\./, "")});
+        if (window.ClickSpring) window.ClickSpring.signup("account created");
         if (r.needsConfirm) return checkInbox(fd.email.trim(), fd.password);
         return afterLogin(null);
       }
@@ -1356,7 +1357,7 @@ function checkInbox(email, password){
 function renderStart(){
   const name = store.userName();
   authShell(`<span class="step-tag">Step 2 of 2</span><h1>Add your website</h1><p class="sub">${name ? `Nice to meet you, ${esc(name.split(" ")[0])}. ` : ""}This is the site your bio link points to. You’ll get your tracking script next.</p>
-    <form id="sf" novalidate><label class="field">Website or brand name<input name="name" required placeholder="My Studio"></label>
+    <form id="sf" novalidate data-cs-ignore><label class="field">Website or brand name<input name="name" required placeholder="My Studio"></label>
     <label class="field">Website address<input name="url" required inputmode="url" autocomplete="url" placeholder="yoursite.com"></label>
     <div class="alert err" id="err" role="alert" hidden></div>
     <button class="btn green wide lg">Create my dashboard</button></form>
@@ -1834,17 +1835,27 @@ window.addEventListener("hashchange", () => { if (!APP_ROUTES.has(location.hash.
   function get(){ try { return localStorage.getItem(K); } catch (e) { return null; } }
   function set(v){ try { localStorage.setItem(K, v); } catch (e) {} }
   function fonts(){ if (document.getElementById("cs-gf")) return; var l = document.createElement("link"); l.id = "cs-gf"; l.rel = "stylesheet"; l.href = FONT; document.head.appendChild(l); }
+  function analytics(){
+    if (document.getElementById("cs-an") || !/^https?:$/.test(location.protocol) || /claude|claudeusercontent/.test(location.hostname)) return;
+    var t = document.createElement("script"); t.id = "cs-an"; t.defer = true;
+    t.src = "tracker.js?v=5";
+    t.setAttribute("data-site", "0bb18186-0c21-4a6d-a560-5b1fdbf5a08c");
+    t.setAttribute("data-endpoint", "https://kuzdzlbyxllovbcudzsy.supabase.co");
+    t.setAttribute("data-key", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt1emR6bGJ5eGxsb3ZiY3VkenN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzE5NjEsImV4cCI6MjEwOTE0Nzk2MX0.2fOWgBbPz5WCrfE8DiXbcfLmD-NVt-mXCu2zsp4eBx8");
+    t.setAttribute("data-base-path", location.pathname.replace(/\/[^\/]*$/, ""));
+    document.head.appendChild(t);
+  }
   var box;
   function show(){
     if (!box) {
       box = document.createElement("div"); box.className = "cs-ck"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", "Cookie preferences");
-      box.innerHTML = '<b class="t">🍪 Cookies &amp; storage</b><p>We use essential browser storage to keep you signed in and remember your settings. With your OK, we also load our font from Google, which shares your IP address with Google. No advertising or tracking cookies. <a href="privacy.html#cookies">Learn more</a></p><div class="r"><button class="a" data-v="all">Accept all</button><button class="e" data-v="essential">Essential only</button></div>';
-      box.addEventListener("click", function(e){ var b = e.target.closest("[data-v]"); if (!b) return; set(b.dataset.v); if (b.dataset.v === "all") fonts(); box.hidden = true; });
+      box.innerHTML = '<b class="t">🍪 Cookies &amp; storage</b><p>We use essential browser storage to keep you signed in and remember your settings. With your OK, we also measure visits with ClickSpring itself (no cookies, no IP stored) and load our font from Google, which shares your IP address with Google. No advertising cookies. <a href="privacy.html#cookies">Learn more</a></p><div class="r"><button class="a" data-v="all">Accept all</button><button class="e" data-v="essential">Essential only</button></div>';
+      box.addEventListener("click", function(e){ var b = e.target.closest("[data-v]"); if (!b) return; set(b.dataset.v); if (b.dataset.v === "all") { fonts(); analytics(); } box.hidden = true; });
       document.body.appendChild(box);
     }
     box.hidden = false; var f = box.querySelector(".a"); if (f) f.focus({preventScroll: true});
   }
-  if (get() === "all") fonts();
+  if (get() === "all") { fonts(); analytics(); }
   document.addEventListener("click", function(e){ if (e.target.closest && e.target.closest("[data-cookie-settings]")) { e.preventDefault(); show(); } });
   function init(){ if (!get()) show(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
