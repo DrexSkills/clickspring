@@ -309,6 +309,8 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .switch a{color:var(--green-ink);font-weight:700;text-decoration:none}
 .tiny{color:var(--muted);font-size:12px;margin:0;text-align:center}
 .step-tag{display:inline-block;font-size:13px;font-weight:700;color:var(--green-ink);background:var(--green-soft);border-radius:999px;padding:4px 12px;margin-bottom:12px}
+.waiting{display:flex;align-items:center;gap:10px;font-weight:600;background:var(--surface);border-radius:12px;padding:12px 14px;margin:0 0 10px}
+.waiting .st-dot{margin:0}
 .mail-ic{width:56px;height:56px;border-radius:16px;background:var(--green-soft);color:var(--green-ink);display:grid;place-items:center;margin-bottom:16px}
 .auth-side{margin:14px;border-radius:30px;background:radial-gradient(120% 90% at 20% 10%,#2bd468 0%,#14a845 45%,#0a5a26 100%);color:#fff;padding:56px clamp(32px,5vw,72px);display:flex;flex-direction:column;justify-content:center;gap:26px;position:relative;overflow:hidden}
 .auth-side::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.05) 0 2px,transparent 2px 30px);pointer-events:none}
@@ -527,7 +529,7 @@ const DemoStore = {
   },
   userName(){ return this.user ? this.user.name : ""; },
   userEmail(){ return this.user ? this.user.email : ""; },
-  async signUp({name, email}){ this.account = {name, email: email.toLowerCase(), on: true}; this.user = this.account; this._saveUser(); return {needsConfirm: false}; },
+  async signUp({name, email, site_url, site_name}){ this.account = {name, email: email.toLowerCase(), site_url, site_name, on: true}; this.user = this.account; this._saveUser(); return {needsConfirm: false}; },
   async signIn({email}){
     if (!this.account || this.account.email !== email.toLowerCase()) throw new Error("Invalid login credentials");
     this.account.on = true; this.user = this.account; this._saveUser(); return this.data ? this.data.site : null;
@@ -556,14 +558,18 @@ const DemoStore = {
 const LiveStore = {
   sb: null, user: null, site: null, live: true,
   async init(){
-    this.sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, { auth: { flowType: "pkce", persistSession: true, detectSessionInUrl: true } });
-    const q = new URLSearchParams(location.search);
+    const q = new URLSearchParams(location.search), hp = new URLSearchParams(location.hash.slice(1));
+    const redirect = q.has("code") || q.has("error") || q.has("confirmed") || q.has("reset") || hp.has("access_token") || hp.has("error_description");
+    const err = hp.get("error_description") || q.get("error_description"), type = hp.get("type") || "";
+    // Implicit flow: the link in the email logs people in on whatever device they open it on.
+    this.sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, { auth: { flowType: "implicit", persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
     const { data } = await this.sb.auth.getSession();
     this.user = data.session ? data.session.user : null;
-    if (q.has("code") || q.has("error") || q.has("confirmed") || q.has("reset")) {
-      if (q.has("reset") && this.user) S.recovery = true;
-      else if (q.has("error_description")) S.flash = {type: "err", text: q.get("error_description")};
+    if (redirect) {
+      if ((q.has("reset") || type === "recovery") && this.user) S.recovery = true;
+      else if (err) S.flash = {type: "err", text: /expired|invalid/i.test(err) ? "That link has expired. Log in, or sign up again to get a new one." : err};
       else if (!this.user) S.flash = {type: "ok", text: "Your email is confirmed. Log in to continue."};
+      else S.welcome = true;
       history.replaceState(null, "", location.pathname + (S.recovery ? "#reset" : this.user ? "#dashboard" : "#login"));
     }
     this.sb.auth.onAuthStateChange((ev, session) => { this.user = session ? session.user : null; if (ev === "PASSWORD_RECOVERY") { S.recovery = true; location.hash = "#reset"; } });
@@ -577,8 +583,8 @@ const LiveStore = {
     const row = res.data && res.data[0];
     return this.site = row ? {id: row.id, name: row.name, url: row.url, owner: row.owner_name, created: Date.parse(row.created_at)} : null;
   },
-  async signUp({name, email, password}){
-    const { data, error } = await this.sb.auth.signUp({ email, password, options: { data: { full_name: name }, emailRedirectTo: BASE() + "?confirmed=1" } });
+  async signUp({name, email, password, site_url, site_name}){
+    const { data, error } = await this.sb.auth.signUp({ email, password, options: { data: { full_name: name, site_url, site_name }, emailRedirectTo: BASE() + "?confirmed=1" } });
     if (error) throw error;
     if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) throw new Error("User already registered");
     if (data.session) { this.user = data.user; return {needsConfirm: false}; }
@@ -1116,16 +1122,30 @@ function authShell(inner){
 }
 function showErr(msg){ const e = $("#err"); if (!e) return toast(msg); e.textContent = msg; e.hidden = false; }
 function flashHTML(){ const f = S.flash; S.flash = null; return f ? `<div class="alert ${f.type}" role="status">${esc(f.text)}</div>` : ""; }
+function normUrl(v){
+  v = String(v || "").trim(); if (!v) return null;
+  if (!/^https?:\/\//i.test(v)) v = "https://" + v;
+  try { const u = new URL(v); return /\./.test(u.hostname) ? u.origin + (u.pathname === "/" ? "" : u.pathname.replace(/\/$/, "")) : null; } catch (e) { return null; }
+}
+async function ensureSite(){
+  if (S.site || !store.user) return S.site;
+  const m = store.user.user_metadata || store.user, url = normUrl(m.site_url);
+  if (!url) return null;
+  try { S.site = await store.createSite({name: m.site_name || new URL(url).hostname, url, owner: store.userName()}); } catch (e) { console.warn(e); }
+  return S.site;
+}
 async function afterLogin(site){
   S.site = site; S.user = store.user;
+  if (!S.site) await ensureSite();
   $("#root").innerHTML = "";
-  location.hash = site ? "#dashboard" : "#start";
+  location.hash = S.site ? "#dashboard" : "#start";
 }
 function renderAuth(mode){
   const forms = {
     signup: `<h1>Create your account</h1><p class="sub">Free during beta. No card needed.</p>${flashHTML()}
       <form id="af" novalidate><label class="field">Your name<input name="name" required autocomplete="name" placeholder="Hassen"></label>
       <label class="field">Email<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
+      <label class="field">Your website<input name="site" required inputmode="url" autocomplete="url" placeholder="yoursite.com"></label>
       ${pwField("password", "Password", "new-password")}<p class="hint">At least 8 characters.</p>
       <div class="alert err" id="err" role="alert" hidden></div>
       <button class="btn green wide lg">Create free account</button></form>
@@ -1153,13 +1173,15 @@ function renderAuth(mode){
     const fd = Object.fromEntries(new FormData(f)); const b = f.querySelector("button.btn"), label = b.textContent;
     if (fd.email !== undefined && !/^\S+@\S+\.\S+$/.test(fd.email.trim())) return showErr("Enter a valid email address.");
     if (fd.name !== undefined && !fd.name.trim()) return showErr("Enter your name.");
+    if (fd.site !== undefined && !normUrl(fd.site)) return showErr("Enter your website address, like yoursite.com.");
     if (fd.password !== undefined && fd.password.length < 8) return showErr("Use a password with at least 8 characters.");
     if (mode === "reset" && fd.password !== fd.confirm) return showErr("The two passwords don’t match.");
     b.disabled = true; b.textContent = "One moment…";
     try {
       if (mode === "signup") {
-        const r = await store.signUp({name: fd.name.trim(), email: fd.email.trim(), password: fd.password});
-        if (r.needsConfirm) return checkInbox(fd.email.trim());
+        const su = normUrl(fd.site);
+        const r = await store.signUp({name: fd.name.trim(), email: fd.email.trim(), password: fd.password, site_url: su, site_name: new URL(su).hostname.replace(/^www\./, "")});
+        if (r.needsConfirm) return checkInbox(fd.email.trim(), fd.password);
         return afterLogin(null);
       }
       if (mode === "login") return afterLogin(await store.signIn({email: fd.email.trim(), password: fd.password}));
@@ -1168,11 +1190,24 @@ function renderAuth(mode){
     } catch (err) { showErr(friendly(err)); b.disabled = false; b.textContent = label; }
   });
 }
-function checkInbox(email){
-  $(".auth-card").innerHTML = `<div class="mail-ic">${ic("bell", 28)}</div><h1>Check your inbox</h1>
-    <p class="sub">We sent a confirmation link to <b>${esc(email)}</b>. Click it to activate your account. It can take a minute, and might land in spam.</p>
-    <button class="btn green wide lg" id="resend">Resend email</button><p class="switch"><a href="#login">Back to log in</a></p>`;
+function checkInbox(email, password){
+  $(".auth-card").innerHTML = `<div class="mail-ic">${ic("bell", 28)}</div><h1>Confirm your email</h1>
+    <p class="sub">We sent a link to <b>${esc(email)}</b>. Open it on any device. This page continues to your dashboard by itself once you confirm.</p>
+    <div class="waiting"><span class="st-dot wait"></span>Waiting for you to confirm…</div>
+    <p class="hint" style="margin:0 0 16px">Can’t find it? Check spam or promotions. It comes from ClickSpring.</p>
+    <button class="btn quiet wide" id="resend">Resend email</button><p class="switch"><a href="#login">Back to log in</a></p>`;
   $("#resend").addEventListener("click", async e => { const b = e.currentTarget; b.disabled = true; try { await store.resend(email); toast("Email sent again"); } catch (err) { toast(friendly(err)); } setTimeout(() => b.disabled = false, 30000); });
+  let busy = false, tries = 0;
+  const check = async () => {
+    if (!$("#resend")) return stop();
+    if (busy || ++tries > 120) return; busy = true;
+    try { const site = await store.signIn({email, password}); stop(); toast("Email confirmed. Welcome to ClickSpring!"); await afterLogin(site); }
+    catch (err) { /* not confirmed yet */ }
+    busy = false;
+  };
+  const timer = setInterval(check, 5000), onVis = () => { if (!document.hidden) check(); };
+  document.addEventListener("visibilitychange", onVis);
+  function stop(){ clearInterval(timer); document.removeEventListener("visibilitychange", onVis); }
 }
 
 /* ---------- Website setup (after sign up) ---------- */
@@ -1567,7 +1602,8 @@ document.addEventListener("click", e => {
 document.addEventListener("change", e => { if (e.target.matches(".range-sel")) { S.days = +e.target.value; route(); } });
 window.addEventListener("hashchange", () => { if (!APP_ROUTES.has(location.hash.slice(1))) $("#root").innerHTML = ""; route(); });
 (async () => {
-  try { S.site = await store.init(); } catch (e) { console.error(e); }
+  try { S.site = await store.init(); if (store.user && !S.site) await ensureSite(); } catch (e) { console.error(e); }
+  if (S.welcome) setTimeout(() => toast("Email confirmed. Welcome to ClickSpring!"), 600);
   if (store.live && store.user && !location.hash && !S.recovery) { location.hash = S.site ? "#dashboard" : "#start"; return; }
   route();
 })();
