@@ -444,6 +444,40 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .newkey{background:var(--green-soft);border-radius:14px;padding:14px;margin-bottom:12px}
 .newkey .linkbox{margin-top:8px}
 .newkey code{background:var(--card)}
+/* ---------- Why They Leave: centerpiece ---------- */
+.why-top .eyebrow-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.eyebrow{display:inline-block;font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--green-ink)}
+.why-top > .eyebrow-row .eyebrow{font-size:14px}
+.why-hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:28px;padding:28px;margin-bottom:22px;border-width:2px}
+@container (max-width:820px){.why-hero{grid-template-columns:1fr;padding:22px}}
+.why-hero h1{font-size:clamp(24px,3.4cqi,34px);line-height:1.15;letter-spacing:-.035em;margin:10px 0 10px}
+.why-hero p{color:var(--muted);margin:0 0 14px;font-size:16px}
+.hero-ev{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px}
+.hero-ev span{background:var(--surface);border-radius:10px;padding:6px 10px;font-size:13px;font-weight:600}
+.hero-ev .conf{border-radius:999px}
+.hero-gain{display:inline-flex;gap:8px;align-items:center;font-weight:600;color:var(--green-ink)}
+.why-r{background:var(--surface);border-radius:16px;padding:18px}
+.why-r-h{font-weight:700;margin:0 0 12px}
+.why-sub{font-size:18px;letter-spacing:-.02em;margin:26px 0 12px}
+.ex{margin-top:14px;border-top:1px dashed var(--line);padding-top:10px}
+.ex summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--green-ink)}
+.ex .jrow{padding:10px 0}
+.ex-more{display:inline-block;margin-top:6px;font-weight:700;font-size:14px;color:var(--green-ink);text-decoration:none}
+/* landing section */
+.why-sec{position:relative;z-index:1;max-width:1320px;margin:0 auto 72px;padding:0 32px}
+.why-intro{max-width:720px;margin-bottom:26px}
+.why-intro h2{font-size:clamp(30px,3.6vw,46px);line-height:1.08;letter-spacing:-.04em;margin:16px 0 12px}
+.why-intro p{font-size:18px;color:var(--muted);margin:0}
+.why-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:26px}
+@media(max-width:900px){.why-cards{grid-template-columns:1fr}.why-sec{padding:0 20px}}
+.wc{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;position:relative;box-shadow:var(--shadow)}
+.wc::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--c,var(--bad))}
+.wc .badge{background:rgba(212,52,44,.1);color:var(--bad)}
+.wc h3{font-size:18px;line-height:1.3;letter-spacing:-.02em;margin:8px 0 10px}
+.wc ul{list-style:none;padding:0;margin:0 0 12px;display:flex;flex-wrap:wrap;gap:6px}
+.wc li{background:var(--surface);border-radius:10px;padding:5px 10px;font-size:13px;font-weight:600}
+.wc .try{background:var(--green-soft);border-radius:12px;padding:10px 12px;font-size:14px;margin:0}
+.wc .try b{color:var(--green-ink)}
 </style>
 </head>
 <body>
@@ -592,7 +626,7 @@ const LiveStore = {
       else if (err) S.flash = {type: "err", text: /expired|invalid/i.test(err) ? "That link has expired. Log in, or sign up again to get a new one." : err};
       else if (!this.user) S.flash = {type: "ok", text: "Your email is confirmed. Log in to continue."};
       else S.welcome = true;
-      history.replaceState(null, "", location.pathname + (S.recovery ? "#reset" : this.user ? "#dashboard" : "#login"));
+      history.replaceState(null, "", location.pathname + (S.recovery ? "#reset" : this.user ? "#advisor" : "#login"));
     }
     this.sb.auth.onAuthStateChange((ev, session) => { this.user = session ? session.user : null; if (ev === "PASSWORD_RECOVERY") { S.recovery = true; location.hash = "#reset"; } });
     return this.user ? this.loadSite() : null;
@@ -914,9 +948,9 @@ function measureFix(fix, events){
 }
 
 const estHTML = t => t.estText ? `<div class="est">${ic("trend", 18)} ${esc(t.estText)}</div>` : t.gain > 0 ? `<div class="est">${ic("trend", 18)} Could win back about ${fmt(t.gain)} sign-up${t.gain === 1 ? "" : "s"} per ${S.days} days</div>` : "";
-function tipHTML(t){
+function tipHTML(t, i){
   const fix = (S.fixes || []).find(f => f.tip_key === t.key);
-  return `<article class="tip ${t.lvl}" data-key="${esc(t.key)}">
+  return `<article class="tip ${t.lvl}" id="tip-${i}" data-key="${esc(t.key)}">
     <div class="tip-h"><span class="badge">${esc(t.tag)}</span>${t.conf ? `<span class="conf ${t.conf.cls}" title="Based on ${fmt(t.conf.n)} people">${t.conf.level} · ${fmt(t.conf.n)} ${t.conf.n === 1 ? "person" : "people"}</span>` : ""}</div>
     <h3>${esc(t.title)}</h3>
     ${t.evidence ? `<ul class="evid">${t.evidence.map(e => `<li>${esc(e)}</li>`).join("")}</ul>` : ""}
@@ -924,10 +958,53 @@ function tipHTML(t){
     <p>${esc(t.body)}</p>
     ${t.steps ? `<div class="fix"><b>What to try</b><ol>${t.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol></div>` : ""}
     ${estHTML(t)}
+    ${examplesHTML(t, i)}
     <div class="tip-a">${t.href ? `<a class="btn sm" href="${t.href}">${esc(t.cta)}</a>` : ""}
       ${["setup", "low", "good"].includes(t.lvl) ? "" : fix ? `<span class="testing">${ic("cal", 14)} Testing your change since ${dShort(new Date(fix.created))}</span>` : `<button class="btn quiet sm" data-fix="${esc(t.key)}">I made this change</button>`}</div>
     <form class="fix-form" data-for="${esc(t.key)}" hidden><label class="field">What did you change? (optional)<input name="note" maxlength="300" placeholder="e.g. Moved the button above the fold"></label><div class="cta-row"><button class="btn green sm">Start measuring</button><button type="button" class="btn quiet sm" data-cancel>Cancel</button></div></form>
   </article>`;
+}
+
+/* ---------- Why They Leave: hero + real visitors behind each reason ---------- */
+function journeyRow(j){
+  const st = j.steps.length > 8 ? [...j.steps.slice(0, 3), null, ...j.steps.slice(-4)] : j.steps;
+  const dev = (j.steps.find(e => e.d) || {}).d;
+  const chip = e => e.t === "pageview" ? `<span class="chip">${esc(pageName(e.p || "/"))}</span>` : e.t === "click" ? `<span class="chip ck2">→ ${esc((e.l || "click").slice(0, 28))}</span>` : `<span class="chip ok">Signed up ✓</span>`;
+  return `<div class="jrow"><div class="jmeta"><span><span class="dot" style="background:${srcColor(j.s)}"></span>${esc(srcName(j.s))}</span><span class="muted">${dev ? (dev === "mobile" ? "Phone" : dev === "tablet" ? "Tablet" : "Computer") + " · " : ""}${ago(j.end)}</span></div>
+    <div class="chips">${st.map(e => e ? chip(e) : `<span class="chip more">+${j.steps.length - 7}</span>`).join("")}</div>
+    <div class="jout ${j.converted ? "ok" : ""}">${j.converted ? "Became a customer" : `Left on ${esc(pageName(j.exit))}`}</div></div>`;
+}
+function examplesFor(t, m){
+  const L = (m.journeys || []).filter(j => !j.converted), dev = j => (j.steps.find(e => e.d) || {}).d, k = t.key || "";
+  let pick = [];
+  if (k === "cta") pick = L.filter(j => !j.steps.some(e => e.t === "click"));
+  else if (k === "bounce") pick = L.filter(j => j.steps.length === 1);
+  else if (k === "form" || k === "track-signup") pick = L.filter(j => j.steps.some(e => e.t === "click"));
+  else if (k.startsWith("exit:")) pick = L.filter(j => j.exit === k.slice(5));
+  else if (k === "mobile") pick = L.filter(j => dev(j) === "mobile");
+  else if (k.startsWith("src:")) pick = L.filter(j => j.s === k.slice(4));
+  else if (k.startsWith("camp:")) pick = L.filter(j => j.steps.some(e => e.c === k.slice(5)));
+  else if (k.startsWith("btn:")) pick = L.filter(j => j.steps.some(e => e.t === "click" && e.l === k.slice(4)));
+  else if (k === "trend") pick = L;
+  return {list: pick.slice().sort((a, b) => b.end - a.end).slice(0, 3), total: pick.length};
+}
+function examplesHTML(t, i){
+  const ex = examplesFor(t, S.m); if (!ex.total) return "";
+  return `<details class="ex" ${i === 0 ? "open" : ""}><summary>See the real visitors behind this <span class="muted">· ${fmt(ex.total)} ${ex.total === 1 ? "person" : "people"}</span></summary>
+    ${ex.list.map(journeyRow).join("")}${ex.total > 3 ? `<a class="ex-more" href="#journeys">See all visitor journeys →</a>` : ""}</details>`;
+}
+function whyHero(m, tips){
+  const V = m.c.visitors, top = tips.find(t => !["low", "good", "setup"].includes(t.lvl)) || tips.find(t => t.lvl === "setup" && t.key !== "setup");
+  let eyebrow, title, body, extra = "", cta = "";
+  if (!V) { eyebrow = "Waiting for your first visitors"; title = "As soon as people visit, this page tells you why they leave."; body = "Add the tracking script to your site, then share your link."; cta = `<a class="btn green lg" href="#install">Set up tracking</a>`; }
+  else if (top) {
+    eyebrow = "The main reason people aren’t buying"; title = top.title; body = top.body;
+    extra = `<div class="hero-ev">${(top.evidence || []).map(e => `<span>${esc(e)}</span>`).join("")}${top.conf ? `<span class="conf ${top.conf.cls}">${top.conf.level}</span>` : ""}</div>`;
+    cta = `<button class="btn green lg" data-scrollto="tip-0">See what to do</button>${top.gain > 0 ? `<span class="hero-gain">${ic("trend", 18)} Fixing this could win back about ${fmt(top.gain)} sign-up${top.gain === 1 ? "" : "s"}</span>` : ""}`;
+  } else if (V < 30) { eyebrow = "Early days"; title = `${fmt(V)} visitor${V === 1 ? "" : "s"} so far. Not enough to know why yet.`; body = "Nothing stands out yet. Patterns get reliable around 30 visitors."; cta = `<a class="btn green lg" href="#campaigns">Get more visitors</a>`; }
+  else { eyebrow = "Good news"; title = `No big leak right now: ${pctStr(m.c.conv)} of visitors sign up.`; body = "Nothing stands out as broken. Your next lever is more of the right traffic."; cta = `<a class="btn green lg" href="#campaigns">Grow traffic</a>`; }
+  return `<section class="why-hero card"><div class="why-l"><span class="eyebrow">${esc(eyebrow)}</span><h1>${esc(title)}</h1><p>${esc(body)}</p>${extra}<div class="cta-row" style="align-items:center">${cta}</div></div>
+    <div class="why-r"><p class="why-r-h">Where people drop off <span class="muted">· last ${m.days} days</span></p>${funnelHTML(m.c)}</div></section>`;
 }
 
 /* ---------- Charts ---------- */
@@ -958,8 +1035,8 @@ function funnelHTML(s){
 
 /* ---------- App state & routing ---------- */
 const S = { site: null, days: 30, metric: "visitors", m: null, events: [], campaigns: [], sim: {v: uid(), log: []} };
-const NAV = [["dashboard","Dashboard","home"],["analytics","Analytics","chart"],["advisor","Why They Leave","bulb"],["funnel","Funnels","funnel"],["journeys","Visitor Journeys","route"],["campaigns","Campaign Links","link"],["install","Tracking Setup","code"],["developers","API Keys","key"],["account","Settings","gear"]];
-const TABS = [["dashboard","Home","home"],["journeys","Journeys","route"],["advisor","Why","bulb"],["campaigns","Links","link"],["account","Profile","user"]];
+const NAV = [["advisor","Why They Leave","bulb"],["dashboard","Dashboard","home"],["journeys","Visitor Journeys","route"],["funnel","Funnels","funnel"],["analytics","Analytics","chart"],["campaigns","Campaign Links","link"],["install","Tracking Setup","code"],["developers","API Keys","key"],["account","Settings","gear"]];
+const TABS = [["advisor","Why","bulb"],["dashboard","Numbers","home"],["journeys","Journeys","route"],["campaigns","Links","link"],["account","Profile","user"]];
 const APP_ROUTES = new Set(NAV.map(n => n[0]));
 
 async function loadData(){
@@ -975,9 +1052,9 @@ async function route(){
   window.scrollTo(0, 0);
   clearInterval(S.poll);
   if (r === "home") return renderLanding();
-  if (["login","signup","forgot"].includes(r)) { if (store.user) { location.hash = S.site ? "#dashboard" : "#start"; return; } return renderAuth(r); }
+  if (["login","signup","forgot"].includes(r)) { if (store.user) { location.hash = S.site ? "#advisor" : "#start"; return; } return renderAuth(r); }
   if (r === "reset") { if (!store.user) { location.hash = "#login"; return; } return renderAuth("reset"); }
-  if (r === "start") { if (!store.user) { location.hash = "#login"; return; } if (S.site) { location.hash = "#dashboard"; return; } return renderStart(); }
+  if (r === "start") { if (!store.user) { location.hash = "#login"; return; } if (S.site) { location.hash = "#advisor"; return; } return renderStart(); }
   if (!APP_ROUTES.has(r)) { location.hash = "#home"; return; }
   if (!store.user) { location.hash = "#login"; return; }
   if (!S.site) { location.hash = "#start"; return; }
@@ -988,7 +1065,7 @@ async function route(){
   const top = advise(S.m)[0]; const pip = $("#pip"); if (pip) pip.hidden = !(top && top.lvl === "high");
   VIEWS[r]();
   S.seq = (S.seq || 0) + 1;
-  if (r === "dashboard" && !Tour.active && !tourSeen()) setTimeout(() => { if (location.hash === "#dashboard" && !Tour.active) Tour.start(); }, 900);
+  if (r === "advisor" && !Tour.active && !tourSeen()) setTimeout(() => { if (location.hash === "#advisor" && !Tour.active) Tour.start(); }, 900);
 }
 
 const sideHTML = active => `<aside class="side"><a class="logo" href="#home">${LOGO(34)}ClickSpring</a>${siteSwitch()}
@@ -1070,8 +1147,8 @@ function renderLanding(){
     <path d="M300 1000C340 760 520 600 900 520V1000Z" style="fill:var(--green-soft);opacity:.75"/>
     <path d="M120 760C260 640 520 560 900 600V700C560 660 330 720 190 820Z" style="fill:var(--green-wash)"/></svg>
   <header class="nav"><a class="logo" href="#home" style="font-size:30px">${LOGO(44)}ClickSpring</a>
-    <nav class="links"><button data-scroll="product">Product</button><button data-scroll="pricing">Pricing</button><a href="docs.html" style="font-weight:500;font-size:16px;text-decoration:none;padding:6px 0">Docs</a><button data-scroll="about">About</button></nav>
-    <div class="nav-r"><a class="signin" href="${store.user ? "#dashboard" : "#login"}">${store.user ? "Dashboard" : "Sign In"}</a><a class="btn" href="${store.user ? "#dashboard" : "#signup"}">Get Started Free ${ic("arrow", 16)}</a></div></header>
+    <nav class="links"><button data-scroll="why">Why They Leave</button><button data-scroll="product">Product</button><button data-scroll="pricing">Pricing</button><a href="docs.html" style="font-weight:500;font-size:16px;text-decoration:none;padding:6px 0">Docs</a><button data-scroll="about">About</button></nav>
+    <div class="nav-r"><a class="signin" href="${store.user ? "#advisor" : "#login"}">${store.user ? "Open app" : "Sign In"}</a><a class="btn" href="${store.user ? "#advisor" : "#signup"}">Get Started Free ${ic("arrow", 16)}</a></div></header>
   <section class="hero">
     <div>
       <span class="pill">For founders who need customers, not just traffic</span>
@@ -1099,6 +1176,16 @@ function renderLanding(){
         <div style="margin-bottom:14px">${kpiCard({label: "Sign-Ups", value: "3.9K", d: 32, series: wave(20, 9, 9)})}</div>
         ${insightHTML({title: "TikTok visitors leave 4× faster than Google visitors", short: "Your page doesn’t match the video they just watched."})}</div>
       <div class="ph-tabs">${[["Home","home"],["Journeys","route"],["Why","bulb"],["Profile","user"]].map(([l, i], n) => `<span class="${n ? "" : "on"}">${ic(i, 20)}${l}</span>`).join("")}</div></div>
+  </section>
+  <section class="why-sec" id="why">
+    <div class="why-intro"><span class="pill">Why They Leave</span><h2>One page tells you why people leave, and what to fix first.</h2>
+      <p>Not more charts to stare at. Real reasons, backed by what your visitors actually did, ranked by how many customers each one costs you.</p></div>
+    <div class="why-cards">
+      <article class="wc"><span class="badge">Exit page</span><h3>62% of people who don’t sign up leave on /pricing</h3><ul><li>120 of 194 who left were last on /pricing</li><li>Customers read your FAQ first: 58% vs 9%</li></ul><p class="try"><b>What to try: </b>Answer the price question on /pricing and add one clear button.</p></article>
+      <article class="wc" style="--c:var(--warn)"><span class="badge" style="background:rgba(194,122,6,.14);color:var(--warn)">Phones</span><h3>Phone visitors sign up 3.4× less than computer visitors</h3><ul><li>81% of your visitors are on phones</li><li>Phones: 1.2% sign up · Computers: 4.1%</li></ul><p class="try"><b>What to try: </b>Make your main button visible without scrolling on a phone.</p></article>
+      <article class="wc"><span class="badge">Sign-up form</span><h3>74% of people who click quit before signing up</h3><ul><li>96 clicked “Get started”</li><li>25 signed up</li></ul><p class="try"><b>What to try: </b>Ask for an email only, and put one line of proof next to the button.</p></article>
+    </div>
+    <div class="cta-row"><a class="btn lg" href="#signup">Find out why yours leave ${ic("arrow", 18)}</a><button class="btn ghost lg" data-demo>See it with sample data</button></div>
   </section>
   <section class="steps" id="how">
     <div class="step"><span class="n">1</span><h3>Add one line to your site</h3><p>It follows each visitor: where they came from, what they clicked, and where they left.</p></div>
@@ -1147,7 +1234,7 @@ async function openDemo(){
   if (!DemoStore.user) { DemoStore.account = {name: "Hassen", email: "demo@clickspring.app", on: true}; DemoStore.user = DemoStore.account; DemoStore._saveUser(); }
   if (!site) site = await DemoStore.createSite({name: "Hassen’s Studio", url: "https://example.com", owner: "Hassen"});
   if (!DemoStore.data.events.length) DemoStore.seed();
-  S.site = site; $("#root").innerHTML = ""; if (location.hash === "#dashboard") route(); else location.hash = "#dashboard";
+  S.site = site; $("#root").innerHTML = ""; if (location.hash === "#advisor") route(); else location.hash = "#advisor";
 }
 
 /* ---------- Sign up / log in ---------- */
@@ -1196,7 +1283,7 @@ async function afterLogin(site){
   S.site = site; S.user = store.user;
   if (!S.site) await ensureSite();
   $("#root").innerHTML = "";
-  location.hash = S.site ? "#dashboard" : "#start";
+  location.hash = S.site ? "#advisor" : "#start";
 }
 function renderAuth(mode){
   const forms = {
@@ -1335,11 +1422,7 @@ const VIEWS = {
   journeys(){
     const m = S.m;
     if (!m.c.visitors) return $("#view").innerHTML = header("Visitor Journeys", "Follow real visitors from first click to sign-up, or to the moment they left.") + noData();
-    const chip = e => e.t === "pageview" ? `<span class="chip">${esc(pageName(e.p || "/"))}</span>` : e.t === "click" ? `<span class="chip ck2">→ ${esc((e.l || "click").slice(0, 28))}</span>` : `<span class="chip ok">Signed up ✓</span>`;
-    const jHTML = j => { const st = j.steps.length > 8 ? [...j.steps.slice(0, 3), null, ...j.steps.slice(-4)] : j.steps;
-      return `<div class="jrow"><div class="jmeta"><span><span class="dot" style="background:${srcColor(j.s)}"></span>${esc(srcName(j.s))}</span><span class="muted">${ago(j.end)}</span></div>
-        <div class="chips">${st.map(e => e ? chip(e) : `<span class="chip more">+${j.steps.length - 7}</span>`).join("")}</div>
-        <div class="jout ${j.converted ? "ok" : ""}">${j.converted ? "Became a customer" : `Left on ${esc(pageName(j.exit))}`}</div></div>`; };
+    const jHTML = journeyRow;
     const recent = m.journeys.slice().sort((a, b) => b.end - a.end).slice(0, 15);
     $("#view").innerHTML = header("Visitor Journeys", "Follow real visitors from first click to sign-up, or to the moment they left.") + `
     <div class="grid kpis">
@@ -1426,12 +1509,14 @@ ClickSpring.track("click", "Pricing toggle"); // send any event</pre></div>`;
         <div class="fx-cmp"><div><small>Before</small><strong>${pctStr(r.before.conv)}</strong><span>${fmt(r.before.signups)} of ${fmt(r.before.visitors)}</span></div><div class="fx-arrow">${ic("arrow", 18)}</div>
         <div><small>After</small><strong>${pctStr(r.after.conv)}</strong><span>${fmt(r.after.signups)} of ${fmt(r.after.visitors)}</span></div></div>
         <p class="fx-v">${esc(r.text)}</p></div>`; };
-    $("#view").innerHTML = header("Why They Leave", "Every card comes from what your visitors actually did, ranked by how many customers fixing it could win back.") + `
+    $("#view").innerHTML = `<div class="why-top"><div class="eyebrow-row"><span class="eyebrow">Why They Leave</span>${rangeHTML()}</div>${whyHero(S.m, tips)}</div>` + `
     ${fixes.length ? `<div class="card" style="margin-bottom:16px"><h2>Changes you’re testing <small>sign-up rate before vs after</small></h2><div class="fx-list">${fixes.map(fixHTML).join("")}</div></div>` : ""}
     ${S.m.c.visitors ? `<div class="ai-box"><b>Your plan for this week</b><p>Turns your funnel, exit pages, devices and visitor journeys into 3 steps, in order.</p><button class="btn green sm" style="color:#05260f;background:#2bd468" id="ask">Write my plan</button><div id="aiout"></div></div>` : ""}
-    ${tips.map(tipHTML).join("")}`;
+    <h2 class="why-sub">${tips.some(t => ["high", "med"].includes(t.lvl)) ? "Every reason, ranked by how many customers it costs you" : "What we can see so far"}</h2>
+    ${tips.map((t, k) => tipHTML(t, k)).join("")}`;
     const v = $("#view");
     v.onclick = async e => {
+      const sc = e.target.closest("[data-scrollto]"); if (sc) { const el = document.getElementById(sc.dataset.scrollto); if (el) el.scrollIntoView({behavior: calmMotion() ? "auto" : "smooth", block: "start"}); return; }
       const fb = e.target.closest("[data-fix]");
       if (fb) { const f = v.querySelector(`.fix-form[data-for="${CSS.escape(fb.dataset.fix)}"]`); f.hidden = false; fb.hidden = true; f.querySelector("input").focus(); return; }
       const cb = e.target.closest("[data-cancel]");
@@ -1563,7 +1648,7 @@ ClickSpring.track("click", "Pricing toggle"); // send any event</pre></div>`;
       try { S.site = await store.createSite({name: fd.name.trim(), url, owner: site.owner || store.userName()}); $("#root").innerHTML = ""; toast("Website added"); location.hash = "#install"; } catch (err) { toast(friendly(err)); }
     });
     on("out", async () => { await store.signOut(); S.site = null; if (demoSession) { try { sessionStorage.removeItem("cs_demo"); } catch (e) {} location.hash = "#login"; return location.reload(); } location.hash = "#login"; });
-    on("seed", () => { if (confirm("Replace your demo data with sample data?")) { DemoStore.seed(); toast("Sample data loaded"); location.hash = "#dashboard"; } });
+    on("seed", () => { if (confirm("Replace your demo data with sample data?")) { DemoStore.seed(); toast("Sample data loaded"); location.hash = "#advisor"; } });
     on("reset", async () => { if (confirm("Delete the demo workspace and all its data?")) { await DemoStore.reset(); S.site = null; location.hash = "#start"; } });
     on("exit", () => { try { sessionStorage.removeItem("cs_demo"); } catch (e) {} location.hash = "#home"; location.reload(); });
   }
@@ -1600,14 +1685,14 @@ function aiSummary(){
 
 /* ---------- Guided tour (animated cursor) ---------- */
 const TOUR = [
-  {route: "dashboard", sel: ".kpis", title: "Your numbers at a glance", body: "Visitors, clicks, sign-ups and conversion for the dates you pick. The arrows compare with the period before."},
-  {route: "dashboard", sel: ".fo", title: "Where people drop off", body: "Each step from visit to sign-up. The biggest drop between two steps is where you lose the most customers."},
-  {route: "dashboard", sel: ".leak, .ai-insight", title: "Your biggest leak", body: "The one problem costing you the most sign-ups right now, backed by what your visitors actually did."},
-  {route: "journeys", nav: "journeys", sel: ".grid.halves > .card:first-child", title: "Where people leave", body: "The last page people saw before leaving without signing up. Start fixing the page at the top of this list."},
-  {route: "journeys", sel: ".grid.halves > .card:nth-child(2)", title: "What customers did differently", body: "Pages and buttons your customers used far more than everyone else. Make those easier to find."},
-  {route: "journeys", sel: ".jrow", title: "Real visitor paths", body: "Every visitor’s path: where they came from, what they clicked, and whether they signed up or left."},
-  {route: "advisor", nav: "advisor", sel: ".tip", title: "Why they leave, and what to try", body: "Each problem shows the numbers behind it and one concrete change to try, ranked by how many sign-ups it could win back."},
-  {route: "campaigns", nav: "campaigns", sel: "#cf", title: "One tracking link per post", body: "Make a link for each Instagram or TikTok post, put it in your bio, and add the post’s views. You’ll see which posts bring customers."},
+  {route: "advisor", sel: ".why-hero", title: "Why people aren’t buying", body: "This is the heart of ClickSpring: the main reason visitors leave without signing up, in plain words, with the numbers behind it."},
+  {route: "advisor", sel: ".why-r", title: "Where they drop off", body: "Visit → click → sign up. The red line marks the step where you lose the most people."},
+  {route: "advisor", sel: "#tip-0", title: "Every reason, ranked", body: "Each card is one reason people leave, ranked by how many customers it costs you, with steps to fix it."},
+  {route: "advisor", sel: "#tip-0 .ex, #tip-0 .evid", title: "Proof from real visitors", body: "Open any card to see the actual visitors behind it: where they came from, what they clicked, and where they left."},
+  {route: "advisor", sel: "[data-fix]", title: "Fix it, then measure it", body: "Made a change? Press this. ClickSpring compares sign-ups before and after, so you know if it worked."},
+  {route: "advisor", sel: "#ask", title: "Your plan for the week", body: "Turns all of this into 3 steps, in order."},
+  {route: "journeys", nav: "journeys", sel: ".grid.halves > .card:nth-child(2)", title: "What customers did differently", body: "Pages and buttons your customers used far more than everyone else. Make those easier to find."},
+  {route: "campaigns", nav: "campaigns", sel: "#cf", title: "One tracking link per post", body: "Make a link for each post and put it in your bio. You’ll see which posts bring customers, not just views."},
   {route: "install", nav: "install", sel: "#status", title: "Check your tracking", body: "Add the script to your site, then open it in test mode. This turns green by itself as soon as visits arrive."},
   {route: null, sel: "#tour-help", title: "You’re all set", body: "Replay this tour any time from the ? button."}
 ];
@@ -1640,7 +1725,7 @@ const Tour = {
     const sheet = $("#sheet"); if (sheet) sheet.classList.remove("open");
     this.active = true; this.build();
     const s0 = S.seq || 0;
-    if (location.hash !== "#dashboard") location.hash = "#dashboard"; else route();
+    if (location.hash !== "#advisor") location.hash = "#advisor"; else route();
     await waitSeq(s0);
     this.go(0);
   },
@@ -1717,7 +1802,7 @@ window.addEventListener("hashchange", () => { if (!APP_ROUTES.has(location.hash.
 (async () => {
   try { S.site = await store.init(); if (store.user && !S.site) await ensureSite(); } catch (e) { console.error(e); }
   if (S.welcome) setTimeout(() => toast("Email confirmed. Welcome to ClickSpring!"), 600);
-  if (store.live && store.user && !location.hash && !S.recovery) { location.hash = S.site ? "#dashboard" : "#start"; return; }
+  if (store.live && store.user && !location.hash && !S.recovery) { location.hash = S.site ? "#advisor" : "#start"; return; }
   route();
 })();
 })();
