@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /email-templates.html
+
+Sitemap: https://clickspring.live/sitemap.xml
