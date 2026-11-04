@@ -89,7 +89,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 @media(max-width:860px){.m-only{display:revert!important}.m-only.flex{display:flex!important}.m-only.grid{display:grid!important}.d-only{display:none!important}}
 
 /* ---------- Landing ---------- */
-.landing{position:relative;overflow:hidden}
+.landing{position:relative;overflow-x:clip}
 .swoosh{position:absolute;pointer-events:none;z-index:0}
 .nav{position:relative;z-index:2;max-width:1440px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:22px 32px;gap:16px}
 .nav .links{display:flex;gap:40px}
@@ -513,6 +513,41 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .limit-alert{margin-bottom:16px}.limit-alert a{color:inherit;font-weight:700}
 .logo svg{flex:none}.side .logo{white-space:nowrap}
 .yt-btn{background:#fff;color:#0b0f0c;box-shadow:inset 0 0 0 1.5px #e6ebe7}
+
+/* ---------- Landing motion ---------- */
+.nav-wrap{position:sticky;top:0;z-index:20;transition:background .3s,box-shadow .3s,backdrop-filter .3s}
+.nav-wrap.sc{background:rgba(255,255,255,.82);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px);box-shadow:0 1px 0 var(--line)}
+.nav-wrap .nav{transition:padding .3s}.nav-wrap.sc .nav{padding-top:12px;padding-bottom:12px}
+.progress{position:fixed;left:0;top:0;height:3px;width:100%;background:var(--green);transform-origin:0 50%;transform:scaleX(0);z-index:30;pointer-events:none}
+.rv{opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+.rv.from-l{transform:translateX(-40px)}.rv.from-r{transform:translateX(40px)}.rv.zoom{transform:translateY(40px) scale(.94)}
+.rv.in{opacity:1;transform:none}
+@keyframes heroIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes heroVis{from{opacity:0;transform:translateX(50px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes floaty{0%,100%{translate:0 0}50%{translate:0 -12px}}
+@keyframes floaty2{0%,100%{translate:0 0}50%{translate:0 10px}}
+@keyframes pop{0%{opacity:0;scale:.6}70%{opacity:1;scale:1.08}100%{scale:1}}
+@keyframes pulse{0%{box-shadow:0 0 0 2px var(--green-ink),0 0 0 0 rgba(31,191,79,.45)}100%{box-shadow:0 0 0 2px var(--green-ink),0 0 0 14px rgba(31,191,79,0)}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes tick{0%,100%{opacity:1}50%{opacity:.35}}
+.hero > div:first-child > *{animation:heroIn .9s cubic-bezier(.2,.7,.2,1) both}
+.hero > div:first-child > *:nth-child(2){animation-delay:.08s}.hero > div:first-child > *:nth-child(3){animation-delay:.18s}.hero > div:first-child > *:nth-child(4){animation-delay:.28s}
+.hero-vis{animation:heroVis 1.1s .2s cubic-bezier(.2,.7,.2,1) both}
+.hero-vis .mock{animation:floaty 7s 1.3s ease-in-out infinite}
+.hero-vis .ai-card{animation:floaty2 6s 1.6s ease-in-out infinite}
+.hero-vis .bubble{animation:pop .6s 1.9s both}
+.hero-vis .pt{animation:pop .5s 1.7s both,pulse 1.8s 2.4s ease-out infinite}
+.hero-vis .ticks i{animation:tick 2.4s ease-in-out infinite}.hero-vis .ticks i:nth-child(2){animation-delay:.3s}.hero-vis .ticks i:nth-child(3){animation-delay:.6s}
+.mock-chart path.drawn{animation:draw 2.2s .6s cubic-bezier(.4,0,.2,1) forwards}
+.swoosh{will-change:transform}
+.btn{transition:transform .18s ease,box-shadow .18s ease,background .18s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px -10px rgba(12,40,20,.45)}
+.btn:active{transform:translateY(0) scale(.98)}
+.wc,.step,.qc{transition:transform .25s ease,box-shadow .25s ease}
+.wc:hover{transform:translateY(-6px)}
+.em-sweep{background:linear-gradient(90deg,var(--green),#7be3a0,var(--green));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent!important;animation:sweep 3.5s 1.2s ease-in-out infinite;text-decoration-color:var(--green)}
+@keyframes sweep{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.hero > div:first-child > *,.hero-vis,.hero-vis *,.mock-chart path.drawn,.em-sweep{animation:none!important}.progress{display:none}.btn:hover,.wc:hover{transform:none}.mock-chart path.drawn{stroke-dashoffset:0!important}}
 </style>
 </head>
 <body>
@@ -1214,9 +1249,9 @@ function renderLanding(){
     <path d="M560 0C700 120 860 260 900 420V0Z" style="fill:var(--green-soft)"/>
     <path d="M300 1000C340 760 520 600 900 520V1000Z" style="fill:var(--green-soft);opacity:.75"/>
     <path d="M120 760C260 640 520 560 900 600V700C560 660 330 720 190 820Z" style="fill:var(--green-wash)"/></svg>
-  <header class="nav"><a class="logo" href="#home" style="font-size:30px">${LOGO(44)}ClickSpring<span class="beta-tag">BETA</span></a>
+  <div class="progress" aria-hidden="true"></div><div class="nav-wrap"><header class="nav"><a class="logo" href="#home" style="font-size:30px">${LOGO(44)}ClickSpring<span class="beta-tag">BETA</span></a>
     <nav class="links"><button data-scroll="why">Why They Leave</button><button data-scroll="product">Product</button><button data-scroll="pricing">Pricing</button><a href="docs.html" style="font-weight:500;font-size:16px;text-decoration:none;padding:6px 0">Docs</a><button data-scroll="about">About</button></nav>
-    <div class="nav-r"><a class="signin" href="${store.user ? "#advisor" : "#login"}">${store.user ? "Open app" : "Sign In"}</a><a class="btn" href="${store.user ? "#advisor" : "#signup"}">Get Started Free ${ic("arrow", 16)}</a></div></header>
+    <div class="nav-r"><a class="signin" href="${store.user ? "#advisor" : "#login"}">${store.user ? "Open app" : "Sign In"}</a><a class="btn" href="${store.user ? "#advisor" : "#signup"}">Get Started Free ${ic("arrow", 16)}</a></div></header></div>
   <section class="hero">
     <div>
       <span class="pill">For founders who need customers, not just traffic</span>
@@ -1264,6 +1299,7 @@ function renderLanding(){
   <section class="band" id="about"><div class="band-in" style="background:var(--surface)"><div><h2>Charts tell you what happened. ClickSpring tells you why.</h2><p>Analytics tools give you numbers: 482 visitors, 0.8% conversion. ClickSpring gives you answers: which page people leave on, what your customers did differently, and what to change first. Post views are entered by you for now; everything after the click is measured automatically.</p></div><div class="cta-row"><a class="btn lg yt-btn" href="https://www.youtube.com/@ClickSpring-official" target="_blank" rel="noopener"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="#ff0033" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8z"/><path fill="#fff" d="M9.6 15.6 15.8 12 9.6 8.4z"/></svg> Follow the build on YouTube</a></div></div></section>
   <div class="foot-note"><span class="logo" style="font-size:18px">${LOGO(22)}ClickSpring</span><span><a href="https://www.youtube.com/@ClickSpring-official" target="_blank" rel="noopener" style="color:inherit;display:inline-flex;align-items:center;gap:6px;vertical-align:middle"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#ff0033" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8z"/><path fill="#fff" d="M9.6 15.6 15.8 12 9.6 8.4z"/></svg>YouTube</a> · <a href="docs.html" style="color:inherit">Docs &amp; API</a> · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="#" data-cookie-settings style="color:inherit">Cookie settings</a> · © ${new Date().getFullYear()} ClickSpring</span></div>
   </div>`;
+  animateLanding();
 }
 
 /* ---------- Demo video popup ---------- */
@@ -1294,6 +1330,42 @@ function playVideo(){
   const st = $("#vmodal .vstage"), html = videoEmbed(DEMO_VIDEO_URL);
   if (html) st.innerHTML = html;
   else st.querySelector(".vposter p").textContent = "Demo video coming soon.", st.querySelector(".vposter small").textContent = "In the meantime, try the live demo below.";
+}
+
+/* Scroll reveals, parallax, sticky nav, progress bar, chart draw, count-up */
+let landingFx = null;
+function animateLanding(){
+  if (landingFx) { removeEventListener("scroll", landingFx); landingFx = null; }
+  const root = $(".landing"); if (!root) return;
+  const calm = calmMotion(), nav = root.querySelector(".nav-wrap"), bar = root.querySelector(".progress"), sw = root.querySelectorAll(".swoosh");
+  const mark = (sel, cls = "", step = 0) => root.querySelectorAll(sel).forEach((el, k) => { el.classList.add("rv"); if (cls) el.classList.add(cls); el.style.setProperty("--d", (k * step).toFixed(2) + "s"); });
+  if (!calm) {
+    mark("#why .why-intro"); mark("#why .wc", "", .12); mark("#why > .cta-row");
+    mark("#product .frame", "zoom"); mark("#product .phone", "from-r");
+    mark(".steps .step", "", .12); mark(".band-in", "zoom"); mark(".foot-note");
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), {threshold: .14, rootMargin: "0px 0px -6% 0px"});
+    root.querySelectorAll(".rv").forEach(el => io.observe(el));
+    const line = root.querySelector(".mock-chart path"); if (line) { const L = Math.ceil(line.getTotalLength()); line.style.strokeDasharray = L; line.style.strokeDashoffset = L; line.classList.add("drawn"); }
+    root.querySelectorAll(".mock-stats b").forEach(b => {
+      const m = b.textContent.match(/^([\d.]+)(\D*)$/); if (!m) return;
+      const end = parseFloat(m[1]), dec = (m[1].split(".")[1] || "").length, suf = m[2]; let t0 = null;
+      const step = t => { if (!t0) t0 = t; const p = Math.min(1, (t - t0) / 1400), v = end * (1 - Math.pow(1 - p, 3)); b.textContent = v.toFixed(dec) + suf; if (p < 1) requestAnimationFrame(step); };
+      setTimeout(() => requestAnimationFrame(step), 500);
+    });
+  }
+  let ticking = false;
+  landingFx = () => {
+    if (!document.body.contains(root)) { removeEventListener("scroll", landingFx); landingFx = null; return; }
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(() => {
+      const y = scrollY, h = document.documentElement.scrollHeight - innerHeight;
+      if (nav) nav.classList.toggle("sc", y > 12);
+      if (bar) bar.style.transform = `scaleX(${h > 0 ? Math.min(1, y / h) : 0})`;
+      if (!calm) sw.forEach(el => el.style.transform = `translate3d(0, ${y * .18}px, 0)`);
+      ticking = false;
+    });
+  };
+  addEventListener("scroll", landingFx, {passive: true}); landingFx();
 }
 
 async function openDemo(){
