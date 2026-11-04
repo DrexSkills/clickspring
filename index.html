@@ -58,12 +58,7 @@
   window.CLICKSPRING_CONFIG = window.CLICKSPRING_CONFIG || { supabaseUrl: "", supabaseAnonKey: "" };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="https://clickspring.live/tracker.js"
-  data-site="b34d5a91-a46f-45cb-9bd9-167925fb1688"
-  data-endpoint="https://kuzdzlbyxllovbcudzsy.supabase.co"
-  data-key="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt1emR6bGJ5eGxsb3ZiY3VkenN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzE5NjEsImV4cCI6MjEwOTE0Nzk2MX0.2fOWgBbPz5WCrfE8DiXbcfLmD-NVt-mXCu2zsp4eBx8"
-  defer></script>
-  <style>
+<style>
 :root{
   --bg:#ffffff;--surface:#f3f6f3;--card:#ffffff;--line:#e6ebe7;--ink:#0b0f0c;--muted:#5d6a62;
   --green:#1fbf4f;--green-ink:#12933a;--green-soft:#e7f7ec;--green-wash:#eef9f1;--on-green:#ffffff;
@@ -1272,7 +1267,7 @@ function renderLanding(){
 
 /* ---------- Demo video popup ---------- */
 // Paste your demo video link here: YouTube, Vimeo, or a direct .mp4 link.
-const DEMO_VIDEO_URL = "";
+const DEMO_VIDEO_URL = "https://youtu.be/FwQZC4GidXw";
 function videoEmbed(url){
   if (!url) return null;
   let m = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{11})/);
@@ -1927,7 +1922,7 @@ window.addEventListener("hashchange", () => { if (!APP_ROUTES.has(location.hash.
     if (document.getElementById("cs-an") || !/^https?:$/.test(location.protocol) || /claude|claudeusercontent/.test(location.hostname)) return;
     var t = document.createElement("script"); t.id = "cs-an"; t.defer = true;
     t.src = "tracker.js?v=5";
-    t.setAttribute("data-site", "0bb18186-0c21-4a6d-a560-5b1fdbf5a08c");
+    t.setAttribute("data-site", "b34d5a91-a46f-45cb-9bd9-167925fb1688");
     t.setAttribute("data-endpoint", "https://kuzdzlbyxllovbcudzsy.supabase.co");
     t.setAttribute("data-key", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt1emR6bGJ5eGxsb3ZiY3VkenN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzE5NjEsImV4cCI6MjEwOTE0Nzk2MX0.2fOWgBbPz5WCrfE8DiXbcfLmD-NVt-mXCu2zsp4eBx8");
     t.setAttribute("data-base-path", location.pathname.replace(/\/[^\/]*$/, ""));
