@@ -661,6 +661,11 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .f-handle{color:var(--muted);font-weight:600;font-size:14px}
 @media(max-width:760px){.founder-card{grid-template-columns:1fr;text-align:center;padding:28px 22px;gap:22px}.f-photo{margin:0 auto}.f-yt{justify-content:center}}
 @media(prefers-reduced-motion:reduce){.f-photo::before{animation:none}}
+.demo-bar{position:relative;z-index:25;display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;background:#101411;color:#fff;padding:10px 20px;font-size:14px}
+.demo-bar b{color:#2bd468}.demo-bar-a{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.demo-bar .btn:not(.green){background:#fff;color:#0b0f0c}.demo-x{color:#cfd8d2;font-weight:600;text-decoration:underline;margin-left:4px}
+@media(max-width:860px){.demo-bar{padding:10px 14px;font-size:13px}}
+.side .logo{font-size:21px}.side .beta-tag{margin-left:4px;font-size:10px;padding:2px 6px}
 </style>
 </head>
 <body>
@@ -765,7 +770,7 @@ function makeSample(){
   return {events: ev.sort((a, b) => a.ts - b.ts), campaigns: camps};
 }
 const DemoStore = {
-  key: "clickspring_demo_v1", ukey: "clickspring_demo_user", data: null, live: false, account: null, user: null,
+  key: "clickspring_demo_v2", ukey: "clickspring_demo_user_v2", data: null, live: false, account: null, user: null,
   _save(){ try { localStorage.setItem(this.key, JSON.stringify(this.data)); } catch (e) {} },
   _saveUser(){ try { localStorage.setItem(this.ukey, JSON.stringify(this.account)); } catch (e) {} },
   async init(){
@@ -1267,7 +1272,7 @@ async function route(){
   window.scrollTo(0, 0);
   clearInterval(S.poll);
   if (r === "home") return renderLanding();
-  if (["login","signup","forgot"].includes(r)) { if (store.user) { location.hash = S.site ? "#advisor" : "#start"; return; } return renderAuth(r); }
+  if (["login","signup","forgot"].includes(r)) { if (store.user && store.user.demo && !demoSession) { DemoStore.signOut(); S.site = null; } if (store.user) { location.hash = S.site ? "#advisor" : "#start"; return; } return renderAuth(r); }
   if (r === "reset") { if (!store.user) { location.hash = "#login"; return; } return renderAuth("reset"); }
   if (r === "start") { if (!store.user) { location.hash = "#login"; return; } if (S.site) { location.hash = "#advisor"; return; } return renderStart(); }
   if (!APP_ROUTES.has(r)) { location.hash = "#home"; return; }
@@ -1299,7 +1304,7 @@ const topbarHTML = initial => `<header class="topbar">
 
 function shell(active){
   if (!$("#view")) {
-    $("#root").innerHTML = `<div class="app" data-cs-ignore>${sideHTML(active)}
+    $("#root").innerHTML = `${store.live ? "" : demoBarHTML()}<div class="app" data-cs-ignore>${sideHTML(active)}
       <div class="main">${topbarHTML((store.userName() || S.site.owner || S.site.name || "?")[0].toUpperCase())}<div id="view"></div></div>
       <nav class="tabs">${TABS.map(([k, label, i]) => `<a data-k="${k}" href="#${k}">${ic(i, 22)}${label}</a>`).join("")}</nav>
       <div class="sheet" id="sheet"><nav>${NAV.map(([k, label, i]) => `<a class="nav-i" data-k="${k}" href="#${k}">${ic(i)}${label}</a>`).join("")}</nav></div></div>`;
@@ -1353,7 +1358,7 @@ const wave = (n, seed, rise = 0) => { const r = mulberry32(seed); let v = 20; re
 /* ---------- Landing ---------- */
 function renderLanding(){
   const YT = "https://www.youtube.com/@ClickSpring-official";
-  const go = store.user ? "#advisor" : "#signup";
+  const go = store.live && store.user ? "#advisor" : "#signup";
   $("#root").innerHTML = `<div class="landing simple">
   <svg class="swoosh" viewBox="0 0 900 1000" style="right:-200px;top:-120px;width:min(900px,85vw)" aria-hidden="true">
     <path d="M560 0C700 120 860 260 900 420V0Z" style="fill:var(--green-soft)"/>
@@ -1563,11 +1568,21 @@ function animateLanding(){
   heroDemo(root);
 }
 
+/* ---------- Demo mode ---------- */
+const demoBarHTML = () => `<div class="demo-bar" role="status"><span><b>👀 You’re in the demo.</b> This is sample data, not a real website. Want your own data?</span>
+  <span class="demo-bar-a"><a class="btn green sm" href="#signup" data-exit-demo>Sign up free</a><a class="btn sm" href="#login" data-exit-demo>Log in</a><a class="demo-x" href="#home" data-exit-demo>Exit demo</a></span></div>`;
+async function exitDemo(dest){
+  if (Tour.active) Tour.end();
+  if (demoSession) { try { sessionStorage.removeItem("cs_demo"); } catch (e) {} location.hash = dest; location.reload(); return; }
+  if (DemoStore.account && DemoStore.account.demo) { await DemoStore.signOut(); S.site = null; }
+  $("#root").innerHTML = ""; if (location.hash === dest) route(); else location.hash = dest;
+}
+
 async function openDemo(){
   if (LIVE) { try { sessionStorage.setItem("cs_demo", "1"); } catch (e) {} store = DemoStore; }
   let site = await DemoStore.init();
-  if (!DemoStore.user) { DemoStore.account = {name: "Hassen", email: "demo@clickspring.app", on: true}; DemoStore.user = DemoStore.account; DemoStore._saveUser(); }
-  if (!site) site = await DemoStore.createSite({name: "Hassen’s Studio", url: "https://example.com", owner: "Hassen"});
+  if (!DemoStore.user) { DemoStore.account = {name: "", email: "demo@clickspring.app", on: true, demo: true}; DemoStore.user = DemoStore.account; DemoStore._saveUser(); }
+  if (!site) site = await DemoStore.createSite({name: "Demo Store", url: "https://example.com", owner: ""});
   if (!DemoStore.data.events.length) DemoStore.seed();
   S.site = site; $("#root").innerHTML = ""; if (location.hash === "#advisor") route(); else location.hash = "#advisor";
 }
@@ -1625,7 +1640,7 @@ async function afterLogin(site){
 function renderAuth(mode){
   const forms = {
     signup: `<h1>Create your account</h1><p class="sub">Free during beta. No card needed.</p>${flashHTML()}
-      <form id="af" novalidate data-cs-signup="manual"><label class="field">Your name<input name="name" required autocomplete="name" placeholder="Hassen"></label>
+      <form id="af" novalidate data-cs-signup="manual"><label class="field">Your name<input name="name" required autocomplete="name" placeholder="Your name"></label>
       <label class="field">Email<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
       <label class="field">Your website<input name="site" required inputmode="url" autocomplete="url" placeholder="yoursite.com"></label>
       ${pwField("password", "Password", "new-password")}<p class="hint">At least 8 characters.</p>
@@ -2154,6 +2169,8 @@ const Tour = {
 
 /* ---------- Boot ---------- */
 document.addEventListener("click", e => {
+  const ex = e.target.closest("[data-exit-demo]"); if (ex) { e.preventDefault(); exitDemo(ex.getAttribute("href")); return; }
+  const st = e.target.closest('.landing a[href="#signup"], .landing a[href="#login"]'); if (st && (demoSession || (!store.live && DemoStore.account && DemoStore.account.demo && DemoStore.user))) { e.preventDefault(); exitDemo(st.getAttribute("href")); return; }
   if (e.target.closest("[data-demo]")) { e.preventDefault(); openDemo(); }
   const sc = e.target.closest("[data-scroll]"); if (sc) { const el = document.getElementById(sc.dataset.scroll); if (el) el.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}); }
 });
