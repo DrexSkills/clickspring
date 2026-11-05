@@ -47,7 +47,11 @@
 <meta name="twitter:image:alt" content="ClickSpring Privacy Policy">
 <meta name="twitter:url" content="https://clickspring.live/privacy.html">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ClickSpring", "item": "https://clickspring.live/"}, {"@type": "ListItem", "position": 2, "name": "Privacy Policy", "item": "https://clickspring.live/privacy.html"}]}</script>
+<link rel="preload" href="/fonts/plus-jakarta-sans.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+@font-face{font-family:"Plus Jakarta Sans";src:url(/fonts/plus-jakarta-sans.woff2) format("woff2");font-weight:200 800;font-style:normal;font-display:swap}
+html{-webkit-text-size-adjust:100%;text-rendering:optimizeLegibility;font-kerning:normal}
+
 :root{--bg:#fff;--surface:#f3f6f3;--line:#e6ebe7;--ink:#0b0f0c;--muted:#5d6a62;--green:#1fbf4f;--green-ink:#12933a;--green-soft:#e7f7ec;--code:#101411}
 *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:76px}body{margin:0;font-family:"Plus Jakarta Sans",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
 a{color:var(--green-ink)}header{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:12px 22px;gap:12px;z-index:2}
@@ -67,7 +71,7 @@ footer{border-top:1px solid var(--line);margin-top:48px;padding-top:18px;color:v
 <div class="summary"><b>The short version</b><ul>
 <li>We collect only what ClickSpring needs to work, and we never sell data or use it for ads.</li>
 <li>On our customers’ websites, ClickSpring records page views, button clicks, sign-ups, where visitors came from and their device type, under a random ID. We don’t use cookies, we don’t store IP addresses with this data, and we don’t record what people type into forms.</li>
-<li>On ClickSpring itself, we only use essential browser storage. Our own visit measurement and Google Fonts load only if you choose “Accept all”.</li>
+<li>On ClickSpring itself, we only use essential browser storage. Our own visit measurement runs only if you choose “Accept all”. Our fonts are hosted by us, so no font requests go to Google.</li>
 <li>Website owners control their visitors’ data. You can delete your account and all of its data at any time in Settings.</li></ul></div>
 <div class="toc"><b>Contents</b><ol><li><a href="#who">Who we are</a></li><li><a href="#cookies">Cookies and browser storage</a></li><li><a href="#users">Data about ClickSpring account holders</a></li><li><a href="#visitors">Data about visitors to our customers’ websites</a></li><li><a href="#use">How we use data</a></li><li><a href="#share">Who we share it with</a></li><li><a href="#keep">How long we keep it</a></li><li><a href="#rights">Your rights and choices</a></li><li><a href="#security">Security</a></li><li><a href="#intl">International transfers</a></li><li><a href="#kids">Children</a></li><li><a href="#owners">For website owners: text for your privacy policy</a></li><li><a href="#changes">Changes and contact</a></li></ol></div>
 
@@ -82,12 +86,6 @@ footer{border-top:1px solid var(--line);margin-top:48px;padding-top:18px;color:v
 <tr><td>App settings (for example <code>cs_site_…</code>, <code>cs_tour_…</code>)</td><td>Essential</td><td>Remembers which website you’re viewing and whether you’ve seen the tour.</td></tr>
 <tr><td>Your choice (<code>cs_consent</code>)</td><td>Essential</td><td>Remembers your answer to the cookie notice.</td></tr>
 <tr><td>ClickSpring analytics (<code>cs_vid</code>, <code>cs_src</code>, <code>cs_camp</code>)</td><td>Optional</td><td>We use ClickSpring on our own website to see which pages people visit and where they leave, with a random ID and no cookies or stored IP address. Only if you choose “Accept all”. We don’t track you inside the app after you log in.</td></tr>
-<tr><td>Google Fonts</td><td>Optional</td><td>Loads our typeface from Google, which receives your IP address. Only if you choose “Accept all”. Otherwise we use your device’s built-in fonts.</td></tr></tbody></table>
-<p>You can change your choice any time with “Cookie settings” at the bottom of our pages, or by clearing this site’s data in your browser. The ClickSpring tracking script that our customers put on <i>their</i> websites works differently and is described in <a href="#visitors">section 3</a>.</p>
-
-<h2 id="users">2. Data about ClickSpring account holders</h2>
-<table><thead><tr><th>What</th><th>Why</th></tr></thead><tbody>
-<tr><td>Name, email address and password (stored only as a secure hash by our authentication provider)</td><td>To create and secure your account and send account emails, like confirmations and password resets</td></tr>
 <tr><td>Your websites (name and address), tracking links, post view counts you enter, changes you mark, and API key names</td><td>To run the service for you</td></tr>
 <tr><td>A device ID saved in your browser, a fingerprint of your device (browser, screen and similar settings, scrambled), and a scrambled version of your IP address, saved when you sign up</td><td>To allow one account per device and stop abuse of the free beta. Stored only as one-way hashes and deleted with your account.</td></tr>
 <tr><td>API keys</td><td>Stored only as a one-way hash, so even we can’t see your key after it’s created</td></tr>
@@ -117,7 +115,6 @@ footer{border-top:1px solid var(--line);margin-top:48px;padding-top:18px;color:v
 <table><thead><tr><th>Provider</th><th>What for</th></tr></thead><tbody>
 <tr><td>Supabase</td><td>Database, authentication, email delivery and server functions (data stored in the United States)</td></tr>
 <tr><td>GitHub (GitHub Pages)</td><td>Hosting the ClickSpring website and tracking script</td></tr>
-<tr><td>Google Fonts</td><td>Loading the typeface on ClickSpring pages, only if you choose “Accept all” in our cookie notice</td></tr>
 <tr><td>Anthropic</td><td>Only if the AI plan writer is turned on: summary numbers about a website (no names or emails) are sent to write a weekly plan</td></tr>
 <tr><td>Email provider (if configured, such as Resend)</td><td>Sending account emails</td></tr></tbody></table>
 <p>We may also disclose data if required by law, to protect people’s safety or our rights, or as part of a merger or sale of ClickSpring, in which case this policy will continue to apply.</p>
@@ -179,13 +176,13 @@ footer{border-top:1px solid var(--line);margin-top:48px;padding-top:18px;color:v
   function show(){
     if (!box) {
       box = document.createElement("div"); box.className = "cs-ck"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", "Cookie preferences");
-      box.innerHTML = '<b class="t">🍪 Cookies &amp; storage</b><p>We use essential browser storage to keep you signed in and remember your settings. With your OK, we also measure visits with ClickSpring itself (no cookies, no IP stored) and load our font from Google, which shares your IP address with Google. No advertising cookies. <a href="privacy.html#cookies">Learn more</a></p><div class="r"><button class="a" data-v="all">Accept all</button><button class="e" data-v="essential">Essential only</button></div>';
-      box.addEventListener("click", function(e){ var b = e.target.closest("[data-v]"); if (!b) return; set(b.dataset.v); if (b.dataset.v === "all") { fonts(); analytics(); } box.hidden = true; });
+      box.innerHTML = '<b class="t">🍪 Cookies &amp; storage</b><p>We use essential browser storage to keep you signed in and remember your settings. With your OK, we also measure visits with ClickSpring itself (no cookies, no IP stored). No advertising cookies. <a href="privacy.html#cookies">Learn more</a></p><div class="r"><button class="a" data-v="all">Accept all</button><button class="e" data-v="essential">Essential only</button></div>';
+      box.addEventListener("click", function(e){ var b = e.target.closest("[data-v]"); if (!b) return; set(b.dataset.v); if (b.dataset.v === "all") analytics(); box.hidden = true; });
       document.body.appendChild(box);
     }
     box.hidden = false; var f = box.querySelector(".a"); if (f) f.focus({preventScroll: true});
   }
-  if (get() === "all") { fonts(); analytics(); }
+  if (get() === "all") analytics();
   document.addEventListener("click", function(e){ if (e.target.closest && e.target.closest("[data-cookie-settings]")) { e.preventDefault(); show(); } });
   function init(){ if (!get()) show(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();

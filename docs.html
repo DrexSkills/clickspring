@@ -48,7 +48,11 @@
 <meta name="twitter:url" content="https://clickspring.live/docs.html">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "ClickSpring Docs: Tracker, Browser SDK & REST API", "description": "Install the ClickSpring tracker in one line, track sign-ups with the browser SDK, and pull your stats with API keys, the REST API and the JavaScript SDK.", "url": "https://clickspring.live/docs.html", "image": "https://clickspring.live/og-docs.png", "dateModified": "2026-11-03", "inLanguage": "en", "publisher": {"@type": "Organization", "name": "ClickSpring", "url": "https://clickspring.live/", "logo": {"@type": "ImageObject", "url": "https://clickspring.live/icon-512.png"}}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ClickSpring", "item": "https://clickspring.live/"}, {"@type": "ListItem", "position": 2, "name": "Docs: Tracker, SDK & REST API", "item": "https://clickspring.live/docs.html"}]}</script>
+<link rel="preload" href="/fonts/plus-jakarta-sans.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+@font-face{font-family:"Plus Jakarta Sans";src:url(/fonts/plus-jakarta-sans.woff2) format("woff2");font-weight:200 800;font-style:normal;font-display:swap}
+html{-webkit-text-size-adjust:100%;text-rendering:optimizeLegibility;font-kerning:normal}
+
 :root{--bg:#fff;--surface:#f3f6f3;--card:#fff;--line:#e6ebe7;--ink:#0b0f0c;--muted:#5d6a62;--green:#1fbf4f;--green-ink:#12933a;--green-soft:#e7f7ec;--code:#101411;--code-ink:#e9efe9}
 *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:80px}body{margin:0;font-family:"Plus Jakarta Sans",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
 a{color:var(--green-ink)}header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:12px 24px;gap:12px}
@@ -255,13 +259,13 @@ document.querySelectorAll("section[id], .ep[id]").forEach(s=>obs.observe(s));
   function show(){
     if (!box) {
       box = document.createElement("div"); box.className = "cs-ck"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", "Cookie preferences");
-      box.innerHTML = '<b class="t">🍪 Cookies &amp; storage</b><p>We use essential browser storage to keep you signed in and remember your settings. With your OK, we also measure visits with ClickSpring itself (no cookies, no IP stored) and load our font from Google, which shares your IP address with Google. No advertising cookies. <a href="privacy.html#cookies">Learn more</a></p><div class="r"><button class="a" data-v="all">Accept all</button><button class="e" data-v="essential">Essential only</button></div>';
-      box.addEventListener("click", function(e){ var b = e.target.closest("[data-v]"); if (!b) return; set(b.dataset.v); if (b.dataset.v === "all") { fonts(); analytics(); } box.hidden = true; });
+      box.innerHTML = '<b class="t">🍪 Cookies &amp; storage</b><p>We use essential browser storage to keep you signed in and remember your settings. With your OK, we also measure visits with ClickSpring itself (no cookies, no IP stored). No advertising cookies. <a href="privacy.html#cookies">Learn more</a></p><div class="r"><button class="a" data-v="all">Accept all</button><button class="e" data-v="essential">Essential only</button></div>';
+      box.addEventListener("click", function(e){ var b = e.target.closest("[data-v]"); if (!b) return; set(b.dataset.v); if (b.dataset.v === "all") analytics(); box.hidden = true; });
       document.body.appendChild(box);
     }
     box.hidden = false; var f = box.querySelector(".a"); if (f) f.focus({preventScroll: true});
   }
-  if (get() === "all") { fonts(); analytics(); }
+  if (get() === "all") analytics();
   document.addEventListener("click", function(e){ if (e.target.closest && e.target.closest("[data-cookie-settings]")) { e.preventDefault(); show(); } });
   function init(){ if (!get()) show(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
