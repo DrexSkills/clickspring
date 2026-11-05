@@ -534,7 +534,7 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .hero > div:first-child > *:nth-child(2){animation-delay:.08s}.hero > div:first-child > *:nth-child(3){animation-delay:.18s}.hero > div:first-child > *:nth-child(4){animation-delay:.28s}
 .hero-vis{animation:heroVis 1.1s .2s cubic-bezier(.2,.7,.2,1) both}
 .hero-vis .mock{animation:floaty 7s 1.3s ease-in-out infinite}
-.hero-vis .answer-card{animation:floaty 7s 1.3s ease-in-out infinite}
+.hero-vis .demo{animation:floaty 8s 1.3s ease-in-out infinite}
 .hero-vis .ai-card{animation:floaty2 6s 1.6s ease-in-out infinite}
 .hero-vis .bubble{animation:pop .6s 1.9s both}
 .hero-vis .pt{animation:pop .5s 1.7s both,pulse 1.8s 2.4s ease-out infinite}
@@ -583,6 +583,69 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .final h2{font-size:clamp(30px,4vw,48px);letter-spacing:-.04em;margin:0 0 22px}
 @media(max-width:900px){.how-grid{grid-template-columns:1fr}.answer-card{margin:0 auto}.s-hero{padding-top:12px}}
 @media(max-width:560px){.nav .beta-tag{display:none}.nav .logo{font-size:22px!important}.nav .logo svg{width:32px;height:32px}.nav-r .btn{padding:9px 14px;font-size:14px}.simple .cta-row .btn{flex:1}}
+/* ---------- Hero product demo (animated cursor) ---------- */
+.demo{position:relative;max-width:480px;margin-left:auto;background:var(--card);border-radius:22px;box-shadow:0 40px 80px -30px rgba(12,40,20,.35),0 0 0 1px var(--line);overflow:hidden}
+.demo-top{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--line)}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.demo-url{flex:1;display:flex;align-items:center;gap:6px;justify-content:center;font-size:12px;color:var(--muted);background:var(--card);border-radius:8px;padding:5px 10px;margin-right:46px}
+.demo-tabs{display:flex;gap:4px;padding:12px 16px 0;border-bottom:1px solid var(--line)}
+.demo-tabs span{padding:8px 12px;font-size:13px;font-weight:700;color:var(--muted);border-bottom:2px solid transparent;transition:color .3s,border-color .3s}
+.demo-tabs span.on{color:var(--green-ink);border-color:var(--green)}
+.demo-body{position:relative;height:300px}
+.sc{position:absolute;inset:0;padding:20px 22px;opacity:0;transform:translateY(12px);transition:opacity .45s,transform .45s;pointer-events:none}
+.sc.on{opacity:1;transform:none}
+.sc-h{margin:0 0 14px;font-weight:700;color:var(--muted);font-size:14px}
+.d-code{display:flex;align-items:center;gap:10px;background:#101411;border-radius:14px;padding:12px 12px 12px 16px}
+.d-code code{flex:1;color:#cfe9d6;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.d-copy{border:0;border-radius:999px;background:#2bd468;color:#05260f;font:700 13px system-ui;padding:7px 14px;transition:transform .15s}
+.d-copy.pressed,.d-made.pressed{transform:scale(.92)}
+.d-status{display:flex;align-items:center;gap:10px;margin-top:22px;background:var(--surface);border-radius:14px;padding:14px 16px;transition:background .4s}
+.d-status .st{width:12px;height:12px;border-radius:50%;background:var(--warn);animation:tick 1.4s infinite}
+.d-status.ok{background:var(--green-soft)}.d-status.ok .st{background:var(--green);animation:none;box-shadow:0 0 0 5px rgba(31,191,79,.2)}
+.d-status.ok b{color:var(--green-ink)}
+.d-row{display:flex;justify-content:space-between;font-weight:600;font-size:15px;margin:12px 0 6px}
+.d-row b{font-size:18px;font-variant-numeric:tabular-nums}
+.d-bar{height:12px;border-radius:99px;background:var(--surface);overflow:hidden}
+.d-bar i{display:block;height:100%;width:0;background:var(--green);border-radius:99px;transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+.d-loss{font-size:13px;font-weight:700;color:var(--bad);margin-top:8px;opacity:0;transition:opacity .4s .9s}
+.sc.on .d-loss.show{opacity:1}
+.d-reason{background:#101411;color:#fff;border-radius:18px;padding:16px 18px;transform:translateY(16px);opacity:0;transition:all .5s .15s}
+.sc.on .d-reason{transform:none;opacity:1}
+.d-badge{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:rgba(255,107,99,.18);color:#ff8a83;border-radius:999px;padding:3px 9px}
+.d-reason h4{margin:10px 0 4px;font-size:17px;line-height:1.3}
+.d-reason p{margin:0 0 10px;color:#cfd8d2;font-size:14px}
+.d-fix{background:#2bd468;color:#05260f;border-radius:10px;padding:8px 10px;font-size:13.5px;margin-bottom:10px}
+.d-made{border:0;border-radius:999px;background:rgba(255,255,255,.12);color:#fff;font:700 13px system-ui;padding:8px 14px;transition:transform .15s,background .3s}
+.d-made.done{background:#2bd468;color:#05260f}
+.d-after{display:flex;align-items:center;gap:10px;margin-top:12px;background:var(--green-soft);border-radius:14px;padding:12px 14px;opacity:0;transform:scale(.95);transition:all .5s}
+.d-after.show{opacity:1;transform:none}
+.d-after span{font-size:12px;font-weight:700;color:var(--muted)}.d-after b{font-size:16px}.d-after em{font-style:normal;font-weight:800;color:var(--green-ink);margin-left:auto}
+.d-cursor{position:absolute;left:0;top:0;z-index:5;pointer-events:none;transition:transform .85s cubic-bezier(.45,.05,.25,1);filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))}
+.d-cursor svg{transition:transform .15s;transform-origin:5px 3px}.d-cursor.press svg{transform:scale(.78)}
+.d-ripple{position:absolute;z-index:4;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;border:3px solid var(--green);pointer-events:none;animation:tripple .55s ease-out forwards}
+.demo-steps{display:flex;justify-content:center;gap:8px;margin:16px 0 0 auto;max-width:480px}
+@media(max-width:900px){.demo-steps{margin:16px auto 0}}
+.demo-steps span{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--muted);background:var(--surface);border-radius:999px;padding:6px 12px;transition:all .3s}
+.demo-steps b{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;background:var(--line);color:var(--ink)}
+.demo-steps span.on{background:var(--btn);color:var(--btn-ink)}.demo-steps span.on b{background:var(--green);color:#fff}
+/* features + FAQ */
+.feat-sec,.faq-sec{position:relative;z-index:1;max-width:1100px;margin:0 auto 80px;padding:0 24px}
+.feat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.feat{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;transition:transform .25s,box-shadow .25s}
+.feat:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.feat .how-ic{margin:0 0 12px;width:48px;height:48px;border-radius:14px}
+.feat h3{margin:0 0 4px;font-size:17px;letter-spacing:-.01em}.feat p{margin:0;color:var(--muted);font-size:15px}
+.faq-list{max-width:760px;margin:0 auto}
+.faq-list details{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:0 20px;margin-bottom:10px;transition:box-shadow .2s}
+.faq-list details[open]{box-shadow:var(--shadow)}
+.faq-list summary{cursor:pointer;list-style:none;padding:18px 0;font-weight:700;font-size:17px;display:flex;justify-content:space-between;gap:12px}
+.faq-list summary::-webkit-details-marker{display:none}
+.faq-list summary::after{content:"+";font-size:22px;line-height:1;color:var(--green-ink);transition:transform .25s}
+.faq-list details[open] summary::after{transform:rotate(45deg)}
+.faq-list p{margin:0 0 18px;color:var(--muted)}
+@media(max-width:900px){.feat-grid{grid-template-columns:1fr 1fr}.demo{margin:0 auto}}
+@media(max-width:560px){.feat-grid{grid-template-columns:1fr}.demo-body{height:300px}}
+@media(prefers-reduced-motion:reduce){.d-cursor{display:none}}
 </style>
 </head>
 <body>
@@ -1282,7 +1345,7 @@ function renderLanding(){
     <path d="M300 1000C340 760 520 600 900 520V1000Z" style="fill:var(--green-wash)"/></svg>
   <div class="progress" aria-hidden="true"></div>
   <div class="nav-wrap"><header class="nav"><a class="logo" href="#home" style="font-size:28px">${LOGO(40)}ClickSpring<span class="beta-tag">BETA</span></a>
-    <nav class="links"><button data-scroll="how">How it works</button><button data-scroll="pricing">Pricing</button><a href="docs.html" class="nav-a">Docs</a></nav>
+    <nav class="links"><button data-scroll="how">How it works</button><button data-scroll="features">Features</button><button data-scroll="pricing">Pricing</button><button data-scroll="faq">FAQ</button><a href="docs.html" class="nav-a">Docs</a></nav>
     <div class="nav-r"><a class="signin" href="${store.user ? "#advisor" : "#login"}">${store.user ? "Open app" : "Log in"}</a><a class="btn" href="${go}">Start free ${ic("arrow", 16)}</a></div></header></div>
 
   <section class="hero s-hero">
@@ -1293,15 +1356,32 @@ function renderLanding(){
       <p class="reassure">${ic("bulb", 16)} Free during beta · No card · Set up in 5 minutes</p>
     </div>
     <div class="hero-vis">
-      <div class="answer-card">
-        <div class="ac-h"><span class="dot-live"></span>Your website · last 30 days</div>
-        <div class="ac-row"><span>Visited</span><b>1,240</b></div><div class="ac-bar"><i style="--w:100%"></i></div>
-        <div class="ac-row"><span>Clicked “Get started”</span><b>310</b></div><div class="ac-bar"><i style="--w:45%"></i></div>
-        <div class="ac-loss">930 people left here. This is your biggest leak.</div>
-        <div class="ac-row"><span>Signed up</span><b>18</b></div><div class="ac-bar"><i style="--w:12%"></i></div>
-        <div class="ac-why"><b>🔍 Why they leave</b><p>62% leave on your pricing page. People who bought read your FAQ first.</p>
-          <div class="ac-fix"><b>Fix:</b> Show your FAQ before the price.</div></div>
+      <div class="demo" aria-label="Animated example: installing ClickSpring, watching visitors, and getting the fix">
+        <div class="demo-top"><span class="dots"><i></i><i></i><i></i></span><span class="demo-url">${ic("search", 12)} clickspring.live/app</span></div>
+        <div class="demo-tabs"><span data-t="setup" class="on">Setup</span><span data-t="numbers">Numbers</span><span data-t="why">Why they leave</span></div>
+        <div class="demo-body">
+          <div class="sc on" data-sc="setup">
+            <p class="sc-h">Paste this on your website</p>
+            <div class="d-code"><code>&lt;script src="clickspring.live/tracker.js"&gt;</code><button class="d-copy" tabindex="-1">Copy</button></div>
+            <div class="d-status"><span class="st"></span><b>Waiting for visitors…</b></div>
+          </div>
+          <div class="sc" data-sc="numbers">
+            <p class="sc-h">Your website · last 30 days</p>
+            <div class="d-row"><span>Visited</span><b data-n="1240">0</b></div><div class="d-bar"><i data-w="100"></i></div>
+            <div class="d-row"><span>Clicked “Get started”</span><b data-n="310">0</b></div><div class="d-bar"><i data-w="45"></i></div>
+            <div class="d-loss">930 people left here</div>
+            <div class="d-row"><span>Signed up</span><b data-n="18">0</b></div><div class="d-bar"><i data-w="12"></i></div>
+          </div>
+          <div class="sc" data-sc="why">
+            <div class="d-reason"><span class="d-badge">Main reason</span><h4>62% of people leave on your pricing page</h4><p>People who bought read your FAQ first.</p>
+              <div class="d-fix"><b>Fix:</b> Show your FAQ before the price.</div>
+              <button class="d-made" tabindex="-1">I made this change</button></div>
+            <div class="d-after"><span>Next week</span><b>18 → 31 sign-ups</b><em>↑ 72%</em></div>
+          </div>
+        </div>
+        <div class="d-cursor" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 28 28"><path d="M5 3l17 9.6-7.5 1.7L11 21.5z" fill="#0b0f0c" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg></div>
       </div>
+      <div class="demo-steps" aria-hidden="true"><span data-st="setup" class="on"><b>1</b> Install</span><span data-st="numbers"><b>2</b> Watch</span><span data-st="why"><b>3</b> Fix</span></div>
     </div>
   </section>
 
@@ -1323,8 +1403,29 @@ function renderLanding(){
     </div>
   </section>
 
+  <section class="feat-sec" id="features">
+    <h2 class="sec-h">Everything you need. Nothing you don’t.</h2>
+    <div class="feat-grid">
+      <div class="feat"><div class="how-ic">${ic("bulb", 24)}</div><h3>Why they leave</h3><p>The main reasons people don’t sign up, ranked, in plain words.</p></div>
+      <div class="feat"><div class="how-ic">${ic("route", 24)}</div><h3>Real visitor paths</h3><p>Where each visitor came from, what they clicked, where they left.</p></div>
+      <div class="feat"><div class="how-ic">${ic("eye", 24)}</div><h3>Phones vs computers</h3><p>Spot when your site works worse on phones.</p></div>
+      <div class="feat"><div class="how-ic">${ic("link", 24)}</div><h3>Links for every post</h3><p>See which Instagram, TikTok or YouTube posts bring customers.</p></div>
+      <div class="feat"><div class="how-ic">${ic("trend", 24)}</div><h3>Did the fix work?</h3><p>Compare sign-ups before and after each change.</p></div>
+      <div class="feat"><div class="how-ic">${ic("gear", 24)}</div><h3>Private by design</h3><p>No cookies on your visitors, no IP addresses stored.</p></div>
+    </div>
+  </section>
   <section class="band" id="pricing"><div class="band-in"><div><span class="beta-tag" style="margin:0 0 10px">BETA</span><h2>Free while we’re in beta.</h2><p>Every feature. No card. ${LIMITS.sites} websites, ${LIMITS.events.toLocaleString("en-US")} visits a month each.</p></div><a class="btn lg" href="${go}">Start free ${ic("arrow", 18)}</a></div></section>
 
+  <section class="faq-sec" id="faq">
+    <h2 class="sec-h">Questions</h2>
+    <div class="faq-list">
+      <details><summary>Do I need to know how to code?</summary><p>No. You copy one line and paste it into your site. ClickSpring shows you exactly where for Wix, Shopify, WordPress, Webflow, Framer and more.</p></details>
+      <details><summary>Is it really free?</summary><p>Yes, while we’re in beta. No card needed. Each account gets ${LIMITS.sites} websites and ${LIMITS.events.toLocaleString("en-US")} visits a month per website.</p></details>
+      <details><summary>How is this different from Google Analytics?</summary><p>Analytics gives you charts. ClickSpring gives you answers: the main reason people leave, the real visitors behind it, and the one fix to try first.</p></details>
+      <details><summary>Will it slow down my website?</summary><p>No. The script is tiny and loads after your page, so visitors won’t notice it.</p></details>
+      <details><summary>Is it private and legal?</summary><p>ClickSpring uses no cookies and stores no IP addresses. We give you ready-made text for your privacy policy. See our <a href="privacy.html">Privacy Policy</a>.</p></details>
+    </div>
+  </section>
   <section class="final">
     <h2>Stop guessing why people aren’t buying.</h2>
     <a class="btn green lg" href="${go}">Find out why yours leave ${ic("arrow", 18)}</a>
@@ -1365,6 +1466,39 @@ function playVideo(){
   else st.querySelector(".vposter p").textContent = "Demo video coming soon.", st.querySelector(".vposter small").textContent = "In the meantime, try the live demo below.";
 }
 
+/* Hero demo: an animated cursor installs ClickSpring, watches visitors arrive, and applies the fix. Loops. */
+function heroDemo(root){
+  const demo = root.querySelector(".demo"); if (!demo) return;
+  const cur = demo.querySelector(".d-cursor"), wait = ms => new Promise(r => setTimeout(r, ms));
+  const alive = () => document.body.contains(demo);
+  const pos = (el, dx = .5, dy = .55) => { const a = demo.getBoundingClientRect(), b = el.getBoundingClientRect(); return [b.left - a.left + b.width * dx, b.top - a.top + b.height * dy]; };
+  const move = async (el, dx, dy) => { const [x, y] = pos(el, dx, dy); cur.style.transform = `translate(${x - 5}px, ${y - 3}px)`; await wait(900); };
+  const click = async el => { cur.classList.add("press"); if (el) el.classList.add("pressed"); const [x, y] = pos(el || cur); const r = document.createElement("span"); r.className = "d-ripple"; r.style.left = x + "px"; r.style.top = y + "px"; demo.appendChild(r); await wait(180); cur.classList.remove("press"); if (el) el.classList.remove("pressed"); await wait(300); r.remove(); };
+  const show = name => { demo.querySelectorAll(".sc").forEach(s => s.classList.toggle("on", s.dataset.sc === name)); demo.querySelectorAll(".demo-tabs span").forEach(t => t.classList.toggle("on", t.dataset.t === name)); root.querySelectorAll(".demo-steps span").forEach(t => t.classList.toggle("on", t.dataset.st === name)); };
+  const q = s => demo.querySelector(s);
+  const reset = () => {
+    show("setup"); q(".d-copy").textContent = "Copy"; q(".d-status").classList.remove("ok"); q(".d-status b").textContent = "Waiting for visitors…";
+    demo.querySelectorAll("[data-n]").forEach(n => n.textContent = "0"); demo.querySelectorAll(".d-bar i").forEach(b => b.style.width = "0");
+    q(".d-loss").classList.remove("show"); q(".d-made").classList.remove("done"); q(".d-made").textContent = "I made this change"; q(".d-after").classList.remove("show");
+    const a = demo.getBoundingClientRect(); cur.style.transition = "none"; cur.style.transform = `translate(${a.width * .8}px, ${a.height * .9}px)`; void cur.offsetWidth; cur.style.transition = "";
+  };
+  const count = () => demo.querySelectorAll("[data-n]").forEach(n => { const end = +n.dataset.n; let t0 = null; const f = t => { if (!t0) t0 = t; const p = Math.min(1, (t - t0) / 1300); n.textContent = Math.round(end * (1 - Math.pow(1 - p, 3))).toLocaleString("en-US"); if (p < 1 && alive()) requestAnimationFrame(f); }; requestAnimationFrame(f); });
+  if (calmMotion()) { show("why"); q(".d-made").classList.add("done"); q(".d-made").textContent = "Measuring ✓"; q(".d-after").classList.add("show"); return; }
+  (async function loop(){
+    while (alive()) {
+      reset(); await wait(900); if (!alive()) return;
+      await move(q(".d-copy")); await click(q(".d-copy")); q(".d-copy").textContent = "Copied ✓"; await wait(700);
+      q(".d-status").classList.add("ok"); q(".d-status b").textContent = "Tracking is working ✓"; await wait(1300); if (!alive()) return;
+      await move(q('.demo-tabs [data-t="numbers"]')); await click(q('.demo-tabs [data-t="numbers"]')); show("numbers");
+      await wait(250); demo.querySelectorAll(".d-bar i").forEach(b => b.style.width = b.dataset.w + "%"); count(); q(".d-loss").classList.add("show");
+      await wait(2600); if (!alive()) return;
+      await move(q('.demo-tabs [data-t="why"]')); await click(q('.demo-tabs [data-t="why"]')); show("why"); await wait(1500);
+      await move(q(".d-made")); await click(q(".d-made")); q(".d-made").classList.add("done"); q(".d-made").textContent = "Measuring ✓";
+      await wait(700); q(".d-after").classList.add("show"); await wait(3400);
+    }
+  })();
+}
+
 /* Scroll reveals, parallax, sticky nav, progress bar, chart draw, count-up */
 let landingFx = null;
 function animateLanding(){
@@ -1374,6 +1508,7 @@ function animateLanding(){
   const mark = (sel, cls = "", step = 0) => root.querySelectorAll(sel).forEach((el, k) => { el.classList.add("rv"); if (cls) el.classList.add(cls); el.style.setProperty("--d", (k * step).toFixed(2) + "s"); });
   if (!calm) {
     mark(".sec-h"); mark(".how-step", "", .12); mark("#why .wc", "", .12);
+    mark(".feat", "", .08); mark(".faq-list details", "", .06);
     mark(".band-in", "zoom"); mark(".final"); mark(".foot-note");
     const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), {threshold: .14, rootMargin: "0px 0px -6% 0px"});
     root.querySelectorAll(".rv").forEach(el => io.observe(el));
@@ -1398,6 +1533,7 @@ function animateLanding(){
     });
   };
   addEventListener("scroll", landingFx, {passive: true}); landingFx();
+  heroDemo(root);
 }
 
 async function openDemo(){
