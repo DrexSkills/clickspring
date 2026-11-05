@@ -534,6 +534,7 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .hero > div:first-child > *:nth-child(2){animation-delay:.08s}.hero > div:first-child > *:nth-child(3){animation-delay:.18s}.hero > div:first-child > *:nth-child(4){animation-delay:.28s}
 .hero-vis{animation:heroVis 1.1s .2s cubic-bezier(.2,.7,.2,1) both}
 .hero-vis .mock{animation:floaty 7s 1.3s ease-in-out infinite}
+.hero-vis .answer-card{animation:floaty 7s 1.3s ease-in-out infinite}
 .hero-vis .ai-card{animation:floaty2 6s 1.6s ease-in-out infinite}
 .hero-vis .bubble{animation:pop .6s 1.9s both}
 .hero-vis .pt{animation:pop .5s 1.7s both,pulse 1.8s 2.4s ease-out infinite}
@@ -548,6 +549,40 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .em-sweep{background:linear-gradient(90deg,var(--green),#7be3a0,var(--green));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent!important;animation:sweep 3.5s 1.2s ease-in-out infinite;text-decoration-color:var(--green)}
 @keyframes sweep{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.hero > div:first-child > *,.hero-vis,.hero-vis *,.mock-chart path.drawn,.em-sweep{animation:none!important}.progress{display:none}.btn:hover,.wc:hover{transform:none}.mock-chart path.drawn{stroke-dashoffset:0!important}}
+/* ---------- Simple landing ---------- */
+.nav-a{font-weight:500;font-size:16px;text-decoration:none;padding:6px 0}
+.s-hero{padding-top:48px;padding-bottom:64px}
+.simple .hero-vis{margin-right:0;padding:10px 0 20px}
+.simple .display{margin-top:0}
+.simple .lead{font-size:21px;max-width:26em;color:#3f4a43}
+.reassure{display:flex;align-items:center;gap:8px;margin:18px 0 0;color:var(--muted);font-size:15px;font-weight:600}
+.reassure svg{color:var(--green-ink)}
+.answer-card{max-width:440px;margin-left:auto;background:var(--card);border-radius:26px;padding:26px;box-shadow:var(--shadow),0 0 0 1px var(--line)}
+.ac-h{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--muted);font-size:14px;margin-bottom:16px}
+.dot-live{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px var(--green-soft)}
+.ac-row{display:flex;justify-content:space-between;font-weight:600;margin:10px 0 6px}
+.ac-row b{font-size:18px}
+.ac-bar{height:12px;border-radius:99px;background:var(--surface);overflow:hidden}
+.ac-bar i{display:block;height:100%;width:var(--w);background:var(--green);border-radius:99px;animation:grow 1.2s .5s cubic-bezier(.2,.8,.2,1) both}
+.ac-loss{font-size:13px;font-weight:700;color:var(--bad);margin:8px 0 4px}
+.ac-why{margin-top:18px;background:#101411;color:#fff;border-radius:18px;padding:16px 18px}
+.ac-why p{margin:6px 0 10px;color:#dfe6e1;font-size:15px}
+.ac-fix{background:#2bd468;color:#05260f;border-radius:12px;padding:9px 12px;font-size:14px}
+.sec-h{font-size:clamp(28px,3.2vw,40px);letter-spacing:-.04em;margin:0 0 24px;text-align:center}
+.how{position:relative;z-index:1;max-width:1100px;margin:0 auto 80px;padding:0 24px}
+.how-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.how-step{position:relative;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px 22px;text-align:center}
+.how-n{position:absolute;top:14px;left:16px;font-weight:800;font-size:14px;color:var(--green-ink)}
+.how-ic{width:56px;height:56px;border-radius:16px;background:var(--green-soft);color:var(--green-ink);display:grid;place-items:center;margin:0 auto 14px}
+.how-step h3{margin:0 0 6px;font-size:19px;letter-spacing:-.02em}
+.how-step p{margin:0;color:var(--muted)}
+.simple .why-sec{max-width:1100px}
+.simple .wc h3{font-size:19px}
+.simple .wc .try{margin-top:4px}
+.final{position:relative;z-index:1;text-align:center;padding:30px 24px 80px}
+.final h2{font-size:clamp(30px,4vw,48px);letter-spacing:-.04em;margin:0 0 22px}
+@media(max-width:900px){.how-grid{grid-template-columns:1fr}.answer-card{margin:0 auto}.s-hero{padding-top:12px}}
+@media(max-width:560px){.nav .beta-tag{display:none}.nav .logo{font-size:22px!important}.nav .logo svg{width:32px;height:32px}.nav-r .btn{padding:9px 14px;font-size:14px}.simple .cta-row .btn{flex:1}}
 </style>
 </head>
 <body>
@@ -1239,65 +1274,63 @@ const wave = (n, seed, rise = 0) => { const r = mulberry32(seed); let v = 20; re
 
 /* ---------- Landing ---------- */
 function renderLanding(){
-  const curve = [22,25,21,27,23,28,24,26,22,27,29,25,28,26,30,27,33,42,50,56,60,59,61,62];
-  const dotI = 15, max = Math.max(...curve), H = 170;
-  const dotX = dotI / (curve.length - 1) * 100, dotY = H - 3 - curve[dotI] / max * (H - 8);
-  const sample = {visitors: 482000, clickers: 24700, signups: 3900, purchases: 1240, conv: .81, convD: .21};
-  const sampleTip = {tag: "Exit page", title: "62% of visitors who leave do it on /pricing", short: "Customers read your FAQ before the price. Most visitors never see it.", estText: "Est. +35% more sign-ups"};
-  $("#root").innerHTML = `<div class="landing">
-  <svg class="swoosh" viewBox="0 0 900 1000" style="right:-160px;top:-80px;width:min(980px,90vw)" aria-hidden="true">
+  const YT = "https://www.youtube.com/@ClickSpring-official";
+  const go = store.user ? "#advisor" : "#signup";
+  $("#root").innerHTML = `<div class="landing simple">
+  <svg class="swoosh" viewBox="0 0 900 1000" style="right:-200px;top:-120px;width:min(900px,85vw)" aria-hidden="true">
     <path d="M560 0C700 120 860 260 900 420V0Z" style="fill:var(--green-soft)"/>
-    <path d="M300 1000C340 760 520 600 900 520V1000Z" style="fill:var(--green-soft);opacity:.75"/>
-    <path d="M120 760C260 640 520 560 900 600V700C560 660 330 720 190 820Z" style="fill:var(--green-wash)"/></svg>
-  <div class="progress" aria-hidden="true"></div><div class="nav-wrap"><header class="nav"><a class="logo" href="#home" style="font-size:30px">${LOGO(44)}ClickSpring<span class="beta-tag">BETA</span></a>
-    <nav class="links"><button data-scroll="why">Why They Leave</button><button data-scroll="product">Product</button><button data-scroll="pricing">Pricing</button><a href="docs.html" style="font-weight:500;font-size:16px;text-decoration:none;padding:6px 0">Docs</a><button data-scroll="about">About</button></nav>
-    <div class="nav-r"><a class="signin" href="${store.user ? "#advisor" : "#login"}">${store.user ? "Open app" : "Sign In"}</a><a class="btn" href="${store.user ? "#advisor" : "#signup"}">Get Started Free ${ic("arrow", 16)}</a></div></header></div>
-  <section class="hero">
+    <path d="M300 1000C340 760 520 600 900 520V1000Z" style="fill:var(--green-wash)"/></svg>
+  <div class="progress" aria-hidden="true"></div>
+  <div class="nav-wrap"><header class="nav"><a class="logo" href="#home" style="font-size:28px">${LOGO(40)}ClickSpring<span class="beta-tag">BETA</span></a>
+    <nav class="links"><button data-scroll="how">How it works</button><button data-scroll="pricing">Pricing</button><a href="docs.html" class="nav-a">Docs</a></nav>
+    <div class="nav-r"><a class="signin" href="${store.user ? "#advisor" : "#login"}">${store.user ? "Open app" : "Log in"}</a><a class="btn" href="${go}">Start free ${ic("arrow", 16)}</a></div></header></div>
+
+  <section class="hero s-hero">
     <div>
-      <span class="pill">For founders who need customers, not just traffic</span>
       <h1 class="display">Turn Your Views<br> <span class="nw">Into <em>Real</em> Customers.</span></h1>
-      <p class="lead">You get visitors. They don’t become customers. ClickSpring follows every visitor from first click to sign-up, shows you exactly where they leave, and what the people who bought did differently.</p>
-      <div class="cta-row"><a class="btn lg" href="#signup">Start Free Today ${ic("arrow", 18)}</a></div>
+      <p class="lead">See where people leave your website, and exactly what to fix so more of them sign up.</p>
+      <div class="cta-row"><a class="btn lg" href="${go}">Start free ${ic("arrow", 18)}</a><button class="btn ghost lg" data-demo>See an example</button></div>
+      <p class="reassure">${ic("bulb", 16)} Free during beta · No card · Set up in 5 minutes</p>
     </div>
     <div class="hero-vis">
-      <div class="mock"><div class="mock-side">${LOGO(30)}<i></i><i></i><i></i><i></i></div>
-        <div class="mock-main"><div class="mock-stats"><div><small>Total Visitors</small><b>482K</b><em>↑ +12%</em></div><div><small>Clicks</small><b>24.7K</b><em>↑ +18%</em></div><div><small>Sign-Ups</small><b>3.9K</b><em>↑ +32%</em></div></div>
-        <div class="mock-chart">${lineSVG(curve, {h: H, fill: false})}<span class="bubble" style="left:${dotX - 6}%;top:${dotY}px">+32%</span><span class="pt" style="left:${dotX}%;top:${dotY}px"></span></div>
-        <div class="axis"><span>Oct 1</span><span>Oct 8</span><span>Oct 15</span><span>Oct 22</span><span>Oct 29</span></div></div></div>
-      <div class="ai-card"><h4>🔍 Why they’re leaving</h4><p>62% of visitors who leave do it on your pricing page. Customers read your FAQ first.</p><button class="btn green wide" data-demo>See the fix ${ic("arrow", 16)}</button></div>
-      <div class="ticks" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="answer-card">
+        <div class="ac-h"><span class="dot-live"></span>Your website · last 30 days</div>
+        <div class="ac-row"><span>Visited</span><b>1,240</b></div><div class="ac-bar"><i style="--w:100%"></i></div>
+        <div class="ac-row"><span>Clicked “Get started”</span><b>310</b></div><div class="ac-bar"><i style="--w:45%"></i></div>
+        <div class="ac-loss">930 people left here. This is your biggest leak.</div>
+        <div class="ac-row"><span>Signed up</span><b>18</b></div><div class="ac-bar"><i style="--w:12%"></i></div>
+        <div class="ac-why"><b>🔍 Why they leave</b><p>62% leave on your pricing page. People who bought read your FAQ first.</p>
+          <div class="ac-fix"><b>Fix:</b> Show your FAQ before the price.</div></div>
+      </div>
     </div>
   </section>
-  <section class="preview" id="product">
-    <div class="frame" inert><div class="app">${sideHTML("dashboard")}<div class="main">${topbarHTML("H")}
-      <div class="welcome"><div><h1>Welcome back, Hassen! 👋</h1><p>Here’s how your funnel is performing today.</p></div><span class="datebtn" style="padding-right:12px">${ic("cal", 18)} <b style="font-weight:600">Last 30 days</b> ${ic("chev", 16)}</span></div>
-      <div class="grid kpis">${kpiCard({icon: "eye", label: "Total Visitors", value: "482K", d: 12, series: wave(20, 3, 8)})}${kpiCard({icon: "cursor", color: "var(--violet)", label: "Clicks", value: "24.7K", d: 18, series: wave(20, 5, 10)})}${kpiCard({icon: "person", label: "Sign-Ups", value: "3.9K", d: 32, series: wave(20, 9, 9)})}${kpiCard({icon: "dollar", color: "var(--ink)", label: "Revenue", value: "$12,480", d: 40, series: wave(20, 11, 12)})}</div>
-      <div class="grid two">${funnelOverview(sample)}${recCard(sampleTip)}</div></div></div></div>
-    <div class="phone" inert><div class="notch"></div><div class="ph-status"><span>9:41</span><span>▂▄▆ ◔ ▭</span></div>
-      <div class="ph-head"><span class="logo">${LOGO(26)}ClickSpring</span>${ic("menu", 22)}</div>
-      <div class="ph-body"><h3>Your Growth In One Place.</h3><p>Track. Improve. Grow.</p>
-        <div style="margin-bottom:14px">${kpiCard({label: "Sign-Ups", value: "3.9K", d: 32, series: wave(20, 9, 9)})}</div>
-        ${insightHTML({title: "TikTok visitors leave 4× faster than Google visitors", short: "Your page doesn’t match the video they just watched."})}</div>
-      <div class="ph-tabs">${[["Home","home"],["Journeys","route"],["Why","bulb"],["Profile","user"]].map(([l, i], n) => `<span class="${n ? "" : "on"}">${ic(i, 20)}${l}</span>`).join("")}</div></div>
+
+  <section class="how" id="how">
+    <h2 class="sec-h">How it works</h2>
+    <div class="how-grid">
+      <div class="how-step"><span class="how-n">1</span><div class="how-ic">${ic("code", 26)}</div><h3>Add one line to your site</h3><p>Copy and paste. Works on any website.</p></div>
+      <div class="how-step"><span class="how-n">2</span><div class="how-ic">${ic("bulb", 26)}</div><h3>See why people leave</h3><p>ClickSpring shows the page where they quit, and why.</p></div>
+      <div class="how-step"><span class="how-n">3</span><div class="how-ic">${ic("trend", 26)}</div><h3>Fix it, get more sign-ups</h3><p>Do the one fix it suggests, then see if it worked.</p></div>
+    </div>
   </section>
+
   <section class="why-sec" id="why">
-    <div class="why-intro"><span class="pill">Why They Leave</span><h2>One page tells you why people leave, and what to fix first.</h2>
-      <p>Not more charts to stare at. Real reasons, backed by what your visitors actually did, ranked by how many customers each one costs you.</p></div>
+    <h2 class="sec-h">The kind of answers you get</h2>
     <div class="why-cards">
-      <article class="wc"><span class="badge">Exit page</span><h3>62% of people who don’t sign up leave on /pricing</h3><ul><li>120 of 194 who left were last on /pricing</li><li>Customers read your FAQ first: 58% vs 9%</li></ul><p class="try"><b>What to try: </b>Answer the price question on /pricing and add one clear button.</p></article>
-      <article class="wc" style="--c:var(--warn)"><span class="badge" style="background:rgba(194,122,6,.14);color:var(--warn)">Phones</span><h3>Phone visitors sign up 3.4× less than computer visitors</h3><ul><li>81% of your visitors are on phones</li><li>Phones: 1.2% sign up · Computers: 4.1%</li></ul><p class="try"><b>What to try: </b>Make your main button visible without scrolling on a phone.</p></article>
-      <article class="wc"><span class="badge">Sign-up form</span><h3>74% of people who click quit before signing up</h3><ul><li>96 clicked “Get started”</li><li>25 signed up</li></ul><p class="try"><b>What to try: </b>Ask for an email only, and put one line of proof next to the button.</p></article>
+      <article class="wc"><span class="badge">Exit page</span><h3>62% of people leave on your pricing page</h3><p class="try"><b>Fix: </b>Answer the price question first.</p></article>
+      <article class="wc" style="--c:var(--warn)"><span class="badge" style="background:rgba(194,122,6,.14);color:var(--warn)">Phones</span><h3>Phone visitors sign up 3× less</h3><p class="try"><b>Fix: </b>Put your button where phones can see it.</p></article>
+      <article class="wc"><span class="badge">Sign-up form</span><h3>74% quit at your sign-up form</h3><p class="try"><b>Fix: </b>Ask for an email only.</p></article>
     </div>
-    <div class="cta-row"><a class="btn lg" href="#signup">Find out why yours leave ${ic("arrow", 18)}</a><button class="btn ghost lg" data-demo>See it with sample data</button></div>
   </section>
-  <section class="steps" id="how">
-    <div class="step"><span class="n">1</span><h3>Add one line to your site</h3><p>It follows each visitor: where they came from, what they clicked, and where they left.</p></div>
-    <div class="step"><span class="n">2</span><h3>See where customers slip away</h3><p>Your funnel and real visitor journeys show the exact page and step where people give up.</p></div>
-    <div class="step"><span class="n">3</span><h3>Know why, then fix it</h3><p>ClickSpring compares the people who bought with the people who left, and tells you the change that wins back the most customers.</p></div>
+
+  <section class="band" id="pricing"><div class="band-in"><div><span class="beta-tag" style="margin:0 0 10px">BETA</span><h2>Free while we’re in beta.</h2><p>Every feature. No card. ${LIMITS.sites} websites, ${LIMITS.events.toLocaleString("en-US")} visits a month each.</p></div><a class="btn lg" href="${go}">Start free ${ic("arrow", 18)}</a></div></section>
+
+  <section class="final">
+    <h2>Stop guessing why people aren’t buying.</h2>
+    <a class="btn green lg" href="${go}">Find out why yours leave ${ic("arrow", 18)}</a>
   </section>
-  <section class="band" id="pricing"><div class="band-in"><div><span class="beta-tag" style="margin:0 0 10px">BETA</span><h2>ClickSpring is in beta, and completely free for now.</h2><p>Every feature, no card needed. The free beta includes ${LIMITS.sites} websites per account, ${LIMITS.events.toLocaleString("en-US")} events per website each month, and ${LIMITS.links} tracking links per website. Early users keep a discount when paid plans start.</p></div><a class="btn lg" href="#signup">Start Free Today ${ic("arrow", 18)}</a></div></section>
-  <section class="band" id="about"><div class="band-in" style="background:var(--surface)"><div><h2>Charts tell you what happened. ClickSpring tells you why.</h2><p>Analytics tools give you numbers: 482 visitors, 0.8% conversion. ClickSpring gives you answers: which page people leave on, what your customers did differently, and what to change first. Post views are entered by you for now; everything after the click is measured automatically.</p></div><div class="cta-row"><a class="btn lg yt-btn" href="https://www.youtube.com/@ClickSpring-official" target="_blank" rel="noopener"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="#ff0033" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8z"/><path fill="#fff" d="M9.6 15.6 15.8 12 9.6 8.4z"/></svg> Follow the build on YouTube</a></div></div></section>
-  <div class="foot-note"><span class="logo" style="font-size:18px">${LOGO(22)}ClickSpring</span><span><a href="https://www.youtube.com/@ClickSpring-official" target="_blank" rel="noopener" style="color:inherit;display:inline-flex;align-items:center;gap:6px;vertical-align:middle"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#ff0033" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8z"/><path fill="#fff" d="M9.6 15.6 15.8 12 9.6 8.4z"/></svg>YouTube</a> · <a href="docs.html" style="color:inherit">Docs &amp; API</a> · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="#" data-cookie-settings style="color:inherit">Cookie settings</a> · © ${new Date().getFullYear()} ClickSpring</span></div>
+
+  <div class="foot-note"><span class="logo" style="font-size:18px">${LOGO(22)}ClickSpring</span><span><a href="${YT}" target="_blank" rel="noopener" style="color:inherit">YouTube</a> · <a href="docs.html" style="color:inherit">Docs</a> · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="#" data-cookie-settings style="color:inherit">Cookie settings</a> · © ${new Date().getFullYear()} ClickSpring</span></div>
   </div>`;
   animateLanding();
 }
@@ -1340,9 +1373,8 @@ function animateLanding(){
   const calm = calmMotion(), nav = root.querySelector(".nav-wrap"), bar = root.querySelector(".progress"), sw = root.querySelectorAll(".swoosh");
   const mark = (sel, cls = "", step = 0) => root.querySelectorAll(sel).forEach((el, k) => { el.classList.add("rv"); if (cls) el.classList.add(cls); el.style.setProperty("--d", (k * step).toFixed(2) + "s"); });
   if (!calm) {
-    mark("#why .why-intro"); mark("#why .wc", "", .12); mark("#why > .cta-row");
-    mark("#product .frame", "zoom"); mark("#product .phone", "from-r");
-    mark(".steps .step", "", .12); mark(".band-in", "zoom"); mark(".foot-note");
+    mark(".sec-h"); mark(".how-step", "", .12); mark("#why .wc", "", .12);
+    mark(".band-in", "zoom"); mark(".final"); mark(".foot-note");
     const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), {threshold: .14, rootMargin: "0px 0px -6% 0px"});
     root.querySelectorAll(".rv").forEach(el => io.observe(el));
     const line = root.querySelector(".mock-chart path"); if (line) { const L = Math.ceil(line.getTotalLength()); line.style.strokeDasharray = L; line.style.strokeDashoffset = L; line.classList.add("drawn"); }
