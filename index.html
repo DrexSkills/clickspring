@@ -1275,7 +1275,11 @@ async function route(){
   window.scrollTo(0, 0);
   clearInterval(S.poll);
   if (r === "home") return renderLanding();
-  if (["login","signup","forgot"].includes(r)) { if (store.user && store.user.demo && !demoSession) { DemoStore.signOut(); S.site = null; } if (store.user) { location.hash = S.site ? "#advisor" : "#start"; return; } return renderAuth(r); }
+  if (["login","signup","forgot"].includes(r)) {
+    if (store.user && store.user.demo) { if (demoSession) { try { sessionStorage.removeItem("cs_demo"); } catch (e) {} location.reload(); return; } await DemoStore.signOut(); S.site = null; }
+    if (store.user) return renderSignedIn();
+    return renderAuth(r);
+  }
   if (r === "reset") { if (!store.user) { location.hash = "#login"; return; } return renderAuth("reset"); }
   if (r === "start") { if (!store.user) { location.hash = "#login"; return; } if (S.site) { location.hash = "#advisor"; return; } return renderStart(); }
   if (!APP_ROUTES.has(r)) { location.hash = "#home"; return; }
@@ -1361,7 +1365,7 @@ const wave = (n, seed, rise = 0) => { const r = mulberry32(seed); let v = 20; re
 /* ---------- Landing ---------- */
 function renderLanding(){
   const YT = "https://www.youtube.com/@ClickSpring-official";
-  const go = store.live && store.user ? "#advisor" : "#signup";
+  const go = "#signup";
   $("#root").innerHTML = `<div class="landing simple">
   <svg class="swoosh" viewBox="0 0 900 1000" style="right:-200px;top:-120px;width:min(900px,85vw)" aria-hidden="true">
     <path d="M560 0C700 120 860 260 900 420V0Z" style="fill:var(--green-soft)"/>
@@ -1672,6 +1676,13 @@ function renderAuth(mode){
       if (mode === "reset") { await store.updatePassword(fd.password); S.recovery = false; toast("Password updated"); return afterLogin(store.live ? await store.loadSite() : S.site); }
     } catch (err) { showErr(friendly(err)); b.disabled = false; b.textContent = label; }
   });
+}
+function renderSignedIn(){
+  authShell(`<div class="mail-ic">${ic("user", 28)}</div><h1>You’re already logged in</h1>
+    <p class="sub">You’re signed in as <b>${esc(store.userEmail())}</b>.</p>
+    <a class="btn green wide lg" href="${S.site ? "#advisor" : "#start"}">Go to my dashboard</a>
+    <p class="switch">Not you? <a href="#" id="so2">Log out</a> to use a different account.</p>`);
+  $("#so2").addEventListener("click", async e => { e.preventDefault(); await store.signOut(); S.site = null; $("#root").innerHTML = ""; renderAuth("login"); history.replaceState(null, "", location.pathname + "#login"); });
 }
 function checkInbox(email, password){
   $(".auth-card").innerHTML = `<div class="mail-ic">${ic("bell", 28)}</div><h1>Confirm your email</h1>
