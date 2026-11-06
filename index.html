@@ -729,6 +729,21 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .ee-ic{width:64px;height:64px;border-radius:18px;margin:0 auto 12px;display:grid;place-items:center;background:var(--green-soft);color:var(--green-ink)}
 .demo-bar b{display:inline-flex;align-items:center;gap:6px}
 .cs-ck b.t svg{flex:none}
+/* need more visitors */
+.need-more{margin-bottom:16px;padding:24px;border:2px solid rgba(124,92,255,.35);background:linear-gradient(135deg,rgba(124,92,255,.06),var(--card) 60%)}
+.nm-head{display:flex;gap:16px;align-items:flex-start}
+.nm-ic{flex:none;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:rgba(124,92,255,.12);color:var(--violet)}
+.need-more .eyebrow{color:var(--violet)}
+.need-more h2{display:block!important;font-size:clamp(19px,2.6cqi,24px)!important;line-height:1.25;letter-spacing:-.02em;margin:6px 0 6px!important}
+.need-more p{margin:0;color:var(--muted)}
+.nm-meter{margin:20px 0 18px}
+.nm-nums{display:flex;justify-content:space-between;margin-bottom:8px}.nm-nums b{font-size:17px}.nm-nums span{color:var(--muted);font-weight:600}
+.nm-bar{height:14px;border-radius:99px;background:var(--surface);overflow:hidden}
+.nm-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--violet),#a78bfa);min-width:6px}
+.nm-scale{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--muted);font-weight:600}
+.nm-steps{background:var(--surface);border-radius:14px;padding:14px 16px;margin-bottom:16px}
+.nm-steps ol{margin:6px 0 0;padding-left:20px}.nm-steps li{margin:3px 0}
+@container (max-width:600px){.nm-head{flex-direction:column;gap:10px}.nm-scale span:nth-child(2){display:none}}
 </style>
 </head>
 <body>
@@ -1061,7 +1076,7 @@ function deltaHTML(a, b){
 }
 
 /* ---------- Why They Leave: diagnosis engine ---------- */
-const conf = n => n >= 150 ? {level: "High confidence", cls: "hi", n} : n >= 30 ? {level: "Medium confidence", cls: "md", n} : {level: "Early signal", cls: "lo", n};
+const conf = n => n >= 150 ? {level: "Very sure", cls: "hi", n} : n >= 30 ? {level: "Fairly sure", cls: "md", n} : {level: "Early guess", cls: "lo", n};
 const SIGNUPISH = /sign|join|get|start|access|free|subscribe|register|try|book|buy|waitlist|download|claim/i;
 function advise(m){
   const c = m.c, tips = [], V = c.visitors;
@@ -1338,6 +1353,22 @@ function funnelHTML(s){
   }).join("")}</div>`;
 }
 
+/* ---------- "You need more visitors" ---------- */
+const ENOUGH = 30;
+function needMoreHTML(V){
+  if (V >= ENOUGH) return "";
+  const pctV = Math.round(Math.min(1, V / ENOUGH) * 100), left = ENOUGH - V;
+  return `<section class="card need-more">
+    <div class="nm-head"><div class="nm-ic">${ic("eye", 22)}</div><div><span class="eyebrow">Collecting data</span>
+      <h2>You need more visitors before ClickSpring can tell you why people leave</h2>
+      <p>${V ? `With only ${fmt(V)} visitor${V === 1 ? "" : "s"}, there isn’t a real pattern yet. Anything below is an early guess, not an answer.` : "No visitors yet. Once people visit your website, this fills up on its own."}</p></div></div>
+    <div class="nm-meter"><div class="nm-nums"><b>${fmt(V)} of ${ENOUGH} visitors</b><span>${fmt(left)} to go</span></div><div class="nm-bar"><i style="width:${pctV}%"></i></div>
+      <div class="nm-scale"><span>Early guess</span><span>Fairly sure at ${ENOUGH}</span><span>Very sure at 150</span></div></div>
+    <div class="nm-steps"><b>Get visitors faster</b><ol><li>Make a tracking link and put it in your bio.</li><li>Post a video or story that sends people to it.</li><li>Send it to 5 people and ask them to look around.</li></ol></div>
+    <div class="cta-row"><a class="btn green" href="#campaigns">Get my tracking link</a><a class="btn quiet" href="#install">Check my tracking</a></div>
+  </section>`;
+}
+
 /* ---------- Beta plan ---------- */
 const LIMITS = {sites: 3, events: 10000, links: 20, keys: 10};
 const monthReset = () => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth() + 1, 1).toLocaleDateString("en-US", {month: "long", day: "numeric"}); };
@@ -1377,6 +1408,7 @@ async function route(){
   try { await loadData(); } catch (e) { v.innerHTML = `<div class="card empty"><h2>Couldn’t load your data</h2><p class="muted">${esc(e.message)}</p></div>`; S.seq = (S.seq || 0) + 1; return; }
   const top = advise(S.m)[0]; const pip = $("#pip"); if (pip) pip.hidden = !(top && top.lvl === "high");
   VIEWS[r]();
+  if (S.m && S.m.c.visitors > 0 && ["advisor", "journeys", "funnel", "analytics"].includes(r)) $("#view").insertAdjacentHTML("afterbegin", needMoreHTML(S.m.c.visitors));
   if (S.usage && S.usage.events >= LIMITS.events * .8) $("#view").insertAdjacentHTML("afterbegin", `<div class="alert ${S.usage.events >= LIMITS.events ? "err" : "ok"} limit-alert">${S.usage.events >= LIMITS.events ? `This website reached the free beta limit of ${LIMITS.events.toLocaleString("en-US")} events this month. New visits aren’t recorded until ${monthReset()}.` : `This website has used ${fmt(S.usage.events)} of its ${LIMITS.events.toLocaleString("en-US")} free events this month.`} <a href="#account">See usage</a></div>`);
   S.seq = (S.seq || 0) + 1;
   if ((r === "advisor" || r === "dashboard") && !Tour.active && !tourSeen()) setTimeout(() => { if (["#advisor", "#dashboard"].includes(location.hash) && !Tour.active) Tour.start(); }, 900);
@@ -1848,7 +1880,7 @@ const VIEWS = {
     const lostClick = c.visitors - c.clickers, lostSign = c.clickers - c.signups, bigAtClick = lostClick >= lostSign;
     const stepsKey = first ? `cs_steps_${S.site.id}_${first.key}` : ""; let done = []; try { done = JSON.parse(localStorage.getItem(stepsKey) || "[]"); } catch (e) {}
     const steps = (first && first.steps) || [];
-    $("#view").innerHTML = head + `
+    $("#view").innerHTML = head + needMoreHTML(c.visitors) + `
     <section class="card easy-sum">
       <span class="eyebrow">1 · How it’s going</span>
       <p class="sum-line"><b>${fmt(c.visitors)} people</b> visited your website. <b>${fmt(c.signups)}</b> of them signed up.</p>
