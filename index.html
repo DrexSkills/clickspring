@@ -690,6 +690,37 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .idea b{display:block;font-size:15px}.idea p{margin:2px 0 4px;color:var(--muted);font-size:14px}.idea a{font-weight:700;font-size:14px;color:var(--green-ink);text-decoration:none}
 .idea-tag{flex:none;align-self:flex-start;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:3px 9px;margin-top:2px}
 .idea-tag.add{background:var(--green-soft);color:var(--green-ink)}.idea-tag.fix{background:rgba(212,52,44,.1);color:var(--bad)}.idea-tag.setup{background:rgba(124,92,255,.12);color:var(--violet)}
+/* ---------- Beginner-friendly dashboard ---------- */
+.easy-sum,.easy-fix,.easy-ideas{margin-bottom:16px;padding:24px}
+.easy-sum .eyebrow,.easy-fix .eyebrow,.easy-ideas .eyebrow{display:block;margin-bottom:8px}
+.sum-line{font-size:clamp(20px,2.6cqi,26px);line-height:1.35;letter-spacing:-.02em;margin:0 0 14px}
+.sum-line b{color:var(--green-ink)}
+.sum-status{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;border-radius:14px;padding:12px 14px;margin-bottom:20px;background:var(--surface)}
+.sum-status > span:last-child{flex-basis:100%;color:var(--ink);font-size:15px}
+.sum-dot{width:12px;height:12px;border-radius:50%;background:var(--muted)}
+.sum-status.good{background:var(--green-soft)}.sum-status.good .sum-dot{background:var(--green)}
+.sum-status.ok{background:rgba(194,122,6,.1)}.sum-status.ok .sum-dot{background:var(--warn)}
+.sum-status.bad{background:rgba(212,52,44,.08)}.sum-status.bad .sum-dot{background:var(--bad)}
+.sum-status.early .sum-dot{background:var(--violet)}
+.flow{display:flex;align-items:stretch;gap:8px}
+.fl-step{flex:1;background:var(--surface);border-radius:16px;padding:14px 10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+.fl-step.ok{background:var(--green-soft)}
+.fl-ic{font-size:22px}.fl-step b{font-size:clamp(20px,3cqi,28px);letter-spacing:-.02em}.fl-step small{color:var(--muted);font-weight:600;font-size:13px}
+.fl-arrow{display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);min-width:56px}
+.fl-arrow span{font-size:22px;font-weight:800}.fl-arrow em{font-style:normal;font-size:12px;font-weight:700}
+.fl-arrow.leak{color:var(--bad)}
+.flow-note{margin:14px 0 0;font-size:15px}
+.easy-mean{color:var(--muted);margin:0 0 16px;font-size:16px}.easy-mean b{color:var(--ink)}
+.easy-hint{margin:12px 0 0;color:var(--muted);font-size:13px}
+.easy-empty{text-align:center;padding:40px 24px}.ee-ic{font-size:44px}.easy-empty h2{justify-content:center}.easy-empty p{color:var(--muted);max-width:28em;margin:0 auto 18px}
+.more-details{margin-top:6px}
+.more-details > summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:14px;font-weight:700;color:var(--ink)}
+.more-details > summary::-webkit-details-marker{display:none}
+.more-details > summary span{color:var(--muted);font-weight:500;font-size:14px}
+.more-details[open] > summary{margin-bottom:4px}
+@container (max-width:600px){.flow{flex-direction:column}.fl-arrow{flex-direction:row;gap:8px;min-width:0;padding:2px 0}.fl-arrow span{transform:rotate(90deg)}.fl-step{flex-direction:row;justify-content:space-between;padding:12px 16px}.fl-step small{order:2}.fl-step b{order:3;margin-left:auto}}
+.nav-more{margin:14px 14px 2px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.nav-i.sm{padding:8px 14px;font-size:14px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -851,7 +882,7 @@ const LiveStore = {
       else if (err) S.flash = {type: "err", text: /expired|invalid/i.test(err) ? "That link has expired. Log in, or sign up again to get a new one." : err};
       else if (!this.user) S.flash = {type: "ok", text: "Your email is confirmed. Log in to continue."};
       else S.welcome = true;
-      history.replaceState(null, "", location.pathname + (S.recovery ? "#reset" : this.user ? "#advisor" : "#login"));
+      history.replaceState(null, "", location.pathname + (S.recovery ? "#reset" : this.user ? "#dashboard" : "#login"));
     }
     this.sb.auth.onAuthStateChange((ev, session) => { this.user = session ? session.user : null; if (ev === "PASSWORD_RECOVERY") { S.recovery = true; location.hash = "#reset"; } });
     return this.user ? this.loadSite() : null;
@@ -1303,8 +1334,8 @@ const monthReset = () => { const d = new Date(); return new Date(d.getFullYear()
 
 /* ---------- App state & routing ---------- */
 const S = { site: null, days: 30, metric: "visitors", m: null, events: [], campaigns: [], sim: {v: uid(), log: []} };
-const NAV = [["advisor","Why They Leave","bulb"],["dashboard","Dashboard","home"],["journeys","Visitor Journeys","route"],["funnel","Funnels","funnel"],["analytics","Analytics","chart"],["campaigns","Campaign Links","link"],["install","Tracking Setup","code"],["developers","API Keys","key"],["account","Settings","gear"]];
-const TABS = [["advisor","Why","bulb"],["dashboard","Numbers","home"],["journeys","Journeys","route"],["campaigns","Links","link"],["account","Profile","user"]];
+const NAV = [["dashboard","Home","home"],["advisor","Why They Leave","bulb"],["journeys","Visitor Paths","route"],["campaigns","Tracking Links","link"],["install","Install","code"],["account","Settings","gear"],["funnel","Funnels","funnel","more"],["analytics","Analytics","chart","more"],["developers","API Keys","key","more"]];
+const TABS = [["dashboard","Home","home"],["advisor","Why","bulb"],["journeys","Paths","route"],["campaigns","Links","link"],["account","Settings","gear"]];
 const APP_ROUTES = new Set(NAV.map(n => n[0]));
 
 async function loadData(){
@@ -1338,11 +1369,12 @@ async function route(){
   VIEWS[r]();
   if (S.usage && S.usage.events >= LIMITS.events * .8) $("#view").insertAdjacentHTML("afterbegin", `<div class="alert ${S.usage.events >= LIMITS.events ? "err" : "ok"} limit-alert">${S.usage.events >= LIMITS.events ? `This website reached the free beta limit of ${LIMITS.events.toLocaleString("en-US")} events this month. New visits aren’t recorded until ${monthReset()}.` : `This website has used ${fmt(S.usage.events)} of its ${LIMITS.events.toLocaleString("en-US")} free events this month.`} <a href="#account">See usage</a></div>`);
   S.seq = (S.seq || 0) + 1;
-  if (r === "advisor" && !Tour.active && !tourSeen()) setTimeout(() => { if (location.hash === "#advisor" && !Tour.active) Tour.start(); }, 900);
+  if ((r === "advisor" || r === "dashboard") && !Tour.active && !tourSeen()) setTimeout(() => { if (["#advisor", "#dashboard"].includes(location.hash) && !Tour.active) Tour.start(); }, 900);
 }
 
 const sideHTML = active => `<aside class="side"><a class="logo" href="#home">${LOGO(34)}ClickSpring<span class="beta-tag">BETA</span></a>${siteSwitch()}
-  ${NAV.map(([k, label, i]) => `<a class="nav-i ${k === active ? "on" : ""}" data-k="${k}" href="#${k}">${ic(i)}${label}</a>`).join("")}
+  ${NAV.filter(n => !n[3]).map(([k, label, i]) => `<a class="nav-i ${k === active ? "on" : ""}" data-k="${k}" href="#${k}">${ic(i)}${label}</a>`).join("")}
+  <p class="nav-more">More</p>${NAV.filter(n => n[3]).map(([k, label, i]) => `<a class="nav-i sm ${k === active ? "on" : ""}" data-k="${k}" href="#${k}">${ic(i, 17)}${label}</a>`).join("")}
   <div class="up"><span class="beta-tag">BETA</span><b>Completely free for now</b><span>${LIMITS.sites} websites · ${LIMITS.events.toLocaleString("en-US")} events a month · ${LIMITS.links} links each</span><a class="btn green" href="#account">See your usage</a></div></aside>`;
 const siteSwitch = () => (store.sites || []).length > 1 && S.site ? `<label class="site-sw">${ic("dash", 16)}<select class="sitesel" aria-label="Website">${store.sites.map(x => `<option value="${x.id}" ${x.id === S.site.id ? "selected" : ""}>${esc(x.name)}</option>`).join("")}</select></label>` : "";
 function switchSite(id){ S.site = store.selectSite(id); $("#root").innerHTML = ""; toast(`Viewing ${S.site.name}`); route(); }
@@ -1617,7 +1649,7 @@ async function openDemo(){
   if (!DemoStore.user) { DemoStore.account = {name: "", email: "demo@clickspring.app", on: true, demo: true}; DemoStore.user = DemoStore.account; DemoStore._saveUser(); }
   if (!site) site = await DemoStore.createSite({name: "Demo Store", url: "https://example.com", owner: ""});
   if (!DemoStore.data.events.length) DemoStore.seed();
-  S.site = site; $("#root").innerHTML = ""; if (location.hash === "#advisor") route(); else location.hash = "#advisor";
+  S.site = site; $("#root").innerHTML = ""; if (location.hash === "#dashboard") route(); else location.hash = "#dashboard";
 }
 
 /* ---------- Sign up / log in ---------- */
@@ -1668,7 +1700,7 @@ async function afterLogin(site){
   S.site = site; S.user = store.user;
   if (!S.site) await ensureSite();
   $("#root").innerHTML = "";
-  location.hash = S.site ? "#advisor" : "#start";
+  location.hash = S.site ? "#dashboard" : "#start";
 }
 function renderAuth(mode){
   const forms = {
@@ -1793,65 +1825,76 @@ async function checkStatus(){
 const VIEWS = {
   dashboard(){
     const m = S.m, c = m.c, p = m.p, s = m.series, name = esc((store.userName() || S.site.owner || "").split(" ")[0]);
-    const top = `<div class="welcome"><div><h1>${name ? `Hey ${name}, h` : "H"}ere’s what to fix 👇</h1><p>Why people leave ${esc(S.site.name)}, and what to add or change to get more sign-ups.</p></div>${rangeHTML()}</div>`;
-    if (!c.visitors) return $("#view").innerHTML = top + noData();
-    const tips = advise(m), real = tips.filter(t => !["low", "good"].includes(t.lvl)), first = real[0] || tips[0];
-    const ideas = addIdeas(m, tips), fixes = S.fixes || [], testing = fixes.find(f => f.tip_key === first.key);
-    const stepsKey = `cs_steps_${S.site.id}_${first.key}`; let done = []; try { done = JSON.parse(localStorage.getItem(stepsKey) || "[]"); } catch (e) {}
-    const steps = first.steps || [];
-    const pctDone = steps.length ? Math.round(done.length / steps.length * 100) : 0;
-    const leaks = real.slice(0, 4), maxImpact = Math.max(1, ...leaks.map(t => t.gain || 1));
-    $("#view").innerHTML = top + `
-    <section class="card act-card">
-      <div class="act-l">
-        <span class="eyebrow">${real.length ? "Fix this first" : V_EARLY(c.visitors) ? "Early days" : "Looking good"}</span>
-        <h2 class="act-title">${esc(first.title)}</h2>
-        ${first.evidence ? `<div class="hero-ev">${first.evidence.map(e => `<span>${esc(e)}</span>`).join("")}${first.conf ? `<span class="conf ${first.conf.cls}">${first.conf.level}</span>` : ""}</div>` : ""}
-        <p class="act-why"><b>Why it happens:</b> ${esc(first.body)}</p>
+    const head = `<div class="welcome"><div><h1>${name ? `Hi ${name} 👋` : "Hi there 👋"}</h1><p>Here’s how ${esc(S.site.name)} is doing, in plain words.</p></div>${rangeHTML()}</div>`;
+    if (!c.visitors) return $("#view").innerHTML = head + `<div class="card easy-empty"><div class="ee-ic">👋</div><h2>No visitors yet</h2><p>Add one line of code to your website, then come back. ClickSpring will explain everything here.</p><a class="btn green lg" href="#install">Show me how</a></div>`;
+    const tips = advise(m), real = tips.filter(t => !["low", "good"].includes(t.lvl)), first = real[0];
+    const ideas = addIdeas(m, tips), testing = first && (S.fixes || []).find(f => f.tip_key === first.key);
+    const early = c.visitors < 30, conv = c.conv;
+    const status = early ? {cls: "early", label: "Too early to tell", note: `You need about 30 visitors for clear answers. You have ${fmt(c.visitors)}.`}
+      : conv >= 5 ? {cls: "good", label: "Doing great", note: "That’s a strong sign-up rate."}
+      : conv >= 2 ? {cls: "ok", label: "Doing OK", note: "Normal, but there’s room to grow."}
+      : {cls: "bad", label: "Needs work", note: "Most visitors leave without signing up. The fix below will help."};
+    const oneIn = conv > 0 ? Math.max(1, Math.round(100 / conv)) : 0, ch = delta(conv, p.conv);
+    const lostClick = c.visitors - c.clickers, lostSign = c.clickers - c.signups, bigAtClick = lostClick >= lostSign;
+    const stepsKey = first ? `cs_steps_${S.site.id}_${first.key}` : ""; let done = []; try { done = JSON.parse(localStorage.getItem(stepsKey) || "[]"); } catch (e) {}
+    const steps = (first && first.steps) || [];
+    $("#view").innerHTML = head + `
+    <section class="card easy-sum">
+      <span class="eyebrow">1 · How it’s going</span>
+      <p class="sum-line"><b>${fmt(c.visitors)} people</b> visited your website. <b>${fmt(c.signups)}</b> of them signed up.</p>
+      <div class="sum-status ${status.cls}"><span class="sum-dot"></span><b>${status.label}</b><span>${oneIn ? `About <b>1 in ${oneIn}</b> visitors signs up. ` : ""}${status.note}${ch !== null && isFinite(ch) && !early ? ` That’s ${Math.abs(Math.round(ch))}% ${ch >= 0 ? "better" : "worse"} than the ${S.days} days before.` : ""}</span></div>
+      <div class="flow">
+        <div class="fl-step"><span class="fl-ic">👀</span><b>${fmt(c.visitors)}</b><small>visited</small></div>
+        <div class="fl-arrow ${bigAtClick ? "leak" : ""}"><span>→</span><em>${fmt(lostClick)} left</em></div>
+        <div class="fl-step"><span class="fl-ic">👆</span><b>${fmt(c.clickers)}</b><small>clicked a button</small></div>
+        <div class="fl-arrow ${!bigAtClick ? "leak" : ""}"><span>→</span><em>${fmt(lostSign)} left</em></div>
+        <div class="fl-step ok"><span class="fl-ic">✅</span><b>${fmt(c.signups)}</b><small>signed up</small></div>
       </div>
+      <p class="flow-note">🔴 Most people leave <b>${bigAtClick ? "before clicking anything" : "after clicking, before signing up"}</b>.</p>
+    </section>
+    ${first ? `<section class="card easy-fix">
+      <span class="eyebrow">2 · Your #1 problem</span>
+      <h2 class="act-title">${esc(first.title)}</h2>
+      <p class="easy-mean"><b>What this means:</b> ${esc(first.body)}</p>
       <div class="act-r">
-        <div class="act-steps-h"><b>What to do</b><span>${done.length}/${steps.length} done</span></div>
-        <div class="src-bar" style="margin-bottom:12px"><i style="width:${pctDone}%;background:var(--green)"></i></div>
+        <div class="act-steps-h"><b>3 · What to do</b><span>${done.length}/${steps.length} done</span></div>
+        <div class="src-bar" style="margin-bottom:12px"><i style="width:${steps.length ? Math.round(done.length / steps.length * 100) : 0}%;background:var(--green)"></i></div>
         <ul class="act-steps">${steps.map((st, k) => `<li><label><input type="checkbox" data-step="${k}" ${done.includes(k) ? "checked" : ""}><span>${esc(st)}</span></label></li>`).join("")}</ul>
         ${estHTML(first)}
-        <div class="cta-row" style="margin-top:14px">${first.href ? `<a class="btn green" href="${first.href}">${esc(first.cta)}</a>` : testing ? `<span class="testing">${ic("cal", 14)} Measuring since ${dShort(new Date(testing.created))}</span>` : (["setup", "low", "good"].includes(first.lvl) ? "" : `<button class="btn green" id="madeit">I made this change</button>`)}<a class="btn quiet" href="#advisor">See the proof</a></div>
+        <div class="cta-row" style="margin-top:14px">${first.href ? `<a class="btn green" href="${first.href}">${esc(first.cta)}</a>` : testing ? `<span class="testing">${ic("cal", 14)} Checking if it worked since ${dShort(new Date(testing.created))}</span>` : `<button class="btn green" id="madeit">I did it ✓</button>`}<a class="btn quiet" href="#advisor">Show me the proof</a></div>
+        <p class="easy-hint">${first.conf ? `Based on ${fmt(first.conf.n)} ${first.conf.n === 1 ? "person" : "people"}. ` : ""}When you’re done, press “I did it” and ClickSpring will tell you if it worked.</p>
       </div>
-    </section>
-    <div class="grid two">
-      <div class="card"><h2><span class="h-ic" style="color:var(--bad)">${ic("funnel", 18)}<span style="color:var(--ink)">Why people leave</span></span><a class="btn quiet sm" href="#advisor">All reasons</a></h2>
-        ${leaks.length ? leaks.map((t, k) => `<a class="leak-row" href="#advisor"><span class="lr-n">${k + 1}</span><div class="lr-b"><b>${esc(t.title)}</b><span class="lr-fix">${ic("arrow", 13)} ${esc(t.short)}</span>
-          <div class="src-bar"><i style="width:${Math.max(8, (t.gain || 1) / maxImpact * 100)}%;background:${t.lvl === "high" ? "var(--bad)" : "var(--warn)"}"></i></div></div></a>`).join("")
-          : `<p class="muted" style="margin:0">${c.visitors < 30 ? `Only ${fmt(c.visitors)} visitor${c.visitors === 1 ? "" : "s"} so far. Clear reasons show up around 30.` : "No big leak right now. Nice."}</p>`}</div>
-      <div class="card"><h2><span class="h-ic" style="color:var(--green-ink)">${ic("spark", 18)}<span style="color:var(--ink)">What to add to your site</span></span></h2>
-        ${ideas.map(i => `<div class="idea"><span class="idea-tag ${i.kind}">${i.kind === "add" ? "Add" : i.kind === "fix" ? "Change" : "Set up"}</span><div><b>${esc(i.title)}</b><p>${esc(i.why)}</p>${i.href ? `<a href="${i.href}">${esc(i.cta)} →</a>` : ""}</div></div>`).join("")}</div>
-    </div>
-    <div class="grid kpis">
-      ${kpiCard({icon: "eye", label: "Visitors", value: fmt(c.visitors), d: delta(c.visitors, p.visitors), series: s.visitors})}
-      ${kpiCard({icon: "cursor", color: "var(--violet)", label: "Clicked something", value: fmt(c.clickers), d: delta(c.clickers, p.clickers), series: s.clicks})}
-      ${kpiCard({icon: "person", label: "Signed up", value: fmt(c.signups), d: delta(c.signups, p.signups), series: s.signups})}
-      ${kpiCard({icon: "pct", color: "var(--ink)", label: "Sign-up rate", value: pctStr(c.conv), d: delta(c.conv, p.conv)})}
-    </div>
-    <div class="grid two">${funnelOverview({...c, convD: c.conv - p.conv})}
-      <div class="card"><h2>Where they leave <a class="btn quiet sm" href="#journeys">Visitor paths</a></h2>
-        ${m.exits.length ? m.exits.slice(0, 5).map(x => `<div class="bar-row"><div class="bar-top"><b>${esc(pageName(x.page))}</b><span>${fmt(x.n)} left · ${pctStr(x.share)}</span></div><div class="src-bar"><i style="width:${x.share}%;background:var(--bad)"></i></div></div>`).join("") : `<p class="muted">Nobody has left yet.</p>`}</div>
-    </div>
-    <div class="card" style="margin-bottom:16px"><h2>Performance over time <div class="seg" id="seg">${["visitors","clicks","signups"].map(k => `<button data-m="${k}" class="${S.metric === k ? "on" : ""}">${{visitors:"Visitors",clicks:"Clicks",signups:"Sign-Ups"}[k]}</button>`).join("")}</div></h2>
-      <div id="bigchart">${lineSVG(s[S.metric], {h: 160})}</div>
-      <div class="axis"><span>${dShort(s.dates[0])}</span><span>${dShort(s.dates[Math.floor(s.dates.length/2)])}</span><span>${dShort(s.dates[s.dates.length-1])}</span></div></div>
-    <div class="card"><h2>Where visitors come from <a class="btn quiet sm" href="#analytics">View all</a></h2>${sourcesTable(m.sources.slice(0, 5))}</div>`;
-    $("#seg").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; S.metric = b.dataset.m;
-      $("#seg").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); $("#bigchart").innerHTML = lineSVG(s[S.metric], {h: 160}); });
+    </section>` : `<section class="card easy-fix"><span class="eyebrow">2 · Your #1 problem</span><h2 class="act-title">${early ? "Nothing clear yet" : "No big problem right now 🎉"}</h2><p class="easy-mean">${early ? "Get more visitors first. Share your tracking link in a post." : "Your next step is getting more of the right visitors."}</p><a class="btn green" href="#campaigns">Get your tracking link</a></section>`}
+    <section class="card easy-ideas"><span class="eyebrow">4 · More ideas</span>
+      ${ideas.map(i => `<div class="idea"><span class="idea-tag ${i.kind}">${i.kind === "add" ? "Add" : i.kind === "fix" ? "Change" : "Set up"}</span><div><b>${esc(i.title)}</b><p>${esc(i.why)}</p>${i.href ? `<a href="${i.href}">${esc(i.cta)} →</a>` : ""}</div></div>`).join("")}</section>
+    <details class="more-details"><summary>Show more details <span>charts, pages, where visitors come from</span></summary>
+      <div class="grid kpis" style="margin-top:16px">
+        ${kpiCard({icon: "eye", label: "Visitors", value: fmt(c.visitors), d: delta(c.visitors, p.visitors), series: s.visitors})}
+        ${kpiCard({icon: "cursor", color: "var(--violet)", label: "Clicked something", value: fmt(c.clickers), d: delta(c.clickers, p.clickers), series: s.clicks})}
+        ${kpiCard({icon: "person", label: "Signed up", value: fmt(c.signups), d: delta(c.signups, p.signups), series: s.signups})}
+        ${kpiCard({icon: "pct", color: "var(--ink)", label: "Sign-up rate", value: pctStr(c.conv), d: delta(c.conv, p.conv)})}
+      </div>
+      <div class="grid two">
+        <div class="card"><h2>All reasons people leave <a class="btn quiet sm" href="#advisor">Open</a></h2>${real.length ? real.slice(0, 5).map((t, k) => `<a class="leak-row" href="#advisor"><span class="lr-n">${k + 1}</span><div class="lr-b"><b>${esc(t.title)}</b><span class="lr-fix">${ic("arrow", 13)} ${esc(t.short)}</span></div></a>`).join("") : `<p class="muted" style="margin:0">Nothing big yet.</p>`}</div>
+        <div class="card"><h2>Pages where people left <a class="btn quiet sm" href="#journeys">Visitor paths</a></h2>${m.exits.length ? m.exits.slice(0, 5).map(x => `<div class="bar-row"><div class="bar-top"><b>${esc(pageName(x.page))}</b><span>${fmt(x.n)} people · ${pctStr(x.share)}</span></div><div class="src-bar"><i style="width:${x.share}%;background:var(--bad)"></i></div></div>`).join("") : `<p class="muted">Nobody has left yet.</p>`}</div>
+      </div>
+      <div class="card" style="margin-bottom:16px"><h2>Visitors per day <div class="seg" id="seg">${["visitors","clicks","signups"].map(k => `<button data-m="${k}" class="${S.metric === k ? "on" : ""}">${{visitors:"Visitors",clicks:"Clicks",signups:"Sign-Ups"}[k]}</button>`).join("")}</div></h2>
+        <div id="bigchart">${lineSVG(s[S.metric], {h: 150})}</div>
+        <div class="axis"><span>${dShort(s.dates[0])}</span><span>${dShort(s.dates[Math.floor(s.dates.length/2)])}</span><span>${dShort(s.dates[s.dates.length-1])}</span></div></div>
+      <div class="card"><h2>Where visitors come from <a class="btn quiet sm" href="#analytics">View all</a></h2>${sourcesTable(m.sources.slice(0, 5))}</div>
+    </details>`;
+    const seg = $("#seg"); if (seg) seg.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; S.metric = b.dataset.m;
+      seg.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); $("#bigchart").innerHTML = lineSVG(s[S.metric], {h: 150}); });
     $("#view").onchange = e => {
       const cb = e.target.closest("[data-step]"); if (!cb) return;
       const k = +cb.dataset.step; done = cb.checked ? [...new Set([...done, k])] : done.filter(x => x !== k);
       try { localStorage.setItem(stepsKey, JSON.stringify(done)); } catch (_) {}
-      const pct2 = steps.length ? Math.round(done.length / steps.length * 100) : 0;
-      $(".act-steps-h span").textContent = `${done.length}/${steps.length} done`; $(".act-r .src-bar i").style.width = pct2 + "%";
-      if (done.length === steps.length && steps.length) toast("All steps done. Press “I made this change” to measure it.");
+      $(".act-steps-h span").textContent = `${done.length}/${steps.length} done`; $(".easy-fix .act-r .src-bar i").style.width = (steps.length ? Math.round(done.length / steps.length * 100) : 0) + "%";
+      if (done.length === steps.length && steps.length) toast("Nice! Now press “I did it ✓” so ClickSpring can check if it worked.");
     };
     const mi = $("#madeit"); if (mi) mi.addEventListener("click", async () => {
       mi.disabled = true;
-      try { await store.addFix({tip_key: first.key, title: first.title, note: steps.filter((_, k) => done.includes(k)).join(" ")}); toast("Measuring before vs after"); route(); }
+      try { await store.addFix({tip_key: first.key, title: first.title, note: steps.filter((_, k) => done.includes(k)).join(" ")}); toast("Got it. ClickSpring will compare before vs after."); route(); }
       catch (err) { toast(friendly(err)); mi.disabled = false; }
     });
   },
