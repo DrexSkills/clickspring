@@ -721,6 +721,14 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 @container (max-width:600px){.flow{flex-direction:column}.fl-arrow{flex-direction:row;gap:8px;min-width:0;padding:2px 0}.fl-arrow span{transform:rotate(90deg)}.fl-step{flex-direction:row;justify-content:space-between;padding:12px 16px}.fl-step small{order:2}.fl-step b{order:3;margin-left:auto}}
 .nav-more{margin:14px 14px 2px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .nav-i.sm{padding:8px 14px;font-size:14px;color:var(--muted)}
+.fl-ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--card);color:var(--muted);font-size:0}
+.fl-step.ok .fl-ic{color:var(--green-ink)}
+.fl-step:nth-child(3) .fl-ic{color:var(--violet)}
+.red-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--bad);margin-right:8px;vertical-align:1px}
+.hi-h{display:flex;align-items:center;gap:10px}.hi-ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--green-soft);color:var(--green-ink)}
+.ee-ic{width:64px;height:64px;border-radius:18px;margin:0 auto 12px;display:grid;place-items:center;background:var(--green-soft);color:var(--green-ink)}
+.demo-bar b{display:inline-flex;align-items:center;gap:6px}
+.cs-ck b.t svg{flex:none}
 </style>
 </head>
 <body>
@@ -753,6 +761,8 @@ const PLATFORMS = ["instagram","tiktok","youtube","x","facebook","other"];
 
 const I = {
   key:'<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M16 7l3 3M14 9l2 2"/>',
+  check:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.6 2.6L16 9.5"/>',
+  hand:'<path d="M7 11V6.5a1.5 1.5 0 0 1 3 0V11m0-1.5V4.5a1.5 1.5 0 0 1 3 0V11m0-4.5a1.5 1.5 0 0 1 3 0V12m0-3.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-1a7 7 0 0 1-5.6-2.8L4.2 15a1.6 1.6 0 0 1 2.6-1.9L7 13.5"/>',
   route:'<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3.5 3.5 0 0 0 0-7H8a3.5 3.5 0 0 1 0-7h7.5"/>',
   home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
   dash:'<path d="M3 13h8V3H3zM13 21h8v-8h-8zM3 21h8v-6H3zM13 3v8h8V3z"/>',
@@ -1634,7 +1644,7 @@ function animateLanding(){
 }
 
 /* ---------- Demo mode ---------- */
-const demoBarHTML = () => `<div class="demo-bar" role="status"><span><b>👀 You’re in the demo.</b> This is sample data, not a real website. Want your own data?</span>
+const demoBarHTML = () => `<div class="demo-bar" role="status"><span><b>${ic("eye", 16)} You’re in the demo.</b> This is sample data, not a real website. Want your own data?</span>
   <span class="demo-bar-a"><a class="btn green sm" href="#signup" data-exit-demo>Sign up free</a><a class="btn sm" href="#login" data-exit-demo>Log in</a><a class="demo-x" href="#home" data-exit-demo>Exit demo</a></span></div>`;
 async function exitDemo(dest){
   if (Tour.active) Tour.end();
@@ -1677,7 +1687,7 @@ function authShell(inner){
         <div class="gl-row"><b>1,240</b><span>visited your site</span><div class="gl-bar"><i style="width:100%"></i></div></div>
         <div class="gl-row"><b>310</b><span>clicked “Get started”</span><div class="gl-bar"><i style="width:50%"></i></div></div>
         <div class="gl-row"><b>18</b><span>signed up</span><div class="gl-bar"><i style="width:12%"></i></div></div></div>
-      <div class="glass tip-g"><b>🔍 Why they’re leaving</b><p>Most people leave on your pricing page. The ones who bought read your FAQ first.</p></div>
+      <div class="glass tip-g"><b>${ic("search", 16)} Why they’re leaving</b><p>Most people leave on your pricing page. The ones who bought read your FAQ first.</p></div>
     </aside></div>`;
   document.querySelectorAll(".pw-t").forEach(b => b.addEventListener("click", () => {
     const i = b.previousElementSibling, show = i.type === "password"; i.type = show ? "text" : "password"; b.textContent = show ? "Hide" : "Show"; b.setAttribute("aria-label", show ? "Hide password" : "Show password"); }));
@@ -1825,8 +1835,8 @@ async function checkStatus(){
 const VIEWS = {
   dashboard(){
     const m = S.m, c = m.c, p = m.p, s = m.series, name = esc((store.userName() || S.site.owner || "").split(" ")[0]);
-    const head = `<div class="welcome"><div><h1>${name ? `Hi ${name} 👋` : "Hi there 👋"}</h1><p>Here’s how ${esc(S.site.name)} is doing, in plain words.</p></div>${rangeHTML()}</div>`;
-    if (!c.visitors) return $("#view").innerHTML = head + `<div class="card easy-empty"><div class="ee-ic">👋</div><h2>No visitors yet</h2><p>Add one line of code to your website, then come back. ClickSpring will explain everything here.</p><a class="btn green lg" href="#install">Show me how</a></div>`;
+    const head = `<div class="welcome"><div><h1 class="hi-h">${name ? `Hi ${name}` : "Hi there"}<span class="hi-ic">${ic("hand", 22)}</span></h1><p>Here’s how ${esc(S.site.name)} is doing, in plain words.</p></div>${rangeHTML()}</div>`;
+    if (!c.visitors) return $("#view").innerHTML = head + `<div class="card easy-empty"><div class="ee-ic">${ic("code", 30)}</div><h2>No visitors yet</h2><p>Add one line of code to your website, then come back. ClickSpring will explain everything here.</p><a class="btn green lg" href="#install">Show me how</a></div>`;
     const tips = advise(m), real = tips.filter(t => !["low", "good"].includes(t.lvl)), first = real[0];
     const ideas = addIdeas(m, tips), testing = first && (S.fixes || []).find(f => f.tip_key === first.key);
     const early = c.visitors < 30, conv = c.conv;
@@ -1844,13 +1854,13 @@ const VIEWS = {
       <p class="sum-line"><b>${fmt(c.visitors)} people</b> visited your website. <b>${fmt(c.signups)}</b> of them signed up.</p>
       <div class="sum-status ${status.cls}"><span class="sum-dot"></span><b>${status.label}</b><span>${oneIn ? `About <b>1 in ${oneIn}</b> visitors signs up. ` : ""}${status.note}${ch !== null && isFinite(ch) && !early ? ` That’s ${Math.abs(Math.round(ch))}% ${ch >= 0 ? "better" : "worse"} than the ${S.days} days before.` : ""}</span></div>
       <div class="flow">
-        <div class="fl-step"><span class="fl-ic">👀</span><b>${fmt(c.visitors)}</b><small>visited</small></div>
+        <div class="fl-step"><span class="fl-ic">${ic("eye", 20)}</span><b>${fmt(c.visitors)}</b><small>visited</small></div>
         <div class="fl-arrow ${bigAtClick ? "leak" : ""}"><span>→</span><em>${fmt(lostClick)} left</em></div>
-        <div class="fl-step"><span class="fl-ic">👆</span><b>${fmt(c.clickers)}</b><small>clicked a button</small></div>
+        <div class="fl-step"><span class="fl-ic">${ic("cursor", 20)}</span><b>${fmt(c.clickers)}</b><small>clicked a button</small></div>
         <div class="fl-arrow ${!bigAtClick ? "leak" : ""}"><span>→</span><em>${fmt(lostSign)} left</em></div>
-        <div class="fl-step ok"><span class="fl-ic">✅</span><b>${fmt(c.signups)}</b><small>signed up</small></div>
+        <div class="fl-step ok"><span class="fl-ic">${ic("check", 20)}</span><b>${fmt(c.signups)}</b><small>signed up</small></div>
       </div>
-      <p class="flow-note">🔴 Most people leave <b>${bigAtClick ? "before clicking anything" : "after clicking, before signing up"}</b>.</p>
+      <p class="flow-note"><span class="red-dot"></span>Most people leave <b>${bigAtClick ? "before clicking anything" : "after clicking, before signing up"}</b>.</p>
     </section>
     ${first ? `<section class="card easy-fix">
       <span class="eyebrow">2 · Your #1 problem</span>
@@ -1864,7 +1874,7 @@ const VIEWS = {
         <div class="cta-row" style="margin-top:14px">${first.href ? `<a class="btn green" href="${first.href}">${esc(first.cta)}</a>` : testing ? `<span class="testing">${ic("cal", 14)} Checking if it worked since ${dShort(new Date(testing.created))}</span>` : `<button class="btn green" id="madeit">I did it ✓</button>`}<a class="btn quiet" href="#advisor">Show me the proof</a></div>
         <p class="easy-hint">${first.conf ? `Based on ${fmt(first.conf.n)} ${first.conf.n === 1 ? "person" : "people"}. ` : ""}When you’re done, press “I did it” and ClickSpring will tell you if it worked.</p>
       </div>
-    </section>` : `<section class="card easy-fix"><span class="eyebrow">2 · Your #1 problem</span><h2 class="act-title">${early ? "Nothing clear yet" : "No big problem right now 🎉"}</h2><p class="easy-mean">${early ? "Get more visitors first. Share your tracking link in a post." : "Your next step is getting more of the right visitors."}</p><a class="btn green" href="#campaigns">Get your tracking link</a></section>`}
+    </section>` : `<section class="card easy-fix"><span class="eyebrow">2 · Your #1 problem</span><h2 class="act-title">${early ? "Nothing clear yet" : "No big problem right now"}</h2><p class="easy-mean">${early ? "Get more visitors first. Share your tracking link in a post." : "Your next step is getting more of the right visitors."}</p><a class="btn green" href="#campaigns">Get your tracking link</a></section>`}
     <section class="card easy-ideas"><span class="eyebrow">4 · More ideas</span>
       ${ideas.map(i => `<div class="idea"><span class="idea-tag ${i.kind}">${i.kind === "add" ? "Add" : i.kind === "fix" ? "Change" : "Set up"}</span><div><b>${esc(i.title)}</b><p>${esc(i.why)}</p>${i.href ? `<a href="${i.href}">${esc(i.cta)} →</a>` : ""}</div></div>`).join("")}</section>
     <details class="more-details"><summary>Show more details <span>charts, pages, where visitors come from</span></summary>
@@ -2341,7 +2351,7 @@ window.addEventListener("hashchange", () => { if (!APP_ROUTES.has(location.hash.
   function show(){
     if (!box) {
       box = document.createElement("div"); box.className = "cs-ck"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", "Cookie preferences");
-      box.innerHTML = '<b class="t">🍪 Cookies &amp; storage</b><p>We use essential browser storage to keep you signed in and remember your settings. With your OK, we also measure visits with ClickSpring itself (no cookies, no IP stored). No advertising cookies. <a href="privacy.html#cookies">Learn more</a></p><div class="r"><button class="a" data-v="all">Accept all</button><button class="e" data-v="essential">Essential only</button></div>';
+      box.innerHTML = '<b class="t"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1fbf4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.5A9 9 0 1 1 11.5 3a3 3 0 0 0 3.5 3.5 3 3 0 0 0 3.5 3.5 3 3 0 0 0 2.5 2.5z"/><circle cx="8.5" cy="10.5" r=".9" fill="#1fbf4f"/><circle cx="14.5" cy="15" r=".9" fill="#1fbf4f"/><circle cx="9" cy="15.5" r=".9" fill="#1fbf4f"/></svg> Cookies &amp; storage</b><p>We use essential browser storage to keep you signed in and remember your settings. With your OK, we also measure visits with ClickSpring itself (no cookies, no IP stored). No advertising cookies. <a href="privacy.html#cookies">Learn more</a></p><div class="r"><button class="a" data-v="all">Accept all</button><button class="e" data-v="essential">Essential only</button></div>';
       box.addEventListener("click", function(e){ var b = e.target.closest("[data-v]"); if (!b) return; set(b.dataset.v); if (b.dataset.v === "all") analytics(); box.hidden = true; });
       document.body.appendChild(box);
     }
