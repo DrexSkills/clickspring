@@ -670,6 +670,26 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 @media(max-width:860px){.demo-bar{padding:10px 14px;font-size:13px}}
 .side .logo{font-size:21px}.side .beta-tag{margin-left:4px;font-size:10px;padding:2px 6px}
 @media(max-width:760px){.founder-card{grid-template-columns:minmax(0,1fr)}.founder{padding:0 16px}.f-text{min-width:0}.founder blockquote{font-size:19px;overflow-wrap:break-word}.f-yt .btn{white-space:normal;max-width:100%}.f-photo,.f-photo img{width:150px;height:150px}}
+/* ---------- Action dashboard ---------- */
+.act-card{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:26px;padding:26px;margin-bottom:16px;border-width:2px;border-color:var(--green)}
+@container (max-width:820px){.act-card{grid-template-columns:minmax(0,1fr);padding:20px}}
+.act-title{display:block!important;font-size:clamp(21px,3cqi,28px)!important;line-height:1.2;letter-spacing:-.03em;margin:8px 0 12px!important}
+.act-why{color:var(--muted);margin:0}.act-why b{color:var(--ink)}
+.act-r{background:var(--surface);border-radius:16px;padding:18px}
+.act-steps-h{display:flex;justify-content:space-between;margin-bottom:8px}.act-steps-h span{color:var(--muted);font-weight:600;font-size:14px}
+.act-steps{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.act-steps label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px}
+.act-steps input{width:18px;height:18px;margin-top:1px;accent-color:#1fbf4f;flex:none}
+.act-steps input:checked + span{text-decoration:line-through;color:var(--muted)}
+.leak-row{display:flex;gap:12px;text-decoration:none;color:inherit;padding:12px 0;border-bottom:1px solid var(--line)}
+.leak-row:last-child{border-bottom:0}.leak-row:hover b{color:var(--green-ink)}
+.lr-n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-weight:800;font-size:13px}
+.lr-b{flex:1;min-width:0}.lr-b b{display:block;font-size:15px;line-height:1.35}
+.lr-fix{display:flex;align-items:center;gap:4px;color:var(--green-ink);font-weight:600;font-size:13px;margin:3px 0 8px}
+.idea{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.idea:last-child{border-bottom:0}
+.idea b{display:block;font-size:15px}.idea p{margin:2px 0 4px;color:var(--muted);font-size:14px}.idea a{font-weight:700;font-size:14px;color:var(--green-ink);text-decoration:none}
+.idea-tag{flex:none;align-self:flex-start;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:3px 9px;margin-top:2px}
+.idea-tag.add{background:var(--green-soft);color:var(--green-ink)}.idea-tag.fix{background:rgba(212,52,44,.1);color:var(--bad)}.idea-tag.setup{background:rgba(124,92,255,.12);color:var(--violet)}
 </style>
 </head>
 <body>
@@ -1151,6 +1171,30 @@ const planHTML = p => `<div class="plan"><p class="plan-h">${esc(p.headline)}</p
   <ol class="plan-steps">${p.actions.map(a => `<li><b>${esc(a.title)}</b>${a.detail ? `<span>${esc(a.detail)}</span>` : ""}${a.target ? `<em>${esc(a.target)}</em>` : ""}</li>`).join("")}</ol>
   ${p.testing.length ? `<p class="plan-sub">Changes you’re testing</p><ul class="plan-test">${p.testing.map(t => `<li>${esc(t)}</li>`).join("")}</ul>` : ""}
   <p class="plan-next">${esc(p.next)}</p><button class="btn quiet sm" id="copyplan">Copy plan</button></div>`;
+
+/* "What to add to your site": concrete additions/changes from the data */
+const V_EARLY = v => v < 30;
+function addIdeas(m, tips){
+  const out = [], c = m.c, has = k => tips.some(t => t.key === k || (t.key || "").startsWith(k));
+  for (const d of (m.diffs || []).filter(d => !(d.f.startsWith("Clicked") && SIGNUPISH.test(d.f))).slice(0, 2)) {
+    const what = d.f.replace(/^Visited /, "").replace(/^Clicked /, "");
+    out.push(d.f.startsWith("Visited")
+      ? {kind: "add", title: `Add a link to ${pageName(what)} next to your main button`, why: `${pctStr(d.b)} of customers visited it vs ${pctStr(d.l)} of everyone else. Make it easy to find.`}
+      : {kind: "add", title: `Put ${what} on your first screen`, why: `${pctStr(d.b)} of customers clicked it vs ${pctStr(d.l)} of everyone else.`});
+  }
+  const ex = (m.exits || []).find(x => x.page !== "/" && x.share >= 20);
+  if (ex) out.push({kind: "fix", title: `Add the missing answer on ${ex.page}`, why: `${pctStr(ex.share)} of people who left were last here. Add the price, how it works, or proof, plus one clear button.`});
+  const mob = (m.devices || []).find(d => d.key === "mobile"), desk = (m.devices || []).find(d => d.key === "desktop");
+  if (mob && mob.visitors >= 5 && pct(mob.visitors, c.visitors) >= 50 && (!desk || pct(mob.clickers, mob.visitors) < pct(desk.clickers, desk.visitors)))
+    out.push({kind: "add", title: "Add a sticky sign-up button on phones", why: `${pctStr(pct(mob.visitors, c.visitors))} of your visitors are on phones and click less than computer visitors.`});
+  if (has("cta") || has("bounce")) out.push({kind: "fix", title: "Rewrite your headline to match your post", why: "People leave after one look. Say exactly what they get, in the same words as the post that sent them."});
+  if (has("form")) out.push({kind: "fix", title: "Cut your sign-up form to one field", why: "Most people who click quit at the form. Ask for an email only."});
+  if (!m.signupEver) out.push({kind: "setup", title: "Turn on sign-up tracking", why: "No sign-ups recorded yet. If your form is an embed or redirects, add your thank-you page.", href: "#install", cta: "Open Tracking Setup"});
+  if (!m.camps.length) out.push({kind: "setup", title: "Add a tracking link to your bio", why: "See which posts bring customers, not just views.", href: "#campaigns", cta: "Create a tracking link"});
+  if (c.visitors < 30) out.push({kind: "setup", title: "Get to 30 visitors", why: `You have ${fmt(c.visitors)}. Share your link in a post so the reasons get more certain.`, href: "#campaigns", cta: "Get your link"});
+  if (out.length < 3) out.push({kind: "add", title: "Add one line of proof next to your button", why: "A number of users, a short review, or a logo helps people trust you right at the moment they decide."});
+  return out.slice(0, 4);
+}
 
 /* Before / after for changes the founder made */
 function measureFix(fix, events){
@@ -1749,25 +1793,67 @@ async function checkStatus(){
 const VIEWS = {
   dashboard(){
     const m = S.m, c = m.c, p = m.p, s = m.series, name = esc((store.userName() || S.site.owner || "").split(" ")[0]);
-    const top = `<div class="welcome d-only"><div><h1>Welcome back${name ? ", " + name : ""}! 👋</h1><p>Here’s where visitors turn into customers, and where they don’t.</p></div>${rangeHTML()}</div>
-      <div class="m-only m-hero"><h1>Your Growth In One Place.</h1><p>Track. Improve. Grow.</p>${rangeHTML()}</div>`;
+    const top = `<div class="welcome"><div><h1>${name ? `Hey ${name}, h` : "H"}ere’s what to fix 👇</h1><p>Why people leave ${esc(S.site.name)}, and what to add or change to get more sign-ups.</p></div>${rangeHTML()}</div>`;
     if (!c.visitors) return $("#view").innerHTML = top + noData();
-    const tip = advise(m)[0];
+    const tips = advise(m), real = tips.filter(t => !["low", "good"].includes(t.lvl)), first = real[0] || tips[0];
+    const ideas = addIdeas(m, tips), fixes = S.fixes || [], testing = fixes.find(f => f.tip_key === first.key);
+    const stepsKey = `cs_steps_${S.site.id}_${first.key}`; let done = []; try { done = JSON.parse(localStorage.getItem(stepsKey) || "[]"); } catch (e) {}
+    const steps = first.steps || [];
+    const pctDone = steps.length ? Math.round(done.length / steps.length * 100) : 0;
+    const leaks = real.slice(0, 4), maxImpact = Math.max(1, ...leaks.map(t => t.gain || 1));
     $("#view").innerHTML = top + `
-    <div class="m-only">${insightHTML(tip)}</div>
-    <div class="grid kpis">
-      ${kpiCard({icon: "eye", label: "Total Visitors", value: fmt(c.visitors), d: delta(c.visitors, p.visitors), series: s.visitors})}
-      ${kpiCard({icon: "cursor", color: "var(--violet)", label: "Clicks", value: fmt(c.clicks), d: delta(c.clicks, p.clicks), series: s.clicks})}
-      ${kpiCard({icon: "person", label: "Sign-Ups", value: fmt(c.signups), d: delta(c.signups, p.signups), series: s.signups})}
-      ${kpiCard({icon: "pct", color: "var(--ink)", label: "Conversion", value: pctStr(c.conv), d: delta(c.conv, p.conv)})}
+    <section class="card act-card">
+      <div class="act-l">
+        <span class="eyebrow">${real.length ? "Fix this first" : V_EARLY(c.visitors) ? "Early days" : "Looking good"}</span>
+        <h2 class="act-title">${esc(first.title)}</h2>
+        ${first.evidence ? `<div class="hero-ev">${first.evidence.map(e => `<span>${esc(e)}</span>`).join("")}${first.conf ? `<span class="conf ${first.conf.cls}">${first.conf.level}</span>` : ""}</div>` : ""}
+        <p class="act-why"><b>Why it happens:</b> ${esc(first.body)}</p>
+      </div>
+      <div class="act-r">
+        <div class="act-steps-h"><b>What to do</b><span>${done.length}/${steps.length} done</span></div>
+        <div class="src-bar" style="margin-bottom:12px"><i style="width:${pctDone}%;background:var(--green)"></i></div>
+        <ul class="act-steps">${steps.map((st, k) => `<li><label><input type="checkbox" data-step="${k}" ${done.includes(k) ? "checked" : ""}><span>${esc(st)}</span></label></li>`).join("")}</ul>
+        ${estHTML(first)}
+        <div class="cta-row" style="margin-top:14px">${first.href ? `<a class="btn green" href="${first.href}">${esc(first.cta)}</a>` : testing ? `<span class="testing">${ic("cal", 14)} Measuring since ${dShort(new Date(testing.created))}</span>` : (["setup", "low", "good"].includes(first.lvl) ? "" : `<button class="btn green" id="madeit">I made this change</button>`)}<a class="btn quiet" href="#advisor">See the proof</a></div>
+      </div>
+    </section>
+    <div class="grid two">
+      <div class="card"><h2><span class="h-ic" style="color:var(--bad)">${ic("funnel", 18)}<span style="color:var(--ink)">Why people leave</span></span><a class="btn quiet sm" href="#advisor">All reasons</a></h2>
+        ${leaks.length ? leaks.map((t, k) => `<a class="leak-row" href="#advisor"><span class="lr-n">${k + 1}</span><div class="lr-b"><b>${esc(t.title)}</b><span class="lr-fix">${ic("arrow", 13)} ${esc(t.short)}</span>
+          <div class="src-bar"><i style="width:${Math.max(8, (t.gain || 1) / maxImpact * 100)}%;background:${t.lvl === "high" ? "var(--bad)" : "var(--warn)"}"></i></div></div></a>`).join("")
+          : `<p class="muted" style="margin:0">${c.visitors < 30 ? `Only ${fmt(c.visitors)} visitor${c.visitors === 1 ? "" : "s"} so far. Clear reasons show up around 30.` : "No big leak right now. Nice."}</p>`}</div>
+      <div class="card"><h2><span class="h-ic" style="color:var(--green-ink)">${ic("spark", 18)}<span style="color:var(--ink)">What to add to your site</span></span></h2>
+        ${ideas.map(i => `<div class="idea"><span class="idea-tag ${i.kind}">${i.kind === "add" ? "Add" : i.kind === "fix" ? "Change" : "Set up"}</span><div><b>${esc(i.title)}</b><p>${esc(i.why)}</p>${i.href ? `<a href="${i.href}">${esc(i.cta)} →</a>` : ""}</div></div>`).join("")}</div>
     </div>
-    <div class="grid two">${funnelOverview({...c, convD: c.conv - p.conv})}${recCard(tip, "d-only")}</div>
+    <div class="grid kpis">
+      ${kpiCard({icon: "eye", label: "Visitors", value: fmt(c.visitors), d: delta(c.visitors, p.visitors), series: s.visitors})}
+      ${kpiCard({icon: "cursor", color: "var(--violet)", label: "Clicked something", value: fmt(c.clickers), d: delta(c.clickers, p.clickers), series: s.clicks})}
+      ${kpiCard({icon: "person", label: "Signed up", value: fmt(c.signups), d: delta(c.signups, p.signups), series: s.signups})}
+      ${kpiCard({icon: "pct", color: "var(--ink)", label: "Sign-up rate", value: pctStr(c.conv), d: delta(c.conv, p.conv)})}
+    </div>
+    <div class="grid two">${funnelOverview({...c, convD: c.conv - p.conv})}
+      <div class="card"><h2>Where they leave <a class="btn quiet sm" href="#journeys">Visitor paths</a></h2>
+        ${m.exits.length ? m.exits.slice(0, 5).map(x => `<div class="bar-row"><div class="bar-top"><b>${esc(pageName(x.page))}</b><span>${fmt(x.n)} left · ${pctStr(x.share)}</span></div><div class="src-bar"><i style="width:${x.share}%;background:var(--bad)"></i></div></div>`).join("") : `<p class="muted">Nobody has left yet.</p>`}</div>
+    </div>
     <div class="card" style="margin-bottom:16px"><h2>Performance over time <div class="seg" id="seg">${["visitors","clicks","signups"].map(k => `<button data-m="${k}" class="${S.metric === k ? "on" : ""}">${{visitors:"Visitors",clicks:"Clicks",signups:"Sign-Ups"}[k]}</button>`).join("")}</div></h2>
-      <div id="bigchart">${lineSVG(s[S.metric], {h: 180})}</div>
+      <div id="bigchart">${lineSVG(s[S.metric], {h: 160})}</div>
       <div class="axis"><span>${dShort(s.dates[0])}</span><span>${dShort(s.dates[Math.floor(s.dates.length/2)])}</span><span>${dShort(s.dates[s.dates.length-1])}</span></div></div>
-    <div class="card"><h2>Traffic Sources <a class="btn quiet sm" href="#analytics">View all</a></h2>${sourcesTable(m.sources.slice(0, 5))}</div>`;
+    <div class="card"><h2>Where visitors come from <a class="btn quiet sm" href="#analytics">View all</a></h2>${sourcesTable(m.sources.slice(0, 5))}</div>`;
     $("#seg").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; S.metric = b.dataset.m;
-      $("#seg").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); $("#bigchart").innerHTML = lineSVG(s[S.metric], {h: 180}); });
+      $("#seg").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); $("#bigchart").innerHTML = lineSVG(s[S.metric], {h: 160}); });
+    $("#view").onchange = e => {
+      const cb = e.target.closest("[data-step]"); if (!cb) return;
+      const k = +cb.dataset.step; done = cb.checked ? [...new Set([...done, k])] : done.filter(x => x !== k);
+      try { localStorage.setItem(stepsKey, JSON.stringify(done)); } catch (_) {}
+      const pct2 = steps.length ? Math.round(done.length / steps.length * 100) : 0;
+      $(".act-steps-h span").textContent = `${done.length}/${steps.length} done`; $(".act-r .src-bar i").style.width = pct2 + "%";
+      if (done.length === steps.length && steps.length) toast("All steps done. Press “I made this change” to measure it.");
+    };
+    const mi = $("#madeit"); if (mi) mi.addEventListener("click", async () => {
+      mi.disabled = true;
+      try { await store.addFix({tip_key: first.key, title: first.title, note: steps.filter((_, k) => done.includes(k)).join(" ")}); toast("Measuring before vs after"); route(); }
+      catch (err) { toast(friendly(err)); mi.disabled = false; }
+    });
   },
   journeys(){
     const m = S.m;
