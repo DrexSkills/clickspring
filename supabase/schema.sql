@@ -127,3 +127,6 @@ grant execute on function public.delete_my_account() to authenticated;
 
 -- v0.01.6: one account per device (device_signups, written by the "signup" edge function) + restart_site(p_site)
 -- see migration "device_limit_and_restart"
+
+-- v0.01.7: waitlist (join_waitlist RPC for visitors, admin_waitlist RPC for the founder's accounts)
+-- see migration "waitlist"

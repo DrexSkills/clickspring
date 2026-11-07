@@ -744,6 +744,17 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .nm-steps{background:var(--surface);border-radius:14px;padding:14px 16px;margin-bottom:16px}
 .nm-steps ol{margin:6px 0 0;padding-left:20px}.nm-steps li{margin:3px 0}
 @container (max-width:600px){.nm-head{flex-direction:column;gap:10px}.nm-scale span:nth-child(2){display:none}}
+/* ---------- Waitlist ---------- */
+.wl-form{display:flex;gap:10px;max-width:480px;background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:6px;box-shadow:0 10px 30px -18px rgba(12,40,20,.35)}
+.wl-form:focus-within{border-color:var(--green)}
+.wl-form input{flex:1;min-width:0;border:0;background:transparent;outline:0;font:inherit;font-size:16px;padding:0 14px}
+.wl-form .btn{flex:none}
+.wl-msg{margin:8px 0 0 16px;font-size:14px;font-weight:600;min-height:1em}.wl-msg.err{color:var(--bad)}
+.wl-done{display:flex;gap:12px;align-items:center;max-width:480px;background:var(--green-soft);border-radius:18px;padding:14px 18px;text-align:left}
+.wl-done > div{display:flex;flex-direction:column}.wl-done b{font-size:16px}.wl-done span{color:var(--ink);font-size:14px}
+.wl-ok{flex:none;width:40px;height:40px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center}
+.wl-wrap.center .wl-form,.wl-wrap.center .wl-done{margin:0 auto}.wl-wrap.center .wl-msg{text-align:center;margin-left:0}
+@media(max-width:520px){.wl-form{flex-direction:column;border-radius:20px}.wl-form input{padding:12px 10px}.wl-form .btn{width:100%}}
 </style>
 </head>
 <body>
@@ -1375,9 +1386,10 @@ const monthReset = () => { const d = new Date(); return new Date(d.getFullYear()
 
 /* ---------- App state & routing ---------- */
 const S = { site: null, days: 30, metric: "visitors", m: null, events: [], campaigns: [], sim: {v: uid(), log: []} };
+const NAV_ADMIN = [["waitlist","Waitlist","user","more"]];
 const NAV = [["dashboard","Home","home"],["advisor","Why They Leave","bulb"],["journeys","Visitor Paths","route"],["campaigns","Tracking Links","link"],["install","Install","code"],["account","Settings","gear"],["funnel","Funnels","funnel","more"],["analytics","Analytics","chart","more"],["developers","API Keys","key","more"]];
 const TABS = [["dashboard","Home","home"],["advisor","Why","bulb"],["journeys","Paths","route"],["campaigns","Links","link"],["account","Settings","gear"]];
-const APP_ROUTES = new Set(NAV.map(n => n[0]));
+const APP_ROUTES = new Set([...NAV, ...NAV_ADMIN].map(n => n[0]));
 
 async function loadData(){
   const since = Date.now() - Math.max(2 * S.days, 90) * DAY;
@@ -1395,6 +1407,7 @@ async function route(){
   if (["login","signup","forgot"].includes(r)) {
     if (store.user && store.user.demo) { if (demoSession) { try { sessionStorage.removeItem("cs_demo"); } catch (e) {} location.reload(); return; } await DemoStore.signOut(); S.site = null; }
     if (store.user) return renderSignedIn();
+    if (WAITLIST && r === "signup") { renderLanding(); history.replaceState(null, "", location.pathname + "#home"); const j = $("#join"); if (j) { j.scrollIntoView({block: "center"}); const i = j.querySelector("input"); if (i) i.focus({preventScroll: true}); } return; }
     return renderAuth(r);
   }
   if (r === "reset") { if (!store.user) { location.hash = "#login"; return; } return renderAuth("reset"); }
@@ -1416,7 +1429,7 @@ async function route(){
 
 const sideHTML = active => `<aside class="side"><a class="logo" href="#home">${LOGO(34)}ClickSpring<span class="beta-tag">BETA</span></a>${siteSwitch()}
   ${NAV.filter(n => !n[3]).map(([k, label, i]) => `<a class="nav-i ${k === active ? "on" : ""}" data-k="${k}" href="#${k}">${ic(i)}${label}</a>`).join("")}
-  <p class="nav-more">More</p>${NAV.filter(n => n[3]).map(([k, label, i]) => `<a class="nav-i sm ${k === active ? "on" : ""}" data-k="${k}" href="#${k}">${ic(i, 17)}${label}</a>`).join("")}
+  <p class="nav-more">More</p>${NAV.filter(n => n[3]).concat(isAdmin() ? NAV_ADMIN : []).map(([k, label, i]) => `<a class="nav-i sm ${k === active ? "on" : ""}" data-k="${k}" href="#${k}">${ic(i, 17)}${label}</a>`).join("")}
   <div class="up"><span class="beta-tag">BETA</span><b>Completely free for now</b><span>${LIMITS.sites} websites · ${LIMITS.events.toLocaleString("en-US")} events a month · ${LIMITS.links} links each</span><a class="btn green" href="#account">See your usage</a></div></aside>`;
 const siteSwitch = () => (store.sites || []).length > 1 && S.site ? `<label class="site-sw">${ic("dash", 16)}<select class="sitesel" aria-label="Website">${store.sites.map(x => `<option value="${x.id}" ${x.id === S.site.id ? "selected" : ""}>${esc(x.name)}</option>`).join("")}</select></label>` : "";
 function switchSite(id){ S.site = store.selectSite(id); $("#root").innerHTML = ""; toast(`Viewing ${S.site.name}`); route(); }
@@ -1482,6 +1495,38 @@ const insightHTML = t => `<div class="ai-insight"><b class="lk">${ic("funnel", 1
 const wave = (n, seed, rise = 0) => { const r = mulberry32(seed); let v = 20; return Array.from({length: n}, (_, i) => (v += (r() - .45) * 6 + rise * (i / n)) + 10); };
 
 /* ---------- Landing ---------- */
+/* ---------- Waitlist ---------- */
+const WAITLIST = true;
+const ADMINS = ["disow29@gmail.com", "disow@gmail.com", "ithassen@icloud.com"];
+const isAdmin = () => ADMINS.includes((store.userEmail() || "").toLowerCase());
+const waitlistForm = where => `<form class="wl-form" data-wl="${where}" data-cs-signup="manual" novalidate>
+  <input type="email" name="email" placeholder="you@email.com" autocomplete="email" required aria-label="Email address">
+  <button class="btn lg">Join the waitlist ${ic("arrow", 18)}</button></form><p class="wl-msg" role="status"></p>`;
+async function joinWaitlist(email, source){
+  if (LiveStore.sb || store.live) {
+    if (!LiveStore.sb) LiveStore.sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey);
+    const { data, error } = await LiveStore.sb.rpc("join_waitlist", { p_email: email, p_source: source || null });
+    if (error) throw error; return data;
+  }
+  let list = []; try { list = JSON.parse(localStorage.getItem("cs_waitlist") || "[]"); } catch (e) {}
+  const i = list.findIndex(x => x.email === email.toLowerCase());
+  if (i >= 0) return {position: i + 1, new: false};
+  list.push({email: email.toLowerCase(), source, created_at: new Date().toISOString()}); try { localStorage.setItem("cs_waitlist", JSON.stringify(list)); } catch (e) {}
+  return {position: list.length, new: true};
+}
+document.addEventListener("submit", async e => {
+  const f = e.target.closest("[data-wl]"); if (!f) return; e.preventDefault();
+  const msg = f.nextElementSibling, email = f.email.value.trim(), b = f.querySelector("button");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = "Enter a valid email address."; msg.className = "wl-msg err"; f.email.focus(); return; }
+  b.disabled = true; msg.textContent = ""; msg.className = "wl-msg";
+  let src = null; try { src = (new URLSearchParams(location.search).get("utm_source") || localStorage.getItem("cs_src") || "").slice(0, 60) || null; } catch (_) {}
+  try {
+    const r = await joinWaitlist(email, src || f.dataset.wl);
+    if (r.new && window.ClickSpring) window.ClickSpring.signup("waitlist");
+    document.querySelectorAll(".wl-wrap").forEach(w => w.innerHTML = `<div class="wl-done"><span class="wl-ok">${ic("check", 22)}</span><div><b>${r.new ? "You’re on the list!" : "You’re already on the list."}</b><span>You’re <b>#${r.position}</b>. We’ll email <b>${esc(email)}</b> when it’s your turn.</span></div></div>`);
+  } catch (err) { msg.textContent = friendly(err); msg.className = "wl-msg err"; b.disabled = false; }
+}, true);
+
 function renderLanding(){
   const YT = "https://www.youtube.com/@ClickSpring-official";
   const go = "#signup";
@@ -1492,14 +1537,14 @@ function renderLanding(){
   <div class="progress" aria-hidden="true"></div>
   <div class="nav-wrap"><header class="nav"><a class="logo" href="#home" style="font-size:28px">${LOGO(40)}ClickSpring<span class="beta-tag">BETA</span></a>
     <nav class="links"><button data-scroll="how">How it works</button><button data-scroll="pricing">Pricing</button><button data-scroll="faq">FAQ</button><button data-scroll="founder">About</button><a href="docs.html" class="nav-a">Docs</a></nav>
-    <div class="nav-r"><a class="signin" href="${store.user ? "#advisor" : "#login"}">${store.user ? "Open app" : "Log in"}</a><a class="btn" href="${go}">Start free ${ic("arrow", 16)}</a></div></header></div>
+    <div class="nav-r">${store.user ? `<a class="signin" href="#dashboard">Open app</a>` : ""}<button class="btn" data-scroll="join">Join the waitlist</button></div></header></div>
 
   <section class="hero s-hero">
     <div>
       <h1 class="display">Turn Your Views<br> <span class="nw">Into <em>Real</em> Customers.</span></h1>
       <p class="lead">See where people leave your website, and exactly what to fix so more of them sign up.</p>
-      <div class="cta-row"><a class="btn lg" href="${go}">Start free ${ic("arrow", 18)}</a><button class="btn ghost lg" data-demo>See an example</button></div>
-      <p class="reassure">${ic("bulb", 16)} Free during beta · No card · Set up in 5 minutes</p>
+      <div id="join" class="wl-wrap">${waitlistForm("hero")}</div>
+      <p class="reassure">${ic("check", 16)} Early access opens in small groups · Free for early members · No spam</p>
     </div>
     <div class="hero-vis">
       <div class="demo" aria-label="Animated example: installing ClickSpring, watching visitors, and getting the fix">
@@ -1552,13 +1597,13 @@ function renderLanding(){
       </div>
     </div>
   </section>
-  <section class="band" id="pricing"><div class="band-in"><div><span class="beta-tag" style="margin:0 0 10px">BETA</span><h2>Free while we’re in beta.</h2><p>Every feature. No card. ${LIMITS.sites} websites, ${LIMITS.events.toLocaleString("en-US")} visits a month each.</p></div><a class="btn lg" href="${go}">Start free ${ic("arrow", 18)}</a></div></section>
+  <section class="band" id="pricing"><div class="band-in"><div><span class="beta-tag" style="margin:0 0 10px">EARLY ACCESS</span><h2>Get in first. Free for early members.</h2><p>We’re letting people in from the waitlist in small groups. Early members use every feature free during beta and keep a founding discount after.</p></div><button class="btn lg" data-scroll="join">Join the waitlist ${ic("arrow", 18)}</button></div></section>
 
   <section class="faq-sec" id="faq">
     <h2 class="sec-h">Questions</h2>
     <div class="faq-list">
       <details><summary>Do I need to know how to code?</summary><p>No. You copy one line and paste it into your site. ClickSpring shows you exactly where for Wix, Shopify, WordPress, Webflow, Framer and more.</p></details>
-      <details><summary>Is it really free?</summary><p>Yes, while we’re in beta. No card needed. Each account gets ${LIMITS.sites} websites and ${LIMITS.events.toLocaleString("en-US")} visits a month per website.</p></details>
+      <details><summary>When can I start using it?</summary><p>We’re opening ClickSpring to people on the waitlist in small groups, in the order they joined. Join now and we’ll email you when it’s your turn. Early members use it free during beta.</p></details>
       <details><summary>How is this different from Google Analytics?</summary><p>Analytics gives you charts. ClickSpring gives you answers: the main reason people leave, the real visitors behind it, and the one fix to try first.</p></details>
       <details><summary>Will it slow down my website?</summary><p>No. The script is tiny and loads after your page, so visitors won’t notice it.</p></details>
       <details><summary>Is it private and legal?</summary><p>ClickSpring uses no cookies and stores no IP addresses. We give you ready-made text for your privacy policy. See our <a href="privacy.html">Privacy Policy</a>.</p></details>
@@ -1566,10 +1611,10 @@ function renderLanding(){
   </section>
   <section class="final">
     <h2>Stop guessing why people aren’t buying.</h2>
-    <a class="btn green lg" href="${go}">Find out why yours leave ${ic("arrow", 18)}</a>
+    <div class="wl-wrap center">${waitlistForm("final")}</div>
   </section>
 
-  <div class="foot-note"><span class="logo" style="font-size:18px">${LOGO(22)}ClickSpring</span><span><a href="${YT}" target="_blank" rel="noopener" style="color:inherit">YouTube</a> · <a href="docs.html" style="color:inherit">Docs</a> · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="#" data-cookie-settings style="color:inherit">Cookie settings</a> · © ${new Date().getFullYear()} ClickSpring</span></div>
+  <div class="foot-note"><span class="logo" style="font-size:18px">${LOGO(22)}ClickSpring</span><span><a href="${YT}" target="_blank" rel="noopener" style="color:inherit">YouTube</a> · <a href="docs.html" style="color:inherit">Docs</a> · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="#" data-cookie-settings style="color:inherit">Cookie settings</a> · <a href="#login" style="color:inherit">Members log in</a> · © ${new Date().getFullYear()} ClickSpring</span></div>
   </div>`;
   animateLanding();
 }
@@ -1677,7 +1722,7 @@ function animateLanding(){
 
 /* ---------- Demo mode ---------- */
 const demoBarHTML = () => `<div class="demo-bar" role="status"><span><b>${ic("eye", 16)} You’re in the demo.</b> This is sample data, not a real website. Want your own data?</span>
-  <span class="demo-bar-a"><a class="btn green sm" href="#signup" data-exit-demo>Sign up free</a><a class="btn sm" href="#login" data-exit-demo>Log in</a><a class="demo-x" href="#home" data-exit-demo>Exit demo</a></span></div>`;
+  <span class="demo-bar-a"><a class="btn green sm" href="#signup" data-exit-demo>Join the waitlist</a><a class="btn sm" href="#login" data-exit-demo>Log in</a><a class="demo-x" href="#home" data-exit-demo>Exit demo</a></span></div>`;
 async function exitDemo(dest){
   if (Tour.active) Tour.end();
   if (demoSession) { try { sessionStorage.removeItem("cs_demo"); } catch (e) {} location.hash = dest; location.reload(); return; }
@@ -1962,6 +2007,20 @@ const VIEWS = {
           : `<p class="muted">Once at least 3 people sign up, this shows the pages and buttons customers used more than everyone else.</p>`}</div>
     </div>
     <div class="card"><h2>Recent visitors</h2>${recent.map(jHTML).join("")}</div>`;
+  },
+  async waitlist(){
+    $("#view").innerHTML = header("Waitlist", "Everyone waiting to get into ClickSpring.", false) + `<div class="card"><p class="muted">Loading…</p></div>`;
+    let rows = [];
+    try {
+      if (store.live) { const { data, error } = await store.sb.rpc("admin_waitlist"); if (error) throw error; rows = data; }
+      else { try { rows = JSON.parse(localStorage.getItem("cs_waitlist") || "[]"); } catch (e) {} }
+    } catch (err) { $("#view").innerHTML = header("Waitlist", "", false) + `<div class="card"><p class="muted">${esc(friendly(err))}</p></div>`; return; }
+    const today = rows.filter(r => Date.now() - Date.parse(r.created_at) < DAY).length;
+    $("#view").innerHTML = header("Waitlist", "Everyone waiting to get into ClickSpring.", false) + `
+      <div class="grid kpis">${kpiCard({icon: "user", label: "On the waitlist", value: fmt(rows.length)})}${kpiCard({icon: "trend", label: "Joined today", value: fmt(today)})}</div>
+      <div class="card"><h2>People <button class="btn quiet sm" id="wlcopy">Copy emails</button></h2>
+      ${rows.length ? `<div class="tbl-wrap"><table><thead><tr><th>#</th><th>Email</th><th>From</th><th class="num">Joined</th></tr></thead><tbody>${rows.map((r, k) => `<tr><td>${k + 1}</td><td>${esc(r.email)}</td><td class="muted">${esc(r.source || "–")}</td><td class="num muted">${dShort(new Date(r.created_at))}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">Nobody yet. Share clickspring.live in your videos.</p>`}</div>`;
+    const cb = $("#wlcopy"); if (cb) cb.addEventListener("click", () => copy(rows.map(r => r.email).join(", ")));
   },
   developers(){
     const base = "https://kuzdzlbyxllovbcudzsy.supabase.co/functions/v1/api";
