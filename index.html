@@ -808,6 +808,49 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .bp .wl-msg{color:#fff}.bp .wl-msg.err{color:#ffb4ae}
 .bp .wl-done{background:#fff;color:var(--ink)}
 @media(max-width:860px){.bp .bp-fig{margin:0 auto 10px}}
+
+/* ---------- Blueprint app ---------- */
+.bp-app{--bp:#1a4b96;--bp-deep:#123a78;--bp-soft:rgba(255,255,255,.75);
+  background-color:var(--bp);
+  background-image:linear-gradient(rgba(255,255,255,.14) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(255,255,255,.14) 1.5px,transparent 1.5px),
+    linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:120px 120px,120px 120px,24px 24px,24px 24px;background-attachment:fixed}
+body:has(.bp-app){background:#1a4b96}
+.bp-app .side{background:var(--bp-deep);border-right:1.5px dashed rgba(255,255,255,.35)}
+.bp-app .side .logo{color:#fff}.bp-app .side .logo svg{stroke:#fff!important}
+.bp-app .side .beta-tag{background:transparent;color:#fff;box-shadow:inset 0 0 0 1.5px #fff}
+.bp-app .nav-i{color:#fff}.bp-app .nav-i svg{color:rgba(255,255,255,.75)}
+.bp-app .nav-i:hover{background:rgba(255,255,255,.1)}
+.bp-app .nav-i.on{background:#fff;color:var(--bp-deep)}.bp-app .nav-i.on svg{color:var(--bp-deep)}
+.bp-app .nav-i.sm{color:var(--bp-soft)}
+.bp-app .nav-more{color:var(--bp-soft);font-family:ui-monospace,Menlo,monospace;letter-spacing:.2em}
+.bp-app .up{background:transparent;border:1.5px dashed rgba(255,255,255,.6);color:#fff}
+.bp-app .up .beta-tag{color:#fff}.bp-app .up .btn{background:#fff;color:var(--bp-deep)}
+.bp-app .topbar{background:rgba(18,58,120,.92);border-bottom:1.5px dashed rgba(255,255,255,.35);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.bp-app .topbar .logo{color:#fff}.bp-app .topbar .logo svg{stroke:#fff!important}
+.bp-app .search{background:rgba(255,255,255,.12);color:var(--bp-soft)}.bp-app .search input{color:#fff}.bp-app .search input::placeholder{color:rgba(255,255,255,.6)}
+.bp-app .iconbtn{color:#fff}.bp-app #tour-help{border-color:rgba(255,255,255,.5)}
+.bp-app .iconbtn .pip{border-color:var(--bp-deep)}
+.bp-app .avatar{background:#fff;color:var(--bp-deep)}
+.bp-app .welcome h1,.bp-app .why-sub,.bp-app #view > h2{color:#fff}
+.bp-app .welcome p,.bp-app #view > p,.bp-app #view > p.muted,.bp-app .why-top > .eyebrow-row .eyebrow{color:var(--bp-soft)}
+.bp-app .welcome h1{letter-spacing:-.02em}
+.bp-app .why-top .eyebrow,.bp-app .card .eyebrow,.bp-app .card h2 small{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.14em;font-size:12px}
+.bp-app .hi-ic{background:#fff;color:var(--bp-deep)}
+.bp-app .datebtn{border:0;box-shadow:0 0 0 1.5px #fff}
+.bp-app #view > .card,.bp-app #view > section.card,.bp-app #view > .grid > .card,.bp-app #view > details > .card,.bp-app #view > details > .grid > .card,.bp-app .why-top > .card,.bp-app #view > article.tip{position:relative;border:0;box-shadow:0 0 0 1.5px rgba(255,255,255,.9),0 24px 50px -28px rgba(0,0,0,.6)}
+.bp-app #view > .card::after,.bp-app #view > section.card::after,.bp-app #view > .grid > .card::after,.bp-app .why-top > .card::after{content:"";position:absolute;inset:-9px;pointer-events:none;border-radius:4px;
+  background:linear-gradient(#fff,#fff) top left/14px 1.5px,linear-gradient(#fff,#fff) top left/1.5px 14px,linear-gradient(#fff,#fff) top right/14px 1.5px,linear-gradient(#fff,#fff) top right/1.5px 14px,
+  linear-gradient(#fff,#fff) bottom left/14px 1.5px,linear-gradient(#fff,#fff) bottom left/1.5px 14px,linear-gradient(#fff,#fff) bottom right/14px 1.5px,linear-gradient(#fff,#fff) bottom right/1.5px 14px;background-repeat:no-repeat}
+.bp-app .act-card{box-shadow:0 0 0 2px #7ff0a6,0 24px 50px -28px rgba(0,0,0,.6)!important}
+.bp-app .more-details > summary{background:rgba(255,255,255,.08);border:1.5px dashed rgba(255,255,255,.7);color:#fff}
+.bp-app .more-details > summary span{color:var(--bp-soft)}
+.bp-app .limit-alert,.bp-app #view > .alert{box-shadow:0 0 0 1.5px #fff}
+.bp-app .tabs{background:var(--bp-deep);border-top:1.5px dashed rgba(255,255,255,.35)}
+.bp-app .tabs a{color:var(--bp-soft)}.bp-app .tabs a.on{color:#fff}
+.bp-app .sheet nav{background:var(--bp-deep)}
+.bp-app .grid.kpis > .card::after{display:none}
+.bp-app .ai-box{background:var(--bp-deep);border:1.5px dashed rgba(255,255,255,.7)}
 </style>
 </head>
 <body>
@@ -1496,7 +1539,7 @@ const topbarHTML = initial => `<header class="topbar">
 
 function shell(active){
   if (!$("#view")) {
-    $("#root").innerHTML = `${store.live ? "" : demoBarHTML()}<div class="app" data-cs-ignore>${sideHTML(active)}
+    $("#root").innerHTML = `${store.live ? "" : demoBarHTML()}<div class="app bp-app" data-cs-ignore>${sideHTML(active)}
       <div class="main">${topbarHTML((store.userName() || S.site.owner || S.site.name || "?")[0].toUpperCase())}<div id="view"></div></div>
       <nav class="tabs">${TABS.map(([k, label, i]) => `<a data-k="${k}" href="#${k}">${ic(i, 22)}${label}</a>`).join("")}</nav>
       <div class="sheet" id="sheet"><nav>${NAV.map(([k, label, i]) => `<a class="nav-i" data-k="${k}" href="#${k}">${ic(i)}${label}</a>`).join("")}</nav></div></div>`;
