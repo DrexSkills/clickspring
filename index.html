@@ -63,9 +63,9 @@
 html{-webkit-text-size-adjust:100%;text-rendering:optimizeLegibility;font-kerning:normal}
 
 :root{
-  --bg:#ffffff;--surface:#f3f6f3;--card:#ffffff;--line:#e6ebe7;--ink:#0b0f0c;--muted:#5d6a62;
-  --green:#1fbf4f;--green-ink:#12933a;--green-soft:#e7f7ec;--green-wash:#eef9f1;--on-green:#ffffff;
-  --btn:#0b0f0c;--btn-ink:#ffffff;--bad:#d4342c;--warn:#c27a06;--violet:#7c5cff;--gold:#f5b400;
+  --bg:#ffffff;--surface:#f3f6f3;--card:#ffffff;--line:#dfe6e1;--ink:#0b0f0c;--muted:#4a574f;
+  --green:#1fbf4f;--green-ink:#0b7a30;--green-soft:#e7f7ec;--green-wash:#eef9f1;--on-green:#04210d;
+  --btn:#0b0f0c;--btn-ink:#ffffff;--bad:#bd2820;--warn:#8a5200;--violet:#5a3fe0;--gold:#f5b400;
   --shadow:0 24px 60px -28px rgba(12,40,20,.28);
   color-scheme:light;
   box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
@@ -73,7 +73,7 @@ html{-webkit-text-size-adjust:100%;text-rendering:optimizeLegibility;font-kernin
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-body{margin:0;font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{margin:0;font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--bg)}
 a{color:inherit}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -668,7 +668,7 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .demo-bar b{color:#2bd468}.demo-bar-a{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .demo-bar .btn:not(.green){background:#fff;color:#0b0f0c}.demo-x{color:#cfd8d2;font-weight:600;text-decoration:underline;margin-left:4px}
 @media(max-width:860px){.demo-bar{padding:10px 14px;font-size:13px}}
-.side .logo{font-size:21px}.side .beta-tag{margin-left:4px;font-size:10px;padding:2px 6px}
+.side .logo{font-size:21px}.side .beta-tag{margin-left:4px;font-size:11px;padding:2px 7px}
 @media(max-width:760px){.founder-card{grid-template-columns:minmax(0,1fr)}.founder{padding:0 16px}.f-text{min-width:0}.founder blockquote{font-size:19px;overflow-wrap:break-word}.f-yt .btn{white-space:normal;max-width:100%}.f-photo,.f-photo img{width:150px;height:150px}}
 /* ---------- Action dashboard ---------- */
 .act-card{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:26px;padding:26px;margin-bottom:16px;border-width:2px;border-color:var(--green)}
@@ -851,6 +851,82 @@ body:has(.bp-app){background:#1a4b96}
 .bp-app .sheet nav{background:var(--bp-deep)}
 .bp-app .grid.kpis > .card::after{display:none}
 .bp-app .ai-box{background:var(--bp-deep);border:1.5px dashed rgba(255,255,255,.7)}
+
+/* ---------- Readability + blueprint polish ---------- */
+.bp-app{font-size:16px}
+.bp-app #view[data-sheet]::before{content:attr(data-sheet);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;font-weight:700;letter-spacing:.2em;color:rgba(255,255,255,.85);margin:2px 0 14px;padding-bottom:10px;border-bottom:1.5px dashed rgba(255,255,255,.4)}
+.bp-app .welcome{margin-bottom:38px}
+.bp-app .welcome h1{font-size:clamp(28px,3.4vw,38px);letter-spacing:-.02em;line-height:1.15}
+.bp-app .welcome p{font-size:17px;color:rgba(255,255,255,.88)}
+.bp-app .why-top > .eyebrow-row{margin-bottom:38px}
+.bp-app .why-top > .eyebrow-row .eyebrow{color:rgba(255,255,255,.9);font-size:13px}
+/* figure captions in the gap above each top-level card */
+.bp-app #view{counter-reset:fig}
+.bp-app #view > .card,.bp-app #view > section.card,.bp-app .why-top > .card{counter-increment:fig;margin-bottom:38px}
+.bp-app #view > .card::before,.bp-app #view > section.card::before,.bp-app .why-top > .card::before{content:"FIG. " counter(fig,decimal-leading-zero);position:absolute;left:0;top:-27px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;font-weight:700;letter-spacing:.18em;color:rgba(255,255,255,.85)}
+.bp-app .need-more::before{display:block}
+.bp-app #view > .card,.bp-app #view > section.card,.bp-app .why-top > .card{border-radius:14px}
+.bp-app .grid{gap:22px}
+/* clearer type inside cards */
+.bp-app .card{color:var(--ink)}
+.bp-app .card h2{font-size:18px;padding-bottom:12px;border-bottom:1.5px dashed var(--line);margin-bottom:16px}
+.bp-app .card.act-card h2,.bp-app .card h2.act-title,.bp-app .need-more h2,.bp-app .easy-empty h2{border-bottom:0;padding-bottom:0}
+.bp-app .card .eyebrow{font-size:13px;font-weight:800;color:var(--green-ink)}
+.bp-app .easy-mean,.bp-app .act-why,.bp-app .need-more p,.bp-app .tip p,.bp-app .idea p,.bp-app .why-hero p{font-size:16px;color:#3b4740}
+.bp-app .act-steps label{font-size:15.5px;line-height:1.45}
+.bp-app .sum-line{font-size:clamp(22px,2.8cqi,28px)}
+.bp-app .sum-status > span:last-child{font-size:16px}
+.bp-app .flow-note{font-size:16px}
+.bp-app .fl-step small{font-size:14px;color:#3b4740}
+.bp-app .fl-arrow em{font-size:13px}
+.bp-app .idea b,.bp-app .lr-b b{font-size:16px}
+.bp-app .lr-fix{font-size:14px}
+.bp-app .idea-tag,.beta-tag{font-size:12px}
+.nav-more{font-size:12px}
+.bp-app .card h2 small,.bp-app small{font-size:13px}
+.bp-app .chip,.bp-app .badge,.bp-app .conf,.bp-app .ev{font-size:13px}
+.bp-app .camp-stats small,.bp-app .fx-cmp small{font-size:13px}
+.bp-app .muted,.bp-app .card p.muted{color:var(--muted)}
+.bp-app table{font-size:15px}
+.bp-app th{color:#3b4740}
+.bp-app .hero-ev span,.bp-app .evid li{font-size:14px;color:var(--ink)}
+.bp-app .conf.lo{background:rgba(138,82,0,.12)}
+/* buttons: dark text on green, always readable */
+.btn.green{color:#04210d;font-weight:800}
+.btn.green:hover{background:#2ad063}
+.bp-app .btn.quiet{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.bp-app .btn.quiet:hover{background:var(--ink);color:#fff}
+.bp-app .btn.sm{font-size:14px}
+.demo-steps span.on b{color:#04210d}
+.ev-signup{color:#04210d}
+/* dark boxes */
+.bp-app .ai-box,.bp-app .ai-box p,.bp-app .plan,.bp-app .ai-insight p{color:rgba(255,255,255,.92)}
+.bp-app .ai-box p{opacity:1;font-size:15.5px}
+.bp-app .ai-box b{font-size:17px;color:#fff}
+.bp-app .ai-box .btn.green{color:#04210d!important}
+/* menu */
+.bp-app .nav-i{font-size:16px;padding:12px 14px}
+.bp-app .nav-i.sm{font-size:15px;padding:9px 14px}
+.bp-app .nav-i.sm.on{background:#fff;color:var(--bp-deep)}.bp-app .nav-i.sm.on svg{color:var(--bp-deep)}
+.bp-app .nav-more{color:rgba(255,255,255,.85)}
+.bp-app .tabs a{font-size:12px;font-weight:700;color:rgba(255,255,255,.85)}
+.bp-app .up span{color:rgba(255,255,255,.9);font-size:13px}.bp-app .up b{font-size:16px;color:#fff}
+.bp-app .topbar .search input{font-size:15px}
+.bp-app .datebtn{font-size:15px}
+/* landing readability */
+.bp .lead{font-size:clamp(18px,2vw,22px);color:rgba(255,255,255,.92)}
+.bp .reassure{color:rgba(255,255,255,.9);font-size:15px}
+.bp .how-step p,.bp .band-in p,.bp .faq-list p,.bp .f-name span,.bp .f-handle{color:rgba(255,255,255,.9);font-size:16px}
+.bp .how-step h3{font-size:20px}
+.bp .bp-fig,.bp .sec-h::before{color:rgba(255,255,255,.9)}
+.bp .nav .links button,.bp .nav-a{font-size:16px;font-weight:600}
+.bp .foot-note{color:rgba(255,255,255,.9);font-size:14px}
+.bp .foot-note a{text-decoration:underline;text-underline-offset:3px}
+.bp .wl-form input::placeholder{color:rgba(255,255,255,.8)}
+.bp .wl-form input{font-size:17px}
+.bp .btn.green{background:#fff}
+@media(max-width:860px){.bp-app .welcome{margin-bottom:34px}.bp-app #view > .card,.bp-app #view > section.card,.bp-app .why-top > .card{margin-bottom:36px}}
+.bp-app .why-top > .eyebrow-row{justify-content:flex-end;margin-bottom:38px}.bp-app .why-top > .eyebrow-row .eyebrow{display:none}
 </style>
 </head>
 <body>
@@ -1516,6 +1592,7 @@ async function route(){
   v.innerHTML = `<div class="loading">Loading your numbers…</div>`;
   try { await loadData(); } catch (e) { v.innerHTML = `<div class="card empty"><h2>Couldn’t load your data</h2><p class="muted">${esc(e.message)}</p></div>`; S.seq = (S.seq || 0) + 1; return; }
   const top = advise(S.m)[0]; const pip = $("#pip"); if (pip) pip.hidden = !(top && top.lvl === "high");
+  $("#view").dataset.sheet = `SHEET ${String(["dashboard","advisor","journeys","campaigns","install","account","funnel","analytics","developers","waitlist"].indexOf(r) + 1).padStart(2, "0")} / ${({dashboard:"HOME",advisor:"WHY THEY LEAVE",journeys:"VISITOR PATHS",campaigns:"TRACKING LINKS",install:"INSTALL",account:"SETTINGS",funnel:"FUNNELS",analytics:"ANALYTICS",developers:"API KEYS",waitlist:"WAITLIST"})[r] || r.toUpperCase()}`;
   VIEWS[r]();
   if (S.m && S.m.c.visitors > 0 && ["advisor", "journeys", "funnel", "analytics"].includes(r)) $("#view").insertAdjacentHTML("afterbegin", needMoreHTML(S.m.c.visitors));
   if (S.usage && S.usage.events >= LIMITS.events * .8) $("#view").insertAdjacentHTML("afterbegin", `<div class="alert ${S.usage.events >= LIMITS.events ? "err" : "ok"} limit-alert">${S.usage.events >= LIMITS.events ? `This website reached the free beta limit of ${LIMITS.events.toLocaleString("en-US")} events this month. New visits aren’t recorded until ${monthReset()}.` : `This website has used ${fmt(S.usage.events)} of its ${LIMITS.events.toLocaleString("en-US")} free events this month.`} <a href="#account">See usage</a></div>`);
