@@ -755,6 +755,59 @@ pre.code{background:#101411;color:#e9efe9;border-radius:14px;padding:16px;overfl
 .wl-ok{flex:none;width:40px;height:40px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center}
 .wl-wrap.center .wl-form,.wl-wrap.center .wl-done{margin:0 auto}.wl-wrap.center .wl-msg{text-align:center;margin-left:0}
 @media(max-width:520px){.wl-form{flex-direction:column;border-radius:20px}.wl-form input{padding:12px 10px}.wl-form .btn{width:100%}}
+
+/* ---------- Blueprint landing ---------- */
+.landing.bp{--bp:#1a4b96;--bp-deep:#123a78;--bp-line:rgba(255,255,255,.85);--bp-soft:rgba(255,255,255,.72);
+  min-height:100vh;color:#fff;background-color:var(--bp);
+  background-image:linear-gradient(rgba(255,255,255,.16) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(255,255,255,.16) 1.5px,transparent 1.5px),
+    linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);
+  background-size:120px 120px,120px 120px,24px 24px,24px 24px;background-position:-1px -1px}
+.bp .swoosh{display:none}
+.bp .progress{background:#fff}
+.bp .nav-wrap.sc{background:rgba(18,58,120,.88);box-shadow:0 1.5px 0 rgba(255,255,255,.35)}
+.bp .logo,.bp .nav .links button,.bp .nav-a,.bp .signin{color:#fff}
+.bp .logo svg{stroke:#fff!important}
+.bp .beta-tag{background:transparent;color:#fff;box-shadow:inset 0 0 0 1.5px #fff}
+.bp .btn{background:#fff;color:var(--bp-deep)}
+.bp .btn:hover{box-shadow:0 10px 24px -10px rgba(0,0,0,.45)}
+.bp .display{color:#fff}
+.bp .display em{color:#7ff0a6;text-decoration-color:#7ff0a6}
+.bp .lead,.bp .reassure{color:var(--bp-soft)}
+.bp .reassure svg{color:#7ff0a6}
+.bp .bp-fig,.bp .sec-h::before{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;font-weight:700;letter-spacing:.2em;color:var(--bp-soft);text-transform:uppercase}
+.bp .bp-fig{max-width:480px;margin:0 0 10px auto;display:flex;align-items:center;gap:10px}
+.bp .bp-fig::after{content:"";flex:1;border-top:1.5px dashed rgba(255,255,255,.5)}
+.bp .sec-h{color:#fff}
+.bp .sec-h::before{display:block;margin-bottom:10px}
+.bp .how .sec-h::before{content:"FIG. 02 — PROCESS"}
+.bp .faq-sec .sec-h::before{content:"FIG. 04 — NOTES"}
+.bp .demo{color:var(--ink);box-shadow:0 0 0 1.5px #fff,0 0 0 10px rgba(255,255,255,.08),0 40px 80px -30px rgba(0,0,0,.55)}
+.bp .demo-steps span{background:rgba(255,255,255,.12);color:#fff}
+.bp .demo-steps b{background:rgba(255,255,255,.25);color:#fff}
+.bp .demo-steps span.on{background:#fff;color:var(--bp-deep)}.bp .demo-steps span.on b{background:var(--green);color:#fff}
+.bp .how-step,.bp .founder-card,.bp .band-in,.bp .faq-list details{position:relative;background:rgba(255,255,255,.05);border:1.5px dashed var(--bp-line);box-shadow:none;color:#fff}
+.bp .how-step::before,.bp .founder-card::before,.bp .band-in::before{content:"";position:absolute;inset:-8px;pointer-events:none;
+  background:linear-gradient(#fff,#fff) top left/14px 1.5px,linear-gradient(#fff,#fff) top left/1.5px 14px,linear-gradient(#fff,#fff) top right/14px 1.5px,linear-gradient(#fff,#fff) top right/1.5px 14px,
+  linear-gradient(#fff,#fff) bottom left/14px 1.5px,linear-gradient(#fff,#fff) bottom left/1.5px 14px,linear-gradient(#fff,#fff) bottom right/14px 1.5px,linear-gradient(#fff,#fff) bottom right/1.5px 14px;background-repeat:no-repeat}
+.bp .how-step p,.bp .band-in p,.bp .faq-list p,.bp .f-name span,.bp .f-handle{color:var(--bp-soft)}
+.bp .how-n{color:#fff;font-family:ui-monospace,Menlo,monospace}
+.bp .how-ic{background:transparent;color:#fff;box-shadow:inset 0 0 0 1.5px #fff}
+.bp .founder-card{background:rgba(255,255,255,.05)}
+.bp .founder .eyebrow,.bp .band-in .beta-tag{color:#fff}
+.bp .founder blockquote{color:#fff}.bp .founder blockquote em{color:#7ff0a6}
+.bp .f-photo::before{background:conic-gradient(#fff,#7ff0a6,#fff)}
+.bp .f-photo img{border-color:var(--bp)}
+.bp .yt-btn{background:#fff;color:var(--bp-deep);box-shadow:none}
+.bp .faq-list details[open]{box-shadow:none;background:rgba(255,255,255,.09)}
+.bp .faq-list summary{color:#fff}.bp .faq-list summary::after{color:#fff}.bp .faq-list a{color:#7ff0a6}
+.bp .final h2{color:#fff}
+.bp .foot-note{color:var(--bp-soft);border-top:1.5px dashed rgba(255,255,255,.4);padding-top:22px}
+.bp .wl-form{background:rgba(255,255,255,.08);border:1.5px dashed #fff;box-shadow:none}
+.bp .wl-form:focus-within{border-style:solid;background:rgba(255,255,255,.14)}
+.bp .wl-form input{color:#fff}.bp .wl-form input::placeholder{color:rgba(255,255,255,.65)}
+.bp .wl-msg{color:#fff}.bp .wl-msg.err{color:#ffb4ae}
+.bp .wl-done{background:#fff;color:var(--ink)}
+@media(max-width:860px){.bp .bp-fig{margin:0 auto 10px}}
 </style>
 </head>
 <body>
@@ -1530,7 +1583,7 @@ document.addEventListener("submit", async e => {
 function renderLanding(){
   const YT = "https://www.youtube.com/@ClickSpring-official";
   const go = "#signup";
-  $("#root").innerHTML = `<div class="landing simple">
+  $("#root").innerHTML = `<div class="landing simple bp">
   <svg class="swoosh" viewBox="0 0 900 1000" style="right:-200px;top:-120px;width:min(900px,85vw)" aria-hidden="true">
     <path d="M560 0C700 120 860 260 900 420V0Z" style="fill:var(--green-soft)"/>
     <path d="M300 1000C340 760 520 600 900 520V1000Z" style="fill:var(--green-wash)"/></svg>
@@ -1547,6 +1600,7 @@ function renderLanding(){
       <p class="reassure">${ic("check", 16)} Early access opens in small groups · Free for early members · No spam</p>
     </div>
     <div class="hero-vis">
+      <p class="bp-fig">FIG. 01 — CLICKSPRING, LIVE</p>
       <div class="demo" aria-label="Animated example: installing ClickSpring, watching visitors, and getting the fix">
         <div class="demo-top"><span class="dots"><i></i><i></i><i></i></span><span class="demo-url">${ic("search", 12)} clickspring.live/app</span></div>
         <div class="demo-tabs"><span data-t="setup" class="on">Setup</span><span data-t="numbers">Numbers</span><span data-t="why">Why they leave</span></div>
