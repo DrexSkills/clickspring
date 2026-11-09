@@ -50,6 +50,17 @@ Open `index.html` in a browser. With no Supabase keys it runs in demo mode: data
 - API keys: app → API Keys. REST API: `supabase/functions/api` (deployed, no JWT; auth with `Bearer cs_live_…`).
 - JS SDK: `sdk.js` (`import { ClickSpring } from "https://clickspring.live/sdk.js"`).
 
+## What the tracker records (v0.01.3)
+- Page views, clicks, sign-ups, source, device (as before).
+- **Which button**: its text, the section it sits in, how far down the page it is (`fold`, in screens), and where it links.
+- **Time on page + scroll depth**, sent once when someone leaves a page (`type: "leave"`, with its own monthly cap).
+- Nothing the visitor types, no cookies, no IP stored with events.
+
+## Security notes
+- The browser only ever holds the public `anon` key. Every table has row-level security; the public key can only INSERT events for a website that exists.
+- Admin access (waitlist, messages, visit counts) is decided on the server (`private.is_admin()`); no admin emails are in the website code.
+- Contact form messages are stored in the database. Nothing is emailed automatically.
+
 ## Known limits to fix after launch
 - Anyone with a site ID can send fake events (normal for analytics scripts). Add rate limiting via an edge function if it becomes a problem.
 - The dashboard downloads raw events (capped at 50k). Past a few thousand visitors a day, move the math into a SQL view.

@@ -826,12 +826,6 @@ html,body{background:#fff}
 .d-cursor svg path{fill:#0a0a0a}
 .demo-steps span{background:#f0f0f0}.demo-steps span.on{background:#0a0a0a;color:#fff}.demo-steps b{background:#d4d4d4}
 
-/* marquee */
-.marquee{position:relative;z-index:2;background:#0a0a0a;color:#fff;overflow:hidden;border-block:2px solid #0a0a0a;transform:rotate(-1.1deg);margin:36px -2vw 56px}
-.mq-track{display:flex;gap:34px;align-items:center;width:max-content;padding:14px 0;animation:mq 34s linear infinite}
-.marquee span{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:15px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;white-space:nowrap}
-.marquee i{width:9px;height:9px;border-radius:50%;background:#fff;flex:none}
-@keyframes mq{to{transform:translateX(-50%)}}
 
 /* sections */
 .mono .sec-h{font-size:clamp(30px,3.6vw,46px);letter-spacing:-.04em;color:#0a0a0a}
@@ -961,8 +955,8 @@ body:has(.mono-app){background:#f2f2f2}
   .mono .display em{box-shadow:3px 3px 0 #bdbdbd}
   .final{border-radius:26px;padding:40px 22px 52px;margin:0 16px 30px;grid-template-columns:1fr;text-align:left}.final .spring-bg{grid-column:1;grid-row:1;height:280px;margin:-10px 0 0}.final h2,.final .wl-wrap{grid-column:1}.final h2{grid-row:2}.final .wl-wrap{grid-row:3}
 }
-@media(max-width:560px){.stack-scene{height:340px}.slab .bb b{font-size:22px}.pin{transform:translate3d(100px,50px,calc(var(--gap) * 1.2))}.marquee{margin:26px -4vw 40px}.wl-form{box-shadow:4px 4px 0 #0a0a0a}}
-@media(prefers-reduced-motion:reduce){.mq-track{animation:none}.deck,.how-step,.stack3d{transition:none}.mono .display em{transform:none}}
+@media(max-width:560px){.stack-scene{height:340px}.slab .bb b{font-size:22px}.pin{transform:translate3d(100px,50px,calc(var(--gap) * 1.2))}.wl-form{box-shadow:4px 4px 0 #0a0a0a}}
+@media(prefers-reduced-motion:reduce){.deck,.how-step,.stack3d{transition:none}.mono .display em{transform:none}}
 .demo-steps{position:relative;z-index:3;margin-top:70px!important}
 .final .spring-bg{height:500px;margin:-48px 0}
 @media(max-width:900px){.spring-bg{left:auto;right:-8%;width:112%;height:100%;top:-6%;opacity:.5}.demo-steps{margin-top:18px!important}.final .spring-bg{height:300px;margin:-8px 0 8px}}
@@ -973,6 +967,60 @@ body:has(.mono-app){background:#f2f2f2}
 .mono-app .easy-fix .est svg{color:#fff}
 .mono-app .up .beta-tag{color:#0a0a0a}
 .beta-tag,.idea-tag,.nav-more{font-size:12px}
+/* ---------- Buttons, journeys, funnel ---------- */
+.btn-sum{display:flex;gap:14px;align-items:flex-start}.bs-ic{flex:none;width:44px;height:44px;border-radius:12px;background:#0a0a0a;color:#fff;display:grid;place-items:center}
+.btn-sum .bs-l{display:block;font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#525252}
+.btn-sum b{display:block;font-size:18px;letter-spacing:-.02em;margin:2px 0}.btn-sum small{color:#333;font-size:14px}
+.brow{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1.3fr) 110px;gap:8px 18px;align-items:center;padding:16px 0;border-bottom:1.5px dashed #d4d4d4}.brow:last-child{border-bottom:0}
+.br-main b{display:block;font-size:17px}.br-where{display:block;color:#333;font-size:14px;margin:2px 0}.br-main code{background:#f0f0f0;border-radius:6px;padding:2px 7px;font-size:12px;color:#333}
+.br-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.br-stats b{display:block;font-size:17px}.br-stats em{font-style:normal;font-weight:600;color:#333;font-size:13px}.br-stats small{color:#525252;font-size:12px;font-weight:600}
+.br-bar{grid-column:1/3;height:8px;border-radius:99px;background:#eee;overflow:hidden}.br-bar i{display:block;height:100%;background:#0a0a0a;border-radius:99px}
+.vd{justify-self:end;font-size:12px;font-weight:800;border-radius:999px;padding:4px 11px;white-space:nowrap;background:#f0f0f0;color:#0a0a0a;grid-column:3;grid-row:1}
+.vd.good{background:#0a0a0a;color:#fff}.vd.bad{background:rgba(189,40,32,.12);color:var(--bad)}.vd.warn{background:rgba(138,82,0,.13);color:var(--warn)}.vd.early{background:#f0f0f0;color:#525252}
+@container (max-width:700px){.brow{grid-template-columns:1fr}.vd{grid-column:1;grid-row:auto;justify-self:start}.br-bar{grid-column:1}.br-stats{grid-template-columns:repeat(2,1fr)}}
+.maps{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.pm h3{font-size:15px;margin:0 0 8px}
+.pm-box{position:relative;height:300px;border:2px solid #0a0a0a;border-radius:14px;background:#fafafa;overflow:hidden}
+.pm-line{position:absolute;left:0;right:0;border-top:1.5px dashed #bdbdbd}.pm-line span{position:absolute;right:8px;top:3px;font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:700;color:#737373;letter-spacing:.08em;text-transform:uppercase}
+.pm-dot{position:absolute;left:46%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.pm-dot i{flex:none;border-radius:50%;background:#0a0a0a;box-shadow:0 0 0 3px #fff,0 0 0 4.5px #0a0a0a}.pm-dot.good i{background:var(--pos)}.pm-dot.bad i{background:var(--bad)}.pm-dot.warn i{background:var(--warn)}
+.pm-dot span{font-size:12.5px;font-weight:700;background:#fff;border:1.5px solid #0a0a0a;border-radius:8px;padding:2px 8px}
+.xp{border-top:1.5px dashed #d4d4d4;padding:2px 0}.xp:first-of-type{border-top:0}
+.xp summary{display:grid;grid-template-columns:1fr auto;gap:2px 12px;cursor:pointer;list-style:none;padding:12px 0}.xp summary::-webkit-details-marker{display:none}
+.xp-p{font-weight:800;font-size:16px}.xp-r{color:#333;font-size:14px;font-weight:600;text-align:right}
+.xp-bar{grid-column:1/3;height:8px;border-radius:99px;background:#eee;overflow:hidden}.xp-bar b{display:block;height:100%;background:var(--bad);border-radius:99px}
+.xp[open] summary{padding-bottom:8px}
+.xp-body{padding:4px 0 14px}.xp-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}.xp-chips span{background:#f0f0f0;border-radius:999px;padding:4px 11px;font-size:13px;font-weight:600}
+.rs{background:#f7f7f7;border-radius:14px;padding:12px 14px;margin-bottom:10px}.rs b{display:flex;gap:8px;align-items:center;font-size:16px}.rs-n{width:22px;height:22px;border-radius:50%;background:#0a0a0a;color:#fff;display:grid;place-items:center;font-size:12px;flex:none}
+.rs p{margin:6px 0 0;color:#333;font-size:15px}.rs .rs-ev{color:#0a0a0a;font-weight:700;font-size:14px}.rs-fix{background:#fff;border:1.5px solid #0a0a0a;border-radius:10px;padding:8px 10px}.rs-ex{font-family:ui-monospace,Menlo,monospace;font-size:13px!important}
+.tip-where{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px;font-weight:700;font-size:14px}.tip-where span:first-of-type{background:#f0f0f0;border-radius:8px;padding:3px 9px}
+.effort{background:#0a0a0a;color:#fff;border-radius:999px;padding:2px 10px;font-size:12px}
+.tip-ex{margin:10px 0 0;border-left:3px solid #0a0a0a;padding:2px 0 2px 12px;font-family:ui-monospace,Menlo,monospace;font-size:13.5px;color:#0a0a0a!important}
+.jrow{grid-template-columns:130px minmax(0,1fr) auto}.jright{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.tl-btn{border:1.5px solid #0a0a0a;background:#fff;color:#0a0a0a;border-radius:999px;padding:3px 12px;font:700 12.5px inherit;font-family:inherit;cursor:pointer}.tl-btn:hover,.tl-btn[aria-expanded="true"]{background:#0a0a0a;color:#fff}
+.jtl{grid-column:1/-1;background:#f7f7f7;border-radius:14px;padding:14px 16px;margin-top:6px}
+.tl-sum{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.tl-sum span{background:#fff;border:1.5px solid #0a0a0a;border-radius:999px;padding:2px 10px;font-size:12.5px;font-weight:700}
+.tl{list-style:none;margin:0;padding:0 0 0 4px;position:relative}.tl::before{content:"";position:absolute;left:78px;top:12px;bottom:12px;border-left:2px dashed #bdbdbd}
+.tl li{display:grid;grid-template-columns:64px 28px 1fr;gap:8px;align-items:start;padding:7px 0;position:relative}
+.tl-t{font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;color:#525252;padding-top:3px;text-align:right}
+.tl-i{width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid #0a0a0a;display:grid;place-items:center;position:relative;z-index:1}
+.tl li b{display:block;font-size:15px}.tl li span:not(.tl-t):not(.tl-i){display:block;color:#333;font-size:13.5px}
+.tl-ck .tl-i{background:#0a0a0a;color:#fff}.tl-ok .tl-i,.tl-end.ok .tl-i{background:var(--pos);border-color:var(--pos);color:#fff}.tl-end .tl-i{border-color:var(--bad);color:var(--bad)}.tl-end.ok .tl-i{color:#fff}
+.seg-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.seg-pills button{border:1.5px solid #0a0a0a;background:#fff;color:#0a0a0a;border-radius:999px;padding:7px 15px;font:700 14px inherit;font-family:inherit;cursor:pointer}.seg-pills button.on,.seg-pills button:hover{background:#0a0a0a;color:#fff}
+.fs-sum{font-size:18px;margin:0 0 20px}.fs-sum b{background:#e8e8e8;border-radius:6px;padding:0 6px}
+.fs{display:grid;grid-template-columns:minmax(130px,.8fr) minmax(0,1.6fr);gap:16px;align-items:center}
+.fs-l b{display:block;font-size:17px}.fs-l small{color:#525252;font-size:13px;font-weight:600}
+.fs-shape{display:flex;justify-content:center}.fs-poly{width:var(--w);min-width:64px;height:76px;background:#0a0a0a;color:#fff;display:grid;place-items:center;clip-path:polygon(0 0,100% 0,calc(50% + 50% * var(--r)) 100%,calc(50% - 50% * var(--r)) 100%);transition:width .5s}
+.fs-poly b{font-size:24px;letter-spacing:-.02em}.fs-poly.s1{background:#333}.fs-poly.s2{background:#6b6b6b}.fs-poly.s3{background:#a8a8a8;color:#0a0a0a}
+.fs-drop{display:grid;grid-template-columns:minmax(130px,.8fr) minmax(0,1.6fr);gap:16px;margin:4px 0}.fs-drop span{grid-column:2;text-align:center;color:var(--bad);font-weight:700;font-size:14px;border-block:1.5px dashed rgba(189,40,32,.45);padding:3px 0}
+.fs-drop.big span{background:rgba(189,40,32,.08)}.fs-drop em{font-style:normal;background:var(--bad);color:#fff;border-radius:999px;padding:1px 9px;font-size:12px;margin-right:4px}
+.fs-why{margin-top:20px;background:#0a0a0a;color:#fff;border-radius:16px;padding:16px 18px}.fs-why b{font-size:17px}.fs-why p{margin:6px 0 12px;color:#e0e0e0}.fs-why .btn.green{background:#fff;color:#0a0a0a}
+@container (max-width:640px){.fs,.fs-drop{grid-template-columns:1fr;gap:6px}.fs-drop span{grid-column:1}.fs-l{text-align:center}}
+.flow-link{font-weight:800;color:#0a0a0a;text-decoration:underline;text-underline-offset:3px;margin-left:6px;white-space:nowrap}
+.msg-row{padding:12px 0;border-bottom:1px dashed #cfcfcf}.msg-row:last-child{border-bottom:0}.msg-h{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.msg-row p{margin:6px 0 0;white-space:pre-wrap;color:#333}
+.btn-sums{grid-template-columns:repeat(3,minmax(0,1fr))}
+@container (max-width:900px){.btn-sums{grid-template-columns:minmax(0,1fr)}}
+.btn-sum > div{min-width:0}.btn-sum b{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -1051,7 +1099,7 @@ async function deviceInfo(){
   return {device_id: id, fp};
 }
 function makeSample(){
-    const r = mulberry32(42), now = Date.now();
+    const r = mulberry32(42), now = Date.now(), pick = a => a[Math.floor(r() * a.length)];
     const camps = [
       {id: uid(), name: "Morning routine reel", platform: "instagram", slug: "morning-routine", views: 18400, created: now - 50*DAY},
       {id: uid(), name: "3 tips video", platform: "tiktok", slug: "3-tips", views: 10000, created: now - 25*DAY},
@@ -1059,21 +1107,38 @@ function makeSample(){
     ];
     const W = [["instagram",.36],["tiktok",.035],["youtube",.13],["google",.19],["direct",.21],["x",.075]];
     const CLICK = {instagram:.15,tiktok:.09,youtube:.21,google:.26,direct:.19,x:.1};
-    const ev = [];
+    const ev = [], rnd = (a, b) => Math.round(a + r() * (b - a));
+    // one page view + the "leave" record the tracker sends (time on page, how far they scrolled)
+    const view = (o, p, ts, dw, sc) => { ev.push({t:"pageview", v:o.v, s:o.s, c:o.c, p, l:null, d:o.dv, ts}); ev.push({t:"leave", v:o.v, s:o.s, c:o.c, p, l:null, d:o.dv, dw, sc, ts: ts + dw * 1000}); };
+    const click = (o, p, ts, l, z, tg, fd) => ev.push({t:"click", v:o.v, s:o.s, c:o.c, p, l, d:o.dv, z, tg, fd: Math.round(fd * 10) / 10, ts});
     for (let d = 59; d >= 0; d--) {
       const n = Math.round((15 + r()*12) * (1 + (59 - d) / 59 * .55));
       for (let i = 0; i < n; i++) {
         let x = r(), s = "other"; for (const [k, w] of W) { if ((x -= w) < 0) { s = k; break; } }
         const ts = now - d*DAY - r()*DAY + 6e4, v = uid();
         const cp = camps.find(c => c.platform === s && ts > c.created && r() < .85);
-        const c = cp ? cp.id : null;
         const dv = r() < ({instagram:.88,tiktok:.94,youtube:.7,x:.75}[s] || .45) ? "mobile" : "desktop";
-        ev.push({t:"pageview", v, s, c, p:"/", l:null, d: dv, ts});
-        if (r() < .3) ev.push({t:"pageview", v, s, c, p: r() < .5 ? "/pricing" : "/about", l:null, d: dv, ts: ts + 3e4});
-        if (r() < (CLICK[s] || .12) * (dv === "mobile" ? .8 : 1.5)) {
-          ev.push({t:"click", v, s, c, p:"/", l: r() < .8 ? "Get the free guide" : "See pricing", d: dv, ts: ts + 2e4});
-          if (r() < (s === "tiktok" ? .5 : .24)) ev.push({t:"signup", v, s, c, p:"/", l:"signup form", d: dv, ts: ts + 9e4});
-        }
+        const o = {v, s, c: cp ? cp.id : null, dv}, mob = dv === "mobile";
+        // home page: phones leave fast and barely scroll
+        const hdw = mob ? rnd(2, 7) : rnd(8, 40), hsc = mob ? rnd(8, 30) : rnd(25, 85);
+        const wantClick = r() < (CLICK[s] || .12) * (mob ? .8 : 1.5), goesOn = r() < .3;
+        let t = ts;
+        if (wantClick) {
+          const hero = r() < .8;
+          view(o, "/", t, hdw + 6, Math.max(hsc, 30));
+          click(o, "/", t + 6e3, hero ? "Get the free guide" : "See pricing", hero ? "hero" : "header", hero ? "a#cta→/signup" : "a→/pricing", hero ? (mob ? .6 : .4) : 0);
+          if (!hero) view(o, "/pricing", t + 9e3, rnd(2, 9), rnd(6, 28));
+          if (hero && r() < (s === "tiktok" ? .5 : .24)) ev.push({t:"signup", v, s, c: o.c, p:"/", l:"signup form", d:dv, z:"signup form", ts: t + 9e4});
+        } else if (goesOn) {
+          view(o, "/", t, hdw, hsc); t += hdw * 1000 + 2000;
+          const roll = r();
+          if (roll < .5) {   // pricing: people leave in seconds and barely scroll
+            const dw = rnd(2, 9), sc = rnd(6, 28), tries = r() < .09;
+            view(o, "/pricing", t, dw + (tries ? 5 : 0), tries ? Math.max(sc, 45) : sc);
+            if (tries) { click(o, "/pricing", t + 5e3, "Start free trial", "Pricing plans", "button#trial(submit)", mob ? 2.4 : 1.7); if (r() < .22) ev.push({t:"signup", v, s, c: o.c, p:"/pricing", l:"signup form", d:dv, z:"Pricing plans", ts: t + 4e4}); }
+          } else if (roll < .85) view(o, "/about", t, rnd(28, 70), rnd(70, 100));   // about: long read, no next step
+          else { view(o, "/faq", t, rnd(18, 45), rnd(45, 95)); if (r() < .06) click(o, "/faq", t + 12e3, "Join newsletter", "footer", "button#newsletter(submit)", 3.6); }
+        } else view(o, "/", t, hdw, hsc);
       }
     }
   return {events: ev.sort((a, b) => a.ts - b.ts), campaigns: camps};
@@ -1131,6 +1196,7 @@ const LiveStore = {
     this.sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, { auth: { flowType: "implicit", persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
     const { data } = await this.sb.auth.getSession();
     this.user = data.session ? data.session.user : null;
+    await this.checkAdmin();
     if (redirect) {
       if ((q.has("reset") || type === "recovery") && this.user) S.recovery = true;
       else if (err) S.flash = {type: "err", text: /expired|invalid/i.test(err) ? "That link has expired. Log in, or sign up again to get a new one." : err};
@@ -1141,6 +1207,7 @@ const LiveStore = {
     this.sb.auth.onAuthStateChange((ev, session) => { this.user = session ? session.user : null; if (ev === "PASSWORD_RECOVERY") { S.recovery = true; location.hash = "#reset"; } });
     return this.user ? this.loadSite() : null;
   },
+  async checkAdmin(){ S.admin = false; if (!this.user) return; try { const r = await this.sb.rpc("am_i_admin"); S.admin = r.data === true; } catch (e) {} },
   userName(){ const m = this.user && this.user.user_metadata; return (m && m.full_name) || ""; },
   userEmail(){ return this.user ? this.user.email : ""; },
   sites: [],
@@ -1173,12 +1240,12 @@ const LiveStore = {
   async signIn({email, password}){
     const { data, error } = await this.sb.auth.signInWithPassword({ email, password });
     if (error) throw error;
-    this.user = data.user; return this.loadSite();
+    this.user = data.user; await this.checkAdmin(); return this.loadSite();
   },
   async resend(email){ const { error } = await this.sb.auth.resend({ type: "signup", email, options: { emailRedirectTo: BASE() + "?confirmed=1" } }); if (error) throw error; },
   async resetPassword(email){ const { error } = await this.sb.auth.resetPasswordForEmail(email, { redirectTo: BASE() + "?reset=1" }); if (error) throw error; },
   async updatePassword(password){ const { error } = await this.sb.auth.updateUser({ password }); if (error) throw error; },
-  async signOut(){ await this.sb.auth.signOut(); this.user = null; this.site = null; },
+  async signOut(){ await this.sb.auth.signOut(); this.user = null; this.site = null; S.admin = false; },
   async createSite(s){
     const { data, error } = await this.sb.from("sites").insert({owner: this.user.id, name: s.name, url: s.url, owner_name: s.owner}).select().single();
     if (error) throw error;
@@ -1202,10 +1269,10 @@ const LiveStore = {
   async events(since){
     const out = []; let from = 0; const size = 1000;
     for (;;) {
-      const { data, error } = await this.sb.from("events").select("type,visitor_id,source,campaign_id,path,label,device,created_at")
+      const { data, error } = await this.sb.from("events").select("type,visitor_id,source,campaign_id,path,label,device,target,zone,fold,dwell_s,scroll_pct,created_at")
         .eq("site_id", this.site.id).gte("created_at", new Date(since).toISOString()).order("created_at").range(from, from + size - 1);
       if (error) throw error;
-      for (const r of data) out.push({t: r.type, v: r.visitor_id, s: r.source || "direct", c: r.campaign_id, p: r.path, l: r.label, d: r.device, ts: Date.parse(r.created_at)});
+      for (const r of data) out.push({t: r.type, v: r.visitor_id, s: r.source || "direct", c: r.campaign_id, p: r.path, l: r.label, d: r.device, tg: r.target, z: r.zone, fd: r.fold, dw: r.dwell_s, sc: r.scroll_pct, ts: Date.parse(r.created_at)});
       if (data.length < size || out.length >= 50000) break;
       from += size;
     }
@@ -1263,22 +1330,137 @@ function groupBy(list, keyOf){
   for (const e of list) { const k = first.get(e.v); if (k == null) continue; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(e); }
   return groups;
 }
+/* ---------- Buttons, pages, journeys, funnel: the numbers behind the explanations ---------- */
+const median = a => { if (!a.length) return null; const s = a.slice().sort((x, y) => x - y), k = Math.floor(s.length / 2); return s.length % 2 ? s[k] : (s[k - 1] + s[k]) / 2; };
+const topOf = m => { let best = null; for (const [k, n] of m) if (!best || n > best[1]) best = [k, n]; return best; };
+const devName = d => d === "mobile" ? "Phone" : d === "tablet" ? "Tablet" : d === "desktop" ? "Computer" : "";
+const foldText = f => f == null ? "" : f < 1 ? "On the first screen" : `${f.toFixed(1)} screens down`;
+const secs = s => s < 60 ? `${Math.round(s)}s` : `${Math.floor(s / 60)}m ${Math.round(s % 60)}s`;
+
+function pageMapHTML(pg, list, verdict){
+  const maxF = Math.max(3, Math.ceil(Math.max(...list.map(b => b.fold)) + .5)), maxC = Math.max(...list.map(b => b.clicks));
+  const lines = Array.from({length: maxF}, (_, k) => `<div class="pm-line" style="top:${k / maxF * 100}%"><span>${k === 0 ? "Top of page" : `${k} screen${k === 1 ? "" : "s"} down`}</span></div>`).join("");
+  const dots = list.slice().sort((a, b) => a.fold - b.fold).map((b, i) => { const sz = Math.round(12 + 26 * Math.sqrt(b.clicks / maxC)), v = verdict(b);
+    return `<div class="pm-dot ${v.c}" style="top:${Math.min(94, Math.max(7, b.fold / maxF * 100 + 4))}%;margin-left:${(i % 3) * 14 - 14}px"><i style="width:${sz}px;height:${sz}px"></i><span>${esc(b.label.slice(0, 26))} · ${fmt(b.clicks)}</span></div>`; }).join("");
+  return `<div class="pm"><h3>${esc(pageName(pg))}</h3><div class="pm-box">${lines}${dots}</div></div>`;
+}
+
+function buildPageAndButtonStats(journeys){
+  const pm = new Map(), ps = p => { if (!pm.has(p)) pm.set(p, {page: p, views: 0, vset: new Set(), dw: [], sc: [], clickers: new Set(), leftN: 0, leftMobile: 0, vMobile: 0, leftSrc: new Map(), vSrc: new Map()}); return pm.get(p); };
+  const bm = new Map();
+  for (const j of journeys) {
+    const seen = new Set();
+    for (const e of j.steps) {
+      const p = e.p || "/";
+      if (e.t === "pageview") { const s = ps(p); s.views++; if (!seen.has(p)) { seen.add(p); s.vset.add(j.v); if (j.dev === "mobile") s.vMobile++; s.vSrc.set(j.s, (s.vSrc.get(j.s) || 0) + 1); } if (e.dw != null) s.dw.push(e.dw); if (e.sc != null) s.sc.push(e.sc); }
+      else if (e.t === "click") {
+        ps(p).clickers.add(j.v);
+        const k = [e.l || "(unnamed)", e.z || "", p].join("¦"); let b = bm.get(k);
+        if (!b) bm.set(k, b = {label: e.l || "(unnamed)", zone: e.z || "", page: p, clicks: 0, who: new Set(), folds: [], targets: new Map(), mobile: new Set(), conv: new Set()});
+        b.clicks++; b.who.add(j.v); if (e.fd != null) b.folds.push(e.fd); if (e.tg) b.targets.set(e.tg, (b.targets.get(e.tg) || 0) + 1); if (j.dev === "mobile") b.mobile.add(j.v); if (j.converted) b.conv.add(j.v);
+      }
+    }
+    if (!j.converted) { const s = ps(j.exit); s.leftN++; if (j.dev === "mobile") s.leftMobile++; s.leftSrc.set(j.s, (s.leftSrc.get(j.s) || 0) + 1); }
+  }
+  const pages = [...pm.values()].map(s => ({page: s.page, views: s.views, visitors: s.vset.size, leftN: s.leftN, exitRate: pct(s.leftN, s.vset.size),
+    medDwell: median(s.dw), medScroll: median(s.sc), samples: s.dw.length, quickPct: s.dw.length ? pct(s.dw.filter(x => x <= 5).length, s.dw.length) : null,
+    shallowPct: s.sc.length ? pct(s.sc.filter(x => x <= 25).length, s.sc.length) : null, engaged: pct(s.clickers.size, s.vset.size),
+    mobileLeftPct: pct(s.leftMobile, s.leftN), mobileViewPct: pct(s.vMobile, s.vset.size), topLeftSrc: topOf(s.leftSrc), topViewSrc: topOf(s.vSrc), leftTotal: s.leftN}))
+    .sort((a, b) => b.leftN - a.leftN);
+  const byPage = new Map(pages.map(p => [p.page, p]));
+  const buttons = [...bm.values()].map(b => { const pg = byPage.get(b.page), t = topOf(b.targets);
+    return {label: b.label, zone: b.zone, page: b.page, clicks: b.clicks, people: b.who.size, signups: b.conv.size, conv: pct(b.conv.size, b.who.size), fold: median(b.folds), target: t ? t[0] : "",
+      mobilePct: pct(b.mobile.size, b.who.size), pageRate: pg && pg.visitors ? pct(b.who.size, pg.visitors) : 0}; }).sort((a, b) => b.clicks - a.clicks);
+  return {pages, buttons};
+}
+function funnelCounts(js){
+  const clicked = j => j.steps.some(e => e.t === "click" || e.t === "signup");
+  const explored = j => j.steps.filter(e => e.t === "pageview").length >= 2 || clicked(j);
+  return [{key: "visit", label: "Visited your website", n: js.length}, {key: "explore", label: "Looked around", sub: "viewed another page or clicked", n: js.filter(explored).length},
+          {key: "click", label: "Clicked a button", n: js.filter(clicked).length}, {key: "sign", label: "Signed up", n: js.filter(j => j.converted).length}];
+}
+/* Why do people leave THIS page? Every reason comes with the numbers behind it. */
+function explainExit(page, m){
+  const ps = (m.pageStats || []).find(p => p.page === page); if (!ps) return null;
+  const n = ps.leftN, reasons = [], cn = conf(n), btns = (m.buttonStats || []).filter(b => b.page === page);
+  const has = ps.samples >= 5;
+  if (has && ps.medDwell <= 6 && ps.quickPct >= 35) reasons.push({k: "quick", title: "They leave within seconds",
+    ev: `Typical visitor stays only ${Math.round(ps.medDwell)}s (${pctStr(ps.quickPct)} leave in under 5 seconds)`,
+    why: "The first screen isn’t what they expected, or it isn’t clear what this page is for. Slow loading does the same thing.",
+    fix: `Make the first screen on ${pageName(page)} say, in one sentence, what they get. Use the same words as the post or link that sent them, and check how fast it loads on a phone.`,
+    ex: "Headline idea: “Get [the result they want] in [time], without [the thing they hate].”"});
+  if (has && ps.medScroll <= 30) reasons.push({k: "shallow", title: "They never scroll down",
+    ev: `Typical visitor only gets ${Math.round(ps.medScroll)}% of the way down the page`,
+    why: "Everything important sits below the first screen, so most people never see it. They don’t know there’s more.",
+    fix: `Move the key answer and your main button into the first screen of ${pageName(page)}. Put the price, the proof, or the offer there.`, ex: ""});
+  if (has && ps.medDwell >= 25 && ps.engaged <= 15) reasons.push({k: "read", title: "They read it, then leave without clicking",
+    ev: `Typical visitor stays ${secs(ps.medDwell)}, but only ${pctStr(ps.engaged)} click anything`,
+    why: "They’re interested, but the page never tells them what to do next. Reading with no button is a dead end.",
+    fix: `Add one clear button right after the main section of ${pageName(page)}, and repeat it at the bottom. Use one main button, not several.`, ex: "Button idea: “Get my free guide” instead of “Submit” or “Learn more”."});
+  if (ps.engaged >= 35 && n >= 5) reasons.push({k: "clickleft", title: "They click something, then still leave",
+    ev: `${pctStr(ps.engaged)} of visitors click on this page, and most still don’t sign up`,
+    why: "They wanted to continue, then hit a step that lost them: a long form, a surprise (price, account, card), or something broken.",
+    fix: "Click your own main button as a first-time visitor, on your phone. Cut the next step down to one field and remove any surprise.", ex: ""});
+  if (n >= 6 && ps.mobileLeftPct >= 70 && ps.mobileViewPct >= 55) reasons.push({k: "phones", title: "Most people who leave are on phones",
+    ev: `${pctStr(ps.mobileLeftPct)} of those who left this page were on a phone`,
+    why: "A page that works on a computer can be cramped, slow, or hide its button on a phone, and most social traffic is phones.",
+    fix: `Open ${pageName(page)} on your phone with mobile data. Make the button visible without scrolling, text easy to read, and nothing covering it.`, ex: ""});
+  if (n >= 6 && ps.topLeftSrc && pct(ps.topLeftSrc[1], n) >= 55 && (!ps.topViewSrc || ps.topViewSrc[0] !== ps.topLeftSrc[0] || pct(ps.topLeftSrc[1], n) >= 70))
+    reasons.push({k: "source", title: `Most come from ${srcName(ps.topLeftSrc[0])}, and they don’t stay`,
+      ev: `${pctStr(pct(ps.topLeftSrc[1], n))} of people who left here arrived from ${srcName(ps.topLeftSrc[0])}`,
+      why: `What ${srcName(ps.topLeftSrc[0])} promised and what this page shows don’t match, so they leave.`,
+      fix: `Send ${srcName(ps.topLeftSrc[0])} visitors to a page that continues the post they just saw, with the same hook as the headline.`, ex: ""});
+  const low = btns.filter(b => SIGNUPISH.test(b.label) && b.fold != null && b.fold >= 1.5 && b.pageRate < 12)[0];
+  if (low) reasons.push({k: "below", title: `“${low.label}” is too far down`,
+    ev: `The button sits ${low.fold.toFixed(1)} screens down, and only ${pctStr(low.pageRate)} of visitors click it`,
+    why: "Most people never scroll far enough to see it, so the thing you want them to do is hidden.",
+    fix: `Move “${low.label}” to the first screen of ${pageName(page)}, so it’s visible without scrolling.`, ex: ""});
+  if (!reasons.length) reasons.push({k: "thin", title: n < 5 ? "Not enough data on this page yet" : "No clear pattern yet",
+    ev: n < 5 ? `Only ${fmt(n)} ${n === 1 ? "person has" : "people have"} left here` : (has ? "Time on page and scrolling look normal" : "No time-on-page data yet"),
+    why: has ? "Nothing stands out as broken on this page." : "Time on page and scrolling are measured with the latest tracking script. If you installed it earlier, update the script in Tracking Setup.",
+    fix: "Keep collecting visitors. This gets more specific as more people leave.", ex: ""});
+  return {page, ps, n, conf: cn, reasons};
+}
+function explainHTML(x){
+  if (!x) return "";
+  const ps = x.ps, chips = [ps.medDwell != null ? `Typically stay ${secs(ps.medDwell)}` : null, ps.medScroll != null ? `Scroll ${Math.round(ps.medScroll)}% down` : null, `${pctStr(ps.engaged)} click something`, `${pctStr(ps.mobileLeftPct)} of leavers on phones`].filter(Boolean);
+  return `<div class="xp-body"><div class="xp-chips">${chips.map(c => `<span>${esc(c)}</span>`).join("")}<span class="conf ${x.conf.cls}">${x.conf.level}</span></div>
+    ${x.reasons.map((r, k) => `<div class="rs"><b><span class="rs-n">${k + 1}</span>${esc(r.title)}</b><p class="rs-ev">${esc(r.ev)}</p><p>${esc(r.why)}</p><p class="rs-fix"><b>What to try:</b> ${esc(r.fix)}</p>${r.ex ? `<p class="rs-ex">${esc(r.ex)}</p>` : ""}</div>`).join("")}</div>`;
+}
+/* A single visitor, step by step, with time on each page */
+function timelineHTML(j){
+  const rel = ts => { const s = Math.round((ts - j.start) / 1000); return s < 60 ? `+${s}s` : `+${Math.floor(s / 60)}m ${s % 60}s`; };
+  const rows = j.steps.map((e, i) => {
+    const nx = j.steps[i + 1], gap = nx ? Math.round((nx.ts - e.ts) / 1000) : null;
+    if (e.t === "pageview") return `<li class="tl-pv"><span class="tl-t">${rel(e.ts)}</span><span class="tl-i">${ic("eye", 14)}</span><div><b>Opened ${esc(pageName(e.p || "/"))}</b><span>${e.dw != null ? `Stayed ${secs(e.dw)} · scrolled ${e.sc}% of the page` : gap != null ? `${secs(gap)} until their next action` : "Time on page not recorded"}</span></div></li>`;
+    if (e.t === "click") return `<li class="tl-ck"><span class="tl-t">${rel(e.ts)}</span><span class="tl-i">${ic("cursor", 14)}</span><div><b>Clicked “${esc(e.l || "a button")}”</b><span>${[e.z && `in “${esc(e.z)}”`, e.fd != null && foldText(e.fd), e.tg && esc(e.tg)].filter(Boolean).join(" · ") || "Button location not recorded"}</span></div></li>`;
+    return `<li class="tl-ok"><span class="tl-t">${rel(e.ts)}</span><span class="tl-i">${ic("check", 14)}</span><div><b>Signed up</b><span>Became a customer</span></div></li>`;
+  }).join("");
+  const last = [...j.steps].reverse().find(e => e.t === "pageview");
+  const out = j.converted ? `<li class="tl-end ok"><span class="tl-t"></span><span class="tl-i">${ic("check", 14)}</span><div><b>Became a customer</b></div></li>`
+    : `<li class="tl-end"><span class="tl-t"></span><span class="tl-i">${ic("arrow", 14)}</span><div><b>Left from ${esc(pageName(j.exit))}</b><span>${last && last.dw != null ? `after ${secs(last.dw)}, having scrolled ${last.sc}%` : "No more activity"}</span></div></li>`;
+  return `<div class="tl-sum"><span>${esc(srcName(j.s))}</span>${j.dev ? `<span>${devName(j.dev)}</span>` : ""}<span>${j.steps.filter(e => e.t === "pageview").length} page${j.steps.filter(e => e.t === "pageview").length === 1 ? "" : "s"}</span><span>${j.steps.filter(e => e.t === "click").length} click${j.steps.filter(e => e.t === "click").length === 1 ? "" : "s"}</span></div><ol class="tl">${rows}${out}</ol>`;
+}
+
 function compute(events, campaigns, days){
   const now = Date.now(), start = now - days*DAY, prevStart = start - days*DAY;
   const cur = events.filter(e => e.ts >= start), prev = events.filter(e => e.ts >= prevStart && e.ts < start);
+  const act = cur.filter(e => e.t !== "leave"), leaves = cur.filter(e => e.t === "leave");
   const c = summarize(cur), p = summarize(prev);
   const series = {visitors: [], clicks: [], signups: [], dates: []};
   const buckets = Array.from({length: days}, () => []);
   for (const e of cur) { const i = days - 1 - Math.floor((now - e.ts) / DAY); if (i >= 0 && i < days) buckets[i].push(e); }
   buckets.forEach((b, i) => { const s = summarize(b); series.visitors.push(s.visitors); series.clicks.push(s.clicks); series.signups.push(s.signups); series.dates.push(new Date(now - (days - 1 - i)*DAY)); });
-  const sources = [...groupBy(cur, e => e.s || "direct")].map(([k, l]) => ({key: k, name: srcName(k), ...summarize(l)})).sort((a, b) => b.visitors - a.visitors);
-  const campGroups = groupBy(events, e => e.c || null);
+  const sources = [...groupBy(act, e => e.s || "direct")].map(([k, l]) => ({key: k, name: srcName(k), ...summarize(l)})).sort((a, b) => b.visitors - a.visitors);
+  const campGroups = groupBy(events.filter(e => e.t !== "leave"), e => e.c || null);
   const camps = campaigns.map(cp => ({...cp, ...summarize(campGroups.get(cp.id) || [])}));
-  const perVisitor = new Map(); for (const e of cur) perVisitor.set(e.v, (perVisitor.get(e.v) || 0) + 1);
+  const perVisitor = new Map(); for (const e of act) perVisitor.set(e.v, (perVisitor.get(e.v) || 0) + 1);
   let bounced = 0; for (const n of perVisitor.values()) if (n === 1) bounced++;
-  const byV = new Map(); for (const e of cur) { if (!byV.has(e.v)) byV.set(e.v, []); byV.get(e.v).push(e); }
+  const lvBy = new Map(); for (const e of leaves) { if (!lvBy.has(e.v)) lvBy.set(e.v, []); lvBy.get(e.v).push(e); }
+  const byV = new Map(); for (const e of act) { if (!byV.has(e.v)) byV.set(e.v, []); byV.get(e.v).push(e); }
   const journeys = [...byV.values()].map(l => { l.sort((a, b) => a.ts - b.ts); const pv = l.filter(e => e.t === "pageview");
-    return {v: l[0].v, s: l[0].s || "direct", start: l[0].ts, end: l[l.length - 1].ts, steps: l, converted: l.some(e => e.t === "signup"), exit: (pv.length ? pv[pv.length - 1].p : l[l.length - 1].p) || "/"}; });
+    const used = new Set(); for (const lf of (lvBy.get(l[0].v) || []).sort((a, b) => a.ts - b.ts)) { let tg = null; for (const e of pv) if (e.p === lf.p && e.ts <= lf.ts && !used.has(e)) tg = e; if (tg) { tg.dw = lf.dw; tg.sc = lf.sc; used.add(tg); } }
+    return {v: l[0].v, s: l[0].s || "direct", dev: (l.find(e => e.d) || {}).d, start: l[0].ts, end: l[l.length - 1].ts, steps: l, converted: l.some(e => e.t === "signup"), exit: (pv.length ? pv[pv.length - 1].p : l[l.length - 1].p) || "/"}; });
   const leavers = journeys.filter(j => !j.converted), buyers = journeys.filter(j => j.converted);
   const exitMap = new Map(); for (const j of leavers) exitMap.set(j.exit, (exitMap.get(j.exit) || 0) + 1);
   const exits = [...exitMap].sort((a, b) => b[1] - a[1]).slice(0, 6).map(([page, n]) => ({page, n, share: pct(n, leavers.length)}));
@@ -1288,12 +1470,13 @@ function compute(events, campaigns, days){
   for (const j of leavers) for (const f of feat(j)) fl.set(f, (fl.get(f) || 0) + 1);
   const diffs = buyers.length >= 3 ? [...fb].map(([f, n]) => ({f, b: pct(n, buyers.length), l: pct(fl.get(f) || 0, leavers.length)}))
     .filter(d => d.b >= 15 && d.b > d.l * 1.5).sort((a, b) => (b.b - b.l) - (a.b - a.l)).slice(0, 5) : [];
-  const devices = [...groupBy(cur.filter(e => e.d), e => e.d)].map(([k, l]) => ({key: k, ...summarize(l)}));
+  const devices = [...groupBy(act.filter(e => e.d), e => e.d)].map(([k, l]) => ({key: k, ...summarize(l)}));
   const signupEver = events.some(e => e.t === "signup");
   const clickedLeft = leavers.filter(j => j.steps.some(e => e.t === "click")).length;
   const count = (list, f) => { const m = new Map(); for (const e of list) { const k = f(e); if (k) m.set(k, (m.get(k) || 0) + 1); } return [...m].sort((a, b) => b[1] - a[1]).slice(0, 6); };
-  return { days, c, p, series, sources, camps, bounce: pct(bounced, perVisitor.size), journeys, exits, diffs, clickedLeft, devices, signupEver, buyers: buyers.length, leavers: leavers.length,
-    buttons: count(cur.filter(e => e.t === "click"), e => e.l), pages: count(cur.filter(e => e.t === "pageview"), e => e.p) };
+  const {pages: pageStats, buttons: buttonStats} = buildPageAndButtonStats(journeys);
+  return { days, c, p, series, sources, camps, bounce: pct(bounced, perVisitor.size), journeys, exits, diffs, clickedLeft, devices, signupEver, buyers: buyers.length, leavers: leavers.length, pageStats, buttonStats,
+    buttons: count(act.filter(e => e.t === "click"), e => e.l), pages: count(act.filter(e => e.t === "pageview"), e => e.p) };
 }
 const pageName = p => !p || p === "/" ? "Homepage" : p;
 const delta = (a, b) => b ? (a - b) / b * 100 : null;
@@ -1389,17 +1572,43 @@ function advise(m){
     steps: ["Reuse the hook from your post as your headline.", "Show the thing you talked about in the first screen.", "Remove anything that loads slowly at the top."],
     gain: Math.max(1, Math.round(c.signups * .15)), conf: conf(V)});
 
-  // 8. Exit page
-  const ex = m.exits.find(x => x.page !== "/");
-  if (ex && m.leavers >= 10 && ex.share >= 25) {
-    const d = m.diffs[0];
-    tips.push({key: "exit:" + ex.page, lvl: ex.share >= 40 ? "high" : "med", impact: 80 + Math.min(10, ex.share / 10), tag: "Exit page",
-      title: `${pctStr(ex.share)} of people who don’t sign up leave on ${ex.page}`, short: `Find out what ${ex.page} is missing.`,
-      evidence: [`${fmt(ex.n)} of ${fmt(m.leavers)} people who left were last on ${ex.page}`].concat(d ? [`Customers: ${d.f.charAt(0).toLowerCase() + d.f.slice(1)} (${pctStr(d.b)} vs ${pctStr(d.l)} of everyone else)`] : []),
-      body: `Something on ${ex.page} makes people stop. Often it’s an unanswered question (price, how it works, is it for me) or no clear next step.`,
-      steps: [`Open ${ex.page} as a first-time visitor and write down your first question.`, "Answer it on that page, near the top.", "Add one obvious button to continue."].concat(d ? [`Make “${d.f.replace(/^Visited |^Clicked /, "")}” easier to reach — customers used it much more.`] : []),
-      gain: Math.max(1, Math.round(ex.n * .1 * Math.max(convRate, .05))), conf: conf(m.leavers)});
+  // 8. Pages people leave: explained with the numbers behind each reason
+  const EFFORT = {quick: "30 min", shallow: "15 min", read: "10 min", clickleft: "30 min", phones: "20 min", source: "20 min", below: "5 min"};
+  if (m.leavers >= 8) for (const ex of m.exits.filter(x => x.page !== "/" && x.share >= 12).slice(0, 2)) {
+    const x = explainExit(ex.page, m); if (!x) continue;
+    const top = x.reasons[0], real = top.k !== "thin", d = m.diffs[0];
+    tips.push({key: "exit:" + ex.page, lvl: ex.share >= 40 ? "high" : "med", impact: 80 + Math.min(10, ex.share / 10), tag: "Page people leave",
+      title: real ? `${pageName(ex.page)}: ${top.title.charAt(0).toLowerCase() + top.title.slice(1)}` : `${pctStr(ex.share)} of people who don’t sign up leave on ${pageName(ex.page)}`,
+      short: real ? top.fix.split(/(?<=\.)\s/)[0] : `Find out what ${pageName(ex.page)} is missing.`,
+      where: `Page: ${ex.page}`, effort: EFFORT[top.k] || "",
+      evidence: [`${fmt(ex.n)} of ${fmt(m.leavers)} people who left were last on ${ex.page}`, real ? top.ev : null].concat(d ? [`Customers: ${d.f.charAt(0).toLowerCase() + d.f.slice(1)} (${pctStr(d.b)} vs ${pctStr(d.l)} of everyone else)`] : []).filter(Boolean),
+      body: real ? top.why : `Something on ${pageName(ex.page)} makes people stop. Often it’s an unanswered question (price, how it works, is it for me) or no clear next step.`,
+      steps: real ? x.reasons.slice(0, 3).map(r => r.fix) : [`Open ${ex.page} as a first-time visitor and write down your first question.`, "Answer it on that page, near the top.", "Add one obvious button to continue."],
+      example: real ? top.ex : "", gain: Math.max(1, Math.round(ex.n * .1 * Math.max(convRate, .05))), conf: x.conf});
   }
+
+  // 8b. Buttons: clicked but nobody signs up / too far down / great but hidden
+  const cta = (m.buttonStats || []).filter(b => SIGNUPISH.test(b.label) && !/^(header|nav|footer)$/i.test(b.zone));
+  const where = b => `Button “${b.label}” · ${b.page}${b.zone ? " · " + b.zone : ""}`;
+  const leaky = cta.filter(b => b.people >= 8 && b.conv < 12).sort((a, b) => b.people - a.people)[0];
+  if (leaky) tips.push({key: "btnleak:" + leaky.label, lvl: "high", impact: 86, tag: "Button", where: where(leaky), effort: "30 min",
+    title: `People click “${leaky.label}”, but only ${fmt(leaky.signups)} of ${fmt(leaky.people)} sign up`, short: `Fix what happens after “${leaky.label}”.`,
+    evidence: [`${fmt(leaky.people)} people clicked it`, `${pctStr(leaky.conv)} of them signed up`].concat(leaky.mobilePct >= 60 ? [`${pctStr(leaky.mobilePct)} were on phones`] : []).concat(leaky.fold != null ? [foldText(leaky.fold)] : []),
+    body: "The button itself works, because people tap it. They quit after that, at the form or the page it leads to.",
+    steps: [`Tap “${leaky.label}” yourself on your phone and look at exactly what appears next.`, "Cut that step down to one field (email only).", "Remove surprises: a price, creating an account, asking for a card.", "Change the button to say what they get."],
+    example: "Button wording: “Send me the free guide” works better than “Submit” or “Continue”.", gain: Math.max(1, Math.round(leaky.people * .2) - leaky.signups), conf: conf(leaky.people)});
+  const low = cta.filter(b => b.fold != null && b.fold >= 1.5 && b.people >= 3 && b !== leaky).sort((a, b) => b.fold - a.fold)[0];
+  if (low) tips.push({key: "btnlow:" + low.label, lvl: "med", impact: 78, tag: "Button", where: where(low), effort: "5 min",
+    title: `“${low.label}” sits ${low.fold.toFixed(1)} screens down`, short: `Move “${low.label}” to the first screen.`,
+    evidence: [`${foldText(low.fold)} on ${low.page}`, `${pctStr(low.pageRate)} of visitors to that page click it`],
+    body: "Most people never scroll far enough to see it, so the action you want is hidden from them.",
+    steps: [`Move “${low.label}” up so it’s visible without scrolling, on a phone too.`, "Keep one main button per screen.", "Repeat it at the bottom for people who read everything."], example: "", gain: Math.max(1, Math.round(low.people * .5)), conf: conf(low.people)});
+  const hid = cta.find(b => b.people >= 4 && b.conv >= 30 && b.pageRate < 10);
+  if (hid) tips.push({key: "btnhid:" + hid.label, lvl: "med", impact: 68, tag: "Button", where: where(hid), effort: "10 min",
+    title: `“${hid.label}” works, but few people click it`, short: `Make “${hid.label}” easier to see.`,
+    evidence: [`${pctStr(hid.conv)} of people who click it sign up`, `Only ${pctStr(hid.pageRate)} of visitors to ${hid.page} click it`],
+    body: "This is your best button, and most visitors never use it. Making it more visible is the cheapest win you have.",
+    steps: [`Make “${hid.label}” bigger, with a color that stands out from the rest of the page.`, "Put it where people are already looking, next to your headline.", "Add one line of text above it saying what happens when they click."], example: "", gain: Math.max(1, Math.round(hid.people * 2)), conf: conf(hid.people)});
 
   // 9. Traffic sources
   const ranked = m.sources.filter(s => s.visitors >= (V >= 60 ? 15 : 6)).sort((a, b) => b.conv - a.conv);
@@ -1427,6 +1636,7 @@ function advise(m){
   else if (!tips.some(t => t.lvl === "high" || t.lvl === "med")) tips.push({key: "healthy", lvl: "good", impact: 30, tag: "Working well", title: `${pctStr(c.conv)} of visitors sign up`, short: "No big leak right now. Grow traffic next.",
     evidence: [`${fmt(c.signups)} sign-ups from ${fmt(V)} visitors`], body: "Nothing stands out as broken. Your next lever is more of the right traffic.",
     steps: ["Make a tracking link for each new post.", "Repeat the posts that bring sign-ups, not just views."], conf: conf(V)});
+  if (tips.some(t => t.key.startsWith("btnleak:"))) { const k = tips.findIndex(t => t.key === "form"); if (k >= 0) tips.splice(k, 1); }
   return tips.sort((a, b) => b.impact - a.impact);
 }
 
@@ -1502,10 +1712,12 @@ function tipHTML(t, i){
   return `<article class="tip ${t.lvl}" id="tip-${i}" data-key="${esc(t.key)}">
     <div class="tip-h"><span class="badge">${esc(t.tag)}</span>${t.conf ? `<span class="conf ${t.conf.cls}" title="Based on ${fmt(t.conf.n)} people">${t.conf.level} · ${fmt(t.conf.n)} ${t.conf.n === 1 ? "person" : "people"}</span>` : ""}</div>
     <h3>${esc(t.title)}</h3>
+    ${t.where ? `<p class="tip-where">${ic("link", 14)}<span>${esc(t.where)}</span>${t.effort ? `<span class="effort">${esc(t.effort)}</span>` : ""}</p>` : ""}
     ${t.evidence ? `<ul class="evid">${t.evidence.map(e => `<li>${esc(e)}</li>`).join("")}</ul>` : ""}
     ${t.progress != null ? `<div class="src-bar" style="margin:4px 0 12px"><i style="width:${t.progress}%;background:var(--green)"></i></div>` : ""}
     <p>${esc(t.body)}</p>
     ${t.steps ? `<div class="fix"><b>What to try</b><ol>${t.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol></div>` : ""}
+    ${t.example ? `<p class="tip-ex">${esc(t.example)}</p>` : ""}
     ${estHTML(t)}
     ${examplesHTML(t, i)}
     <div class="tip-a">${t.href ? `<a class="btn sm" href="${t.href}">${esc(t.cta)}</a>` : ""}
@@ -1521,7 +1733,8 @@ function journeyRow(j){
   const chip = e => e.t === "pageview" ? `<span class="chip">${esc(pageName(e.p || "/"))}</span>` : e.t === "click" ? `<span class="chip ck2">→ ${esc((e.l || "click").slice(0, 28))}</span>` : `<span class="chip ok">Signed up ✓</span>`;
   return `<div class="jrow"><div class="jmeta"><span><span class="dot" style="background:${srcColor(j.s)}"></span>${esc(srcName(j.s))}</span><span class="muted">${dev ? (dev === "mobile" ? "Phone" : dev === "tablet" ? "Tablet" : "Computer") + " · " : ""}${ago(j.end)}</span></div>
     <div class="chips">${st.map(e => e ? chip(e) : `<span class="chip more">+${j.steps.length - 7}</span>`).join("")}</div>
-    <div class="jout ${j.converted ? "ok" : ""}">${j.converted ? "Became a customer" : `Left on ${esc(pageName(j.exit))}`}</div></div>`;
+    <div class="jright"><div class="jout ${j.converted ? "ok" : ""}">${j.converted ? "Became a customer" : `Left on ${esc(pageName(j.exit))}`}</div><button class="tl-btn" data-tl aria-expanded="false">Timeline</button></div>
+    <div class="jtl" hidden>${timelineHTML(j)}</div></div>`;
 }
 function examplesFor(t, m){
   const L = (m.journeys || []).filter(j => !j.converted), dev = j => (j.steps.find(e => e.d) || {}).d, k = t.key || "";
@@ -1605,7 +1818,7 @@ const monthReset = () => { const d = new Date(); return new Date(d.getFullYear()
 /* ---------- App state & routing ---------- */
 const S = { site: null, days: 30, metric: "visitors", m: null, events: [], campaigns: [], sim: {v: uid(), log: []} };
 const NAV_ADMIN = [["waitlist","Waitlist","user","more"]];
-const NAV = [["dashboard","Home","home"],["advisor","Why They Leave","bulb"],["journeys","Visitor Paths","route"],["campaigns","Tracking Links","link"],["install","Install","code"],["account","Settings","gear"],["funnel","Funnels","funnel","more"],["analytics","Analytics","chart","more"],["developers","API Keys","key","more"]];
+const NAV = [["dashboard","Home","home"],["advisor","Why They Leave","bulb"],["buttons","Buttons","cursor"],["journeys","Visitor Paths","route"],["funnel","Funnel","funnel"],["campaigns","Tracking Links","link"],["install","Install","code"],["account","Settings","gear"],["analytics","Analytics","chart","more"],["developers","API Keys","key","more"]];
 const TABS = [["dashboard","Home","home"],["advisor","Why","bulb"],["journeys","Paths","route"],["campaigns","Links","link"],["account","Settings","gear"]];
 const APP_ROUTES = new Set([...NAV, ...NAV_ADMIN].map(n => n[0]));
 
@@ -1675,8 +1888,8 @@ function shell(active){
 }
 function search(q){
   q = q.trim().toLowerCase(); if (!q) return;
-  const words = {dashboard:"dashboard home overview", analytics:"analytics traffic source sources pages buttons clicks visitors", advisor:"why leave leaving recommendations fix fixes advice suggestions insight leak",journeys:"journeys journey visitors visitor path paths exit exits customers",
-    funnel:"funnel funnels drop conversion", campaigns:"campaign campaigns link links post posts tiktok instagram youtube views utm", install:"setup install script tracking code track",developers:"api key keys developer developers sdk docs documentation", account:"settings account profile name"};
+  const words = {dashboard:"dashboard home overview", analytics:"analytics traffic source sources pages buttons clicks visitors", advisor:"why leave leaving recommendations fix fixes advice suggestions insight leak",journeys:"journeys journey visitors visitor path paths exit exits customers timeline",buttons:"buttons button click clicks cta link which",
+    funnel:"funnel funnels drop conversion steps", campaigns:"campaign campaigns link links post posts tiktok instagram youtube views utm", install:"setup install script tracking code track",developers:"api key keys developer developers sdk docs documentation", account:"settings account profile name"};
   let hit = Object.keys(words).find(k => words[k].split(" ").some(w => w.startsWith(q) || q.startsWith(w)));
   if (!hit && S.campaigns.some(c => c.name.toLowerCase().includes(q))) hit = "campaigns";
   if (hit) { $("#q").value = ""; location.hash = "#" + hit; } else toast(`No matches for “${q}”`);
@@ -1713,10 +1926,20 @@ const insightHTML = t => `<div class="ai-insight"><b class="lk">${ic("funnel", 1
 const wave = (n, seed, rise = 0) => { const r = mulberry32(seed); let v = 20; return Array.from({length: n}, (_, i) => (v += (r() - .45) * 6 + rise * (i / n)) + 10); };
 
 /* ---------- Landing ---------- */
+/* ---------- Anonymous page-load counter (no IDs, no cookies, no IP) ---------- */
+let hitDone = false;
+function countHit(path){
+  if (hitDone) return; hitDone = true;
+  try {
+    if (location.hostname !== "clickspring.live" || !CFG.supabaseUrl || navigator.webdriver || /bot|crawl|spider|preview|lighthouse/i.test(navigator.userAgent)) return;
+    fetch(CFG.supabaseUrl + "/rest/v1/rpc/count_hit", {method: "POST", keepalive: true, headers: {apikey: CFG.supabaseAnonKey, Authorization: "Bearer " + CFG.supabaseAnonKey, "Content-Type": "application/json"}, body: JSON.stringify({p_path: path})}).catch(() => {});
+  } catch (e) {}
+}
+
 /* ---------- Waitlist ---------- */
 const WAITLIST = true;
-const ADMINS = ["disow29@gmail.com", "disow@gmail.com", "ithassen@icloud.com"];
-const isAdmin = () => ADMINS.includes((store.userEmail() || "").toLowerCase());
+// Who is an admin is decided on the server (am_i_admin). No email addresses live in this file.
+const isAdmin = () => store.live ? !!S.admin : (() => { try { return localStorage.getItem("cs_admin_demo") === "1"; } catch (e) { return false; } })();
 const waitlistForm = where => `<form class="wl-form" data-wl="${where}" data-cs-signup="manual" novalidate>
   <input type="email" name="email" placeholder="you@email.com" autocomplete="email" required aria-label="Email address">
   <button class="btn lg">Join the waitlist ${ic("arrow", 18)}</button></form><p class="wl-msg" role="status"></p>`;
@@ -1796,7 +2019,6 @@ function renderLanding(){
     </div>
   </section>
 
-  <div class="marquee" aria-hidden="true"><div class="mq-track">${Array(2).fill(`<span>Why they leave</span><i></i><span>What to fix</span><i></i><span>Did it work</span><i></i><span>Not more charts</span><i></i><span>Real answers</span><i></i>`).join("")}${Array(2).fill(`<span>Why they leave</span><i></i><span>What to fix</span><i></i><span>Did it work</span><i></i><span>Not more charts</span><i></i><span>Real answers</span><i></i>`).join("")}</div></div>
   <section class="how" id="how">
     <h2 class="sec-h">How it works</h2>
     <div class="how-grid">
@@ -1846,9 +2068,10 @@ function renderLanding(){
     <div class="wl-wrap center">${waitlistForm("final")}</div>
   </section>
 
-  <div class="foot-note"><span class="logo" style="font-size:18px">${LOGO(22)}ClickSpring</span><span><a href="${YT}" target="_blank" rel="noopener" style="color:inherit">YouTube</a> · <a href="docs.html" style="color:inherit">Docs</a> · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="#" data-cookie-settings style="color:inherit">Cookie settings</a> · <a href="#login" style="color:inherit">Members log in</a> · © ${new Date().getFullYear()} ClickSpring</span></div>
+  <div class="foot-note"><span class="logo" style="font-size:18px">${LOGO(22)}ClickSpring</span><span><a href="${YT}" target="_blank" rel="noopener" style="color:inherit">YouTube</a> · <a href="docs.html" style="color:inherit">Docs</a> · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="contact.html" style="color:inherit">Contact</a> · <a href="#" data-cookie-settings style="color:inherit">Cookie settings</a> · <a href="#login" style="color:inherit">Members log in</a> · © ${new Date().getFullYear()} ClickSpring</span></div>
   </div>`;
   animateLanding();
+  if (!store.user) countHit("/");
 }
 
 /* ---------- Demo video popup ---------- */
@@ -2235,7 +2458,7 @@ const VIEWS = {
         <div class="fl-arrow ${!bigAtClick ? "leak" : ""}"><span>→</span><em>${fmt(lostSign)} left</em></div>
         <div class="fl-step ok"><span class="fl-ic">${ic("check", 20)}</span><b>${fmt(c.signups)}</b><small>signed up</small></div>
       </div>
-      <p class="flow-note"><span class="red-dot"></span>Most people leave <b>${bigAtClick ? "before clicking anything" : "after clicking, before signing up"}</b>.</p>
+      <p class="flow-note"><span class="red-dot"></span>Most people leave <b>${bigAtClick ? "before clicking anything" : "after clicking, before signing up"}</b>. <a class="flow-link" href="#funnel">Open the full funnel</a></p>
     </section>
     ${first ? `<section class="card easy-fix">
       <span class="eyebrow">2 · Your #1 problem</span>
@@ -2284,11 +2507,11 @@ const VIEWS = {
     });
   },
   journeys(){
-    const m = S.m;
-    if (!m.c.visitors) return $("#view").innerHTML = header("Visitor Journeys", "Follow real visitors from first click to sign-up, or to the moment they left.") + noData();
-    const jHTML = journeyRow;
-    const recent = m.journeys.slice().sort((a, b) => b.end - a.end).slice(0, 15);
-    $("#view").innerHTML = header("Visitor Journeys", "Follow real visitors from first click to sign-up, or to the moment they left.") + `
+    const m = S.m, head = header("Visitor Journeys", "Follow each visitor step by step, and see why people leave each page.");
+    if (!m.c.visitors) return $("#view").innerHTML = head + noData();
+    const recent = m.journeys.slice().sort((a, b) => b.end - a.end).slice(0, 15), top = m.exits.slice(0, 5);
+    const exX = top.map(x => explainExit(x.page, m));
+    $("#view").innerHTML = head + `
     <div class="grid kpis">
       ${kpiCard({icon: "person", label: "Became customers", value: fmt(m.buyers)})}
       ${kpiCard({icon: "eye", color: "var(--bad)", label: "Left without signing up", value: fmt(m.leavers)})}
@@ -2296,28 +2519,83 @@ const VIEWS = {
       ${kpiCard({icon: "funnel", color: "var(--ink)", label: "Top exit page", value: esc(m.exits[0] ? pageName(m.exits[0].page) : "–")})}
     </div>
     <div class="grid halves">
-      <div class="card"><h2>Where people leave <small>last page seen by visitors who didn’t sign up</small></h2>
-        ${m.exits.length ? m.exits.map(x => `<div class="bar-row"><div class="bar-top"><b>${esc(pageName(x.page))}</b><span>${fmt(x.n)} · ${pctStr(x.share)}</span></div><div class="src-bar"><i style="width:${x.share}%;background:var(--bad)"></i></div></div>`).join("") : `<p class="muted">Nobody has left yet.</p>`}</div>
+      <div class="card"><h2>Why people leave each page <small>tap a page to see why</small></h2>
+        ${top.length ? top.map((x, k) => `<details class="xp" ${k === 0 ? "open" : ""}><summary><span class="xp-p">${esc(pageName(x.page))}</span><span class="xp-r">${fmt(x.n)} left · ${pctStr(x.share)}</span><i class="xp-bar"><b style="width:${Math.max(4, x.share)}%"></b></i></summary>${explainHTML(exX[k])}</details>`).join("") : `<p class="muted">Nobody has left yet.</p>`}</div>
       <div class="card"><h2>What customers did differently</h2>
         ${m.diffs.length ? m.diffs.map(d => `<div class="bar-row"><div class="bar-top"><b>${esc(d.f)}</b></div>
           <div class="dual"><span>Customers</span><div class="src-bar"><i style="width:${d.b}%;background:var(--green)"></i></div><span class="num">${pctStr(d.b)}</span></div>
           <div class="dual"><span>Everyone else</span><div class="src-bar"><i style="width:${d.l}%;background:var(--muted)"></i></div><span class="num">${pctStr(d.l)}</span></div></div>`).join("")
           : `<p class="muted">Once at least 3 people sign up, this shows the pages and buttons customers used more than everyone else.</p>`}</div>
     </div>
-    <div class="card"><h2>Recent visitors</h2>${recent.map(jHTML).join("")}</div>`;
+    <div class="card"><h2>Recent visitors <small>tap “Timeline” to follow one visitor</small></h2>${recent.map(journeyRow).join("")}</div>`;
+  },
+  buttons(){
+    const m = S.m, head = header("Buttons", "Exactly which buttons people click, where they sit, and which ones lead to sign-ups.");
+    if (!m.c.visitors) return $("#view").innerHTML = head + noData();
+    const bs = m.buttonStats;
+    if (!bs.length) return $("#view").innerHTML = head + `<div class="card easy-empty"><div class="ee-ic">${ic("cursor", 30)}</div><h2>No button clicks yet</h2><p>ClickSpring records every button and link your visitors click. Once someone clicks one, this page shows which ones work.</p><a class="btn green lg" href="#install">Check my tracking</a></div>`;
+    const isNav = b => /^(header|nav|footer)$/i.test(b.zone) && !SIGNUPISH.test(b.label);
+    const verdict = b => b.people < 4 ? {c: "early", t: "Too few clicks to judge"} : isNav(b) ? {c: "early", t: "Menu link"} : b.conv >= 25 ? {c: "good", t: "Working"} : b.people >= 8 && b.conv < 12 ? {c: "bad", t: "Clicks, but no sign-ups"} : b.fold != null && b.fold >= 1.5 && b.pageRate < 12 ? {c: "warn", t: "Hard to see"} : {c: "ok", t: "OK"};
+    const most = bs[0], best = bs.filter(b => b.people >= 3 && !isNav(b)).sort((a, b) => b.conv - a.conv || b.people - a.people)[0], dead = bs.filter(b => !isNav(b) && b.people >= 8 && b.conv < 12).sort((a, b) => b.people - a.people)[0], maxC = Math.max(...bs.map(b => b.clicks));
+    const sum = (ico, lab, b, line) => `<div class="card btn-sum"><span class="bs-ic">${ic(ico, 20)}</span><div><span class="bs-l">${lab}</span><b>${b ? esc(b.label) : "None"}</b><small>${esc(line)}</small></div></div>`;
+    const maps = [...new Set(bs.filter(b => b.fold != null).map(b => b.page))].slice(0, 3).map(pg => pageMapHTML(pg, bs.filter(b => b.page === pg && b.fold != null), verdict));
+    $("#view").innerHTML = head + `
+    <div class="grid btn-sums">
+      ${sum("cursor", "Most clicked", most, `${fmt(most.clicks)} clicks from ${fmt(most.people)} people`)}
+      ${sum("check", "Best at getting sign-ups", best, best ? `${pctStr(best.conv)} of ${fmt(best.people)} people who click it sign up` : "Not enough clicks yet")}
+      ${sum("trend", "Clicks, but no sign-ups", dead, dead ? `${fmt(dead.people)} clicked, ${fmt(dead.signups)} signed up` : "Nothing stuck like this")}
+    </div>
+    <div class="card"><h2>Every button <small>${fmt(bs.length)} tracked</small></h2>
+      ${bs.slice(0, 15).map(b => { const v = verdict(b); return `<div class="brow"><div class="br-main"><b>${esc(b.label)}</b><span class="br-where">${esc(pageName(b.page))}${b.zone ? ` · ${esc(b.zone)}` : ""}${b.fold != null ? ` · ${foldText(b.fold)}` : ""}</span>${b.target ? `<code>${esc(b.target)}</code>` : ""}</div>
+        <div class="br-stats"><div><b>${fmt(b.clicks)}</b><small>clicks</small></div><div><b>${fmt(b.people)}</b><small>people</small></div><div><b>${fmt(b.signups)} <em>(${pctStr(b.conv)})</em></b><small>signed up after</small></div><div><b>${pctStr(b.pageRate)}</b><small>of page visitors</small></div></div>
+        <div class="br-bar"><i style="width:${Math.max(3, b.clicks / maxC * 100)}%"></i></div><span class="vd ${v.c}">${v.t}</span></div>`; }).join("")}</div>
+    ${maps.length ? `<div class="card"><h2>Where on the page people click <small>dot size = clicks</small></h2><div class="maps">${maps.join("")}</div><p class="muted" style="font-size:13px;margin:12px 0 0">Position needs the latest tracking script. “1.0” means one full screen down.</p></div>` : ""}`;
+  },
+  funnel(){
+    const m = S.m, head = header("Funnel", "See where visitors drop off, step by step.");
+    if (!m.c.visitors) return $("#view").innerHTML = head + noData();
+    const segs = [["all", "Everyone", () => true], ["mobile", "Phones", j => j.dev === "mobile"], ["desktop", "Computers", j => j.dev === "desktop"]].concat(m.sources.filter(s => s.visitors >= 3).map(s => ["s:" + s.key, s.name, j => j.s === s.key]));
+    const rowsFor = f => funnelCounts(m.journeys.filter(f));
+    const hint = {explore: "People leave right after arriving. The first screen doesn’t match what they expected.", click: "They look around but see no clear button. Add one obvious next step.", sign: "They click, then quit at the form or page that follows. Cut it down to one field."};
+    const draw = key => {
+      const f = segs.find(x => x[0] === key)[2], st = rowsFor(f), top = Math.max(1, st[0].n);
+      let big = -1, bigLoss = -1; for (let i = 1; i < st.length; i++) { const l = st[i - 1].n - st[i].n; if (l > bigLoss && st[i - 1].n > 0) { bigLoss = l; big = i; } }
+      const w = i => Math.max(24, st[i].n / top * 100), per100 = i => Math.round(st[i].n / top * 100);
+      const shapes = st.map((x, i) => { const r = i < st.length - 1 ? Math.max(.25, w(i + 1) / w(i)) : .82;
+        const drop = i < st.length - 1 ? st[i].n - st[i + 1].n : 0;
+        return `<div class="fs"><div class="fs-l"><b>${esc(x.label)}</b><small>${x.sub ? esc(x.sub) + " · " : ""}${pctStr(pct(x.n, top))} of visitors</small></div>
+          <div class="fs-shape"><div class="fs-poly s${i}" style="--w:${w(i)}%;--r:${r}"><b>${fmt(x.n)}</b></div></div></div>
+          ${i < st.length - 1 ? `<div class="fs-drop ${i + 1 === big ? "big" : ""}"><span>${i + 1 === big ? `<em>Biggest leak</em> ` : ""}${fmt(drop)} left here (${pctStr(pct(drop, st[i].n))})</span></div>` : ""}`; }).join("");
+      const bigKey = big > 0 ? st[big].key : null;
+      return `<p class="fs-sum">Out of every <b>100 visitors</b>: <b>${per100(1)}</b> look around, <b>${per100(2)}</b> click a button, and <b>${per100(3)}</b> sign up.</p>
+        <div class="fs-wrap">${shapes}</div>
+        ${bigKey ? `<div class="fs-why"><b>Your biggest leak is between “${esc(st[big - 1].label)}” and “${esc(st[big].label)}”.</b><p>${esc(hint[bigKey])}</p><a class="btn green sm" href="#advisor">See why and what to fix</a></div>` : ""}`;
+    };
+    const cmp = segs.map(([k, lab, f]) => { const st = rowsFor(f); return {k, lab, st}; }).filter(x => x.st[0].n > 0);
+    $("#view").innerHTML = head + `
+    <div class="card"><div class="seg-pills" id="fpills">${segs.map(([k, lab], i) => `<button data-s="${esc(k)}" class="${i ? "" : "on"}">${esc(lab)}</button>`).join("")}</div><div id="fbody">${draw("all")}</div></div>
+    <div class="card"><h2>Compare segments <small>% of visitors who reach each step</small></h2><div class="tbl-wrap"><table><thead><tr><th>Segment</th><th class="num">Visitors</th><th class="num">Looked around</th><th class="num">Clicked</th><th class="num">Signed up</th></tr></thead><tbody>
+      ${cmp.map(x => `<tr><td><b>${esc(x.lab)}</b></td><td class="num">${fmt(x.st[0].n)}</td>${[1, 2, 3].map(i => `<td class="num">${pctStr(pct(x.st[i].n, x.st[0].n))}</td>`).join("")}</tr>`).join("")}</tbody></table></div></div>`;
+    $("#fpills").addEventListener("click", e => { const b = e.target.closest("[data-s]"); if (!b) return; $("#fpills").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); $("#fbody").innerHTML = draw(b.dataset.s); });
   },
   async waitlist(){
     $("#view").innerHTML = header("Waitlist", "Everyone waiting to get into ClickSpring.", false) + `<div class="card"><p class="muted">Loading…</p></div>`;
-    let rows = [];
+    let rows = [], hits = [], msgs = [];
     try {
-      if (store.live) { const { data, error } = await store.sb.rpc("admin_waitlist"); if (error) throw error; rows = data; }
-      else { try { rows = JSON.parse(localStorage.getItem("cs_waitlist") || "[]"); } catch (e) {} }
+      if (store.live) {
+        const [w, h, m] = await Promise.all([store.sb.rpc("admin_waitlist"), store.sb.rpc("admin_hits"), store.sb.rpc("admin_messages")]);
+        if (w.error) throw w.error; rows = w.data || []; hits = h.data || []; msgs = m.data || [];
+      } else { try { rows = JSON.parse(localStorage.getItem("cs_waitlist") || "[]"); } catch (e) {} }
     } catch (err) { $("#view").innerHTML = header("Waitlist", "", false) + `<div class="card"><p class="muted">${esc(friendly(err))}</p></div>`; return; }
-    const today = rows.filter(r => Date.now() - Date.parse(r.created_at) < DAY).length;
-    $("#view").innerHTML = header("Waitlist", "Everyone waiting to get into ClickSpring.", false) + `
-      <div class="grid kpis">${kpiCard({icon: "user", label: "On the waitlist", value: fmt(rows.length)})}${kpiCard({icon: "trend", label: "Joined today", value: fmt(today)})}</div>
+    const today = rows.filter(r => Date.now() - Date.parse(r.created_at) < DAY).length, weekAgo = Date.now() - 7 * DAY;
+    const visitsWeek = hits.filter(h => h.path === "/" && Date.parse(h.day) >= weekAgo).reduce((a, h) => a + h.hits, 0), visitsAll = hits.filter(h => h.path === "/").reduce((a, h) => a + h.hits, 0);
+    $("#view").innerHTML = header("Waitlist", "Everyone waiting to get into ClickSpring. Nothing here is emailed automatically.", false) + `
+      <div class="grid kpis">${kpiCard({icon: "user", label: "On the waitlist", value: fmt(rows.length)})}${kpiCard({icon: "trend", label: "Joined today", value: fmt(today)})}${kpiCard({icon: "eye", label: "Home page loads (7 days)", value: fmt(visitsWeek)})}${kpiCard({icon: "pct", label: "Visits that joined", value: visitsAll ? pctStr(pct(rows.length, visitsAll)) : "–"})}</div>
       <div class="card"><h2>People <button class="btn quiet sm" id="wlcopy">Copy emails</button></h2>
-      ${rows.length ? `<div class="tbl-wrap"><table><thead><tr><th>#</th><th>Email</th><th>From</th><th class="num">Joined</th></tr></thead><tbody>${rows.map((r, k) => `<tr><td>${k + 1}</td><td>${esc(r.email)}</td><td class="muted">${esc(r.source || "–")}</td><td class="num muted">${dShort(new Date(r.created_at))}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">Nobody yet. Share clickspring.live in your videos.</p>`}</div>`;
+      ${rows.length ? `<div class="tbl-wrap"><table><thead><tr><th>#</th><th>Email</th><th>From</th><th class="num">Joined</th></tr></thead><tbody>${rows.map((r, k) => `<tr><td>${k + 1}</td><td>${esc(r.email)}</td><td class="muted">${esc(r.source || "–")}</td><td class="num muted">${dShort(new Date(r.created_at))}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">Nobody yet. Share clickspring.live in your videos.</p>`}</div>
+      <div class="card" style="margin-top:16px"><h2>Messages <small>${fmt(msgs.length)} from the contact form</small></h2>
+      ${msgs.length ? msgs.map(m => `<div class="msg-row"><div class="msg-h"><b>${esc(m.email || "No email given")}</b><span class="muted">${esc(m.page || "contact")} · ${dShort(new Date(m.created_at))}</span></div><p>${esc(m.message)}</p></div>`).join("") : `<p class="muted">No messages yet.</p>`}</div>
+      <p class="muted" style="font-size:13px;margin-top:14px">Visit counts are anonymous page loads (no cookies, no IDs, no IP), so they’re a little higher than real people.</p>`;
     const cb = $("#wlcopy"); if (cb) cb.addEventListener("click", () => copy(rows.map(r => r.email).join(", ")));
   },
   developers(){
@@ -2370,14 +2648,6 @@ ClickSpring.track("click", "Pricing toggle"); // send any event</pre></div>`;
     $("#view").innerHTML = header("Analytics", `Last ${S.days} days · ${fmt(m.c.pageviews)} page views`) + `
     <div class="card" style="margin-bottom:16px"><h2>Traffic sources <small>first visit, per visitor</small></h2>${sourcesTable(m.sources)}</div>
     <div class="grid halves"><div class="card"><h2>Most clicked buttons</h2>${list(m.buttons)}</div><div class="card"><h2>Top pages</h2>${list(m.pages)}</div></div>`;
-  },
-  funnel(){
-    const m = S.m; if (!m.c.visitors) return $("#view").innerHTML = header("Funnels", "See where you lose potential customers.") + noData();
-    const opts = [["all", "All traffic"], ...m.sources.map(s => [s.key, s.name])];
-    $("#view").innerHTML = header("Funnels", "See where you lose potential customers.") + `
-    <div class="card" style="margin-bottom:16px"><h2>Your funnel <select class="range" id="fsrc" aria-label="Traffic source">${opts.map(([k, n]) => `<option value="${esc(k)}">${esc(n)}</option>`).join("")}</select></h2><div id="fbody">${funnelHTML(m.c)}</div></div>
-    <div class="card"><h2>Conversion by source</h2>${sourcesTable(m.sources)}</div>`;
-    $("#fsrc").addEventListener("change", e => { const s = m.sources.find(x => x.key === e.target.value) || m.c; $("#fbody").innerHTML = funnelHTML(s); });
   },
   advisor(){
     const tips = advise(S.m), fixes = S.fixes || [];
@@ -2505,7 +2775,7 @@ ClickSpring.track("click", "Pricing toggle"); // send any event</pre></div>`;
     $("#view").innerHTML = header("Settings", "Your account and website.", false) + `
     <div class="card plan-card" style="margin-bottom:16px"><h2><span>Your plan: <b>Beta</b> <span class="beta-tag">FREE</span></span><small>Resets ${monthReset()}</small></h2>
       ${[["Events this month (this website)", (S.usage && S.usage.events) || 0, LIMITS.events], ["Websites", (store.sites || [site]).length, LIMITS.sites], ["Tracking links (this website)", (S.campaigns || []).length, LIMITS.links]].map(([l, n, max]) => `<div class="bar-row"><div class="bar-top"><b>${l}</b><span>${fmt(n)} of ${max.toLocaleString("en-US")}</span></div><div class="src-bar"><i style="width:${Math.min(100, n / max * 100)}%;background:${n >= max ? "var(--bad)" : n >= max * .8 ? "var(--warn)" : "var(--green)"}"></i></div></div>`).join("")}
-      <p class="muted" style="margin:6px 0 0;font-size:13px">ClickSpring is completely free during beta. Need more? Email <a href="mailto:disow29@gmail.com">disow29@gmail.com</a>.</p></div>
+      <p class="muted" style="margin:6px 0 0;font-size:13px">ClickSpring is completely free during beta. Need more? Use the <a href="contact.html">contact form</a>.</p></div>
     <div class="grid halves">
       <div class="card"><h2>Website</h2><form id="af">
         <label class="field">Website or brand name<input name="name" value="${esc(site.name)}" required></label>
@@ -2592,6 +2862,9 @@ const TOUR = [
   {route: "advisor", sel: "[data-fix]", title: "Fix it, then measure it", body: "Made a change? Press this. ClickSpring compares sign-ups before and after, so you know if it worked."},
   {route: "advisor", sel: "#ask", title: "Your plan for the week", body: "Turns all of this into 3 steps, in order."},
   {route: "journeys", nav: "journeys", sel: ".grid.halves > .card:nth-child(2)", title: "What customers did differently", body: "Pages and buttons your customers used far more than everyone else. Make those easier to find."},
+  {route: "journeys", sel: ".tl-btn", title: "Follow one visitor", body: "Tap Timeline to see one person step by step: what they opened, what they clicked, and how long they stayed before leaving."},
+  {route: "buttons", nav: "buttons", sel: ".btn-sum", title: "Which buttons people click", body: "Every button and link, where it sits on the page, and how many of the people who click it go on to sign up."},
+  {route: "funnel", nav: "funnel", sel: ".fs-wrap", title: "Your funnel", body: "Each step from visit to sign-up. The red tag marks your biggest leak, and you can compare phones, computers and each traffic source."},
   {route: "campaigns", nav: "campaigns", sel: "#cf", title: "One tracking link per post", body: "Make a link for each post and put it in your bio. You’ll see which posts bring customers, not just views."},
   {route: "install", nav: "install", sel: "#status", title: "Check your tracking", body: "Add the script to your site, then open it in test mode. This turns green by itself as soon as visits arrive."},
   {route: null, sel: "#tour-help", title: "You’re all set", body: "Replay this tour any time from the ? button."}
@@ -2693,6 +2966,7 @@ const Tour = {
 
 /* ---------- Boot ---------- */
 document.addEventListener("click", e => {
+  const tl = e.target.closest("[data-tl]"); if (tl) { const p = tl.closest(".jrow"), panel = p && p.querySelector(".jtl"); if (panel) { panel.hidden = !panel.hidden; tl.setAttribute("aria-expanded", String(!panel.hidden)); tl.textContent = panel.hidden ? "Timeline" : "Hide"; } return; }
   const ex = e.target.closest("[data-exit-demo]"); if (ex) { e.preventDefault(); exitDemo(ex.getAttribute("href")); return; }
   const st = e.target.closest('.landing a[href="#signup"], .landing a[href="#login"]'); if (st && (demoSession || (!store.live && DemoStore.account && DemoStore.account.demo && DemoStore.user))) { e.preventDefault(); exitDemo(st.getAttribute("href")); return; }
   if (e.target.closest("[data-demo]")) { e.preventDefault(); openDemo(); }
@@ -2729,7 +3003,7 @@ window.addEventListener("hashchange", () => { if (!APP_ROUTES.has(location.hash.
   function analytics(){
     if (document.getElementById("cs-an") || !/^https?:$/.test(location.protocol) || /claude|claudeusercontent/.test(location.hostname)) return;
     var t = document.createElement("script"); t.id = "cs-an"; t.defer = true;
-    t.src = "tracker.js?v=5";
+    t.src = "tracker.js?v=7";
     t.setAttribute("data-site", "b34d5a91-a46f-45cb-9bd9-167925fb1688");
     t.setAttribute("data-endpoint", "https://kuzdzlbyxllovbcudzsy.supabase.co");
     t.setAttribute("data-key", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt1emR6bGJ5eGxsb3ZiY3VkenN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzE5NjEsImV4cCI6MjEwOTE0Nzk2MX0.2fOWgBbPz5WCrfE8DiXbcfLmD-NVt-mXCu2zsp4eBx8");

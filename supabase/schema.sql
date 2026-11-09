@@ -130,3 +130,7 @@ grant execute on function public.delete_my_account() to authenticated;
 
 -- v0.01.7: waitlist (join_waitlist RPC for visitors, admin_waitlist RPC for the founder's accounts)
 -- see migration "waitlist"
+
+-- v0.01.8: tracker v0.01.3 columns (target, zone, fold, dwell_s, scroll_pct), "leave" events with their own cap,
+--          contact messages, anonymous page-load counter, admin check on the server, daily keep-alive (pg_cron).
+-- see migrations: "contact_hits_admin_keepalive", "keepalive_cron", "tracker_v7_buttons_dwell_scroll"
